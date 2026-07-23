@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 export const metadata: Metadata = {
   title: 'CeliteCreators — Pay-Per-Product Creator Asset Marketplace',
@@ -13,8 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#090D16] text-slate-100 antialiased min-h-screen selection:bg-[#0284C7] selection:text-white">
-        {children}
+      <body className="bg-[#090D16] text-slate-100 antialiased min-h-screen flex flex-col selection:bg-[#0284C7] selection:text-white">
+        <Navbar />
+        <div className="flex-1">{children}</div>
+        <Footer />
       </body>
     </html>
   );
