@@ -2,23 +2,24 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { UserCheck, UserPlus, Star, ShoppingBag, Eye, ShieldCheck, Sparkles } from 'lucide-react';
 
 interface CreatorShopPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function CreatorShopProfilePage({ params }: CreatorShopPageProps) {
+  const resolvedParams = use(params);
   const [following, setFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(342);
 
   // Mock creator shop data
   const shop = {
-    name: params.slug.replace(/-/g, ' ').toUpperCase(),
-    slug: params.slug,
+    name: resolvedParams.slug.replace(/-/g, ' ').toUpperCase(),
+    slug: resolvedParams.slug,
     description: 'Specializing in cinematic After Effects openers, 4K motion graphics, and modular 3D Blender assets.',
     profileImageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     bannerImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',

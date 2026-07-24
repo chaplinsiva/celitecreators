@@ -1,89 +1,126 @@
-/* agent-notes: { ctx: "Admin Dashboard overview page with platform GMV, commission split, and quick action cards", deps: [], state: active, last: "dani@2026-07-23" } */
+/* agent-notes: { ctx: "Admin Overview Dashboard in crisp white light theme", deps: [src/types/database.ts], state: active, last: "dani@2026-07-23" } */
 
 'use client';
 
-import { IndianRupee, ShoppingBag, Users, Clock, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, IndianRupee, Users, Package, ArrowUpRight, CheckCircle2, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AdminDashboardPage() {
-  const metrics = {
-    grossMarketplaceVolume: 184500,
-    platformCommissionRevenue: 36900, // 20%
-    activeCreatorShops: 42,
-    pendingAssetApprovals: 5,
-    pendingPayoutRequests: 3,
+  const stats = {
+    grossVolume: 184500,
+    platformRevenue: 36900,
+    activeCreators: 42,
+    pendingProducts: 5,
+    pendingPayouts: 3,
   };
 
   return (
     <div className="space-y-8">
-      <div>
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 inline-flex items-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5" /> Platform Governance
-        </span>
-        <h1 className="text-3xl font-extrabold text-white mt-2">Admin Control Center</h1>
+      {/* Top Welcome Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Admin Governance Center</h1>
+          <p className="text-slate-500 text-sm mt-1">Platform metrics, asset moderation queue, and creator payout processing.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/products"
+            className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-xs transition shadow-sm flex items-center gap-1.5"
+          >
+            <Clock className="w-4 h-4" /> Moderation Queue ({stats.pendingProducts})
+          </Link>
+        </div>
       </div>
 
-      {/* Metrics Row */}
+      {/* Metrics Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800">
-          <p className="text-xs font-semibold text-slate-400">Total GMV (Gross Sales)</p>
-          <p className="text-2xl font-black text-white mt-2 flex items-center">
-            <IndianRupee className="w-5 h-5 text-sky-400 mr-1" /> {metrics.grossMarketplaceVolume.toLocaleString()}
-          </p>
-          <span className="text-[11px] text-slate-500 mt-1 block">Pay-Per-Product transactions</span>
+        <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+            Gross Volume <IndianRupee className="w-4 h-4 text-emerald-600" />
+          </div>
+          <span className="text-3xl font-black text-slate-900 block">₹{stats.grossVolume.toLocaleString('en-IN')}</span>
+          <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+            <ArrowUpRight className="w-3.5 h-3.5" /> +18.4% from last month
+          </span>
         </div>
 
-        <div className="glass-panel-glow p-6 rounded-2xl border border-sky-500/30">
-          <p className="text-xs font-semibold text-sky-300">Platform Revenue (20%)</p>
-          <p className="text-2xl font-black text-white mt-2 flex items-center">
-            <IndianRupee className="w-5 h-5 text-sky-400 mr-1" /> {metrics.platformCommissionRevenue.toLocaleString()}
-          </p>
-          <span className="text-[11px] text-sky-400/80 mt-1 block">Net platform commission</span>
+        <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+            Platform Cut (20%) <ShieldCheck className="w-4 h-4 text-sky-600" />
+          </div>
+          <span className="text-3xl font-black text-sky-600 block">₹{stats.platformRevenue.toLocaleString('en-IN')}</span>
+          <span className="text-xs text-slate-500">20% commission split</span>
         </div>
 
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800">
-          <p className="text-xs font-semibold text-slate-400">Active Creator Shops</p>
-          <p className="text-2xl font-black text-white mt-2 flex items-center gap-2">
-            <Users className="w-5 h-5 text-sky-400" /> {metrics.activeCreatorShops}
-          </p>
-          <span className="text-[11px] text-slate-500 mt-1 block">Verified creator shops</span>
+        <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+            Active Creator Shops <Users className="w-4 h-4 text-slate-600" />
+          </div>
+          <span className="text-3xl font-black text-slate-900 block">{stats.activeCreators}</span>
+          <span className="text-xs text-slate-500">Verified Indian Creators</span>
         </div>
 
-        <div className="glass-panel p-6 rounded-2xl border border-amber-500/30">
-          <p className="text-xs font-semibold text-amber-300">Pending Moderation</p>
-          <p className="text-2xl font-black text-amber-400 mt-2 flex items-center gap-2">
-            <Clock className="w-5 h-5" /> {metrics.pendingAssetApprovals}
-          </p>
-          <span className="text-[11px] text-amber-500/80 mt-1 block">Assets awaiting review</span>
+        <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+            Pending Moderation <Package className="w-4 h-4 text-amber-600" />
+          </div>
+          <span className="text-3xl font-black text-amber-600 block">{stats.pendingProducts}</span>
+          <span className="text-xs text-slate-500">Awaiting asset review</span>
         </div>
       </div>
 
-      {/* Quick Action Navigation */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a
+      {/* Quick Action Sections */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link
           href="/admin/products"
-          className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-sky-500/40 transition group"
+          className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white hover:border-sky-500/40 transition space-y-3 block group"
         >
-          <h2 className="text-lg font-bold text-white group-hover:text-sky-400 transition flex items-center justify-between">
-            <span>Asset Moderation Portal</span>
-            <ArrowUpRight className="w-5 h-5 text-slate-500 group-hover:text-sky-400 transition" />
-          </h2>
-          <p className="text-sm text-slate-400 mt-2">
-            Review uploaded source files, verify preview videos, and approve or reject creator products.
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition">
+              Asset Moderation Queue
+            </span>
+            <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800">
+              {stats.pendingProducts} Pending
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Review submitted After Effects templates, Blender 3D models, and SFX packages before public marketplace listing.
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/admin/payouts"
-          className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-sky-500/40 transition group"
+          className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white hover:border-sky-500/40 transition space-y-3 block group"
         >
-          <h2 className="text-lg font-bold text-white group-hover:text-sky-400 transition flex items-center justify-between">
-            <span>Creator Payout Processing</span>
-            <ArrowUpRight className="w-5 h-5 text-slate-500 group-hover:text-sky-400 transition" />
-          </h2>
-          <p className="text-sm text-slate-400 mt-2">
-            Process creator earnings withdrawal requests, inspect bank/UPI details, and record reference numbers.
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition">
+              Payout Requests
+            </span>
+            <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-800">
+              {stats.pendingPayouts} Pending
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Process creator earnings withdrawal requests (Min ₹1,000 threshold) with bank UTR reference numbers.
           </p>
-        </a>
+        </Link>
+
+        <Link
+          href="/admin/creators"
+          className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white hover:border-sky-500/40 transition space-y-3 block group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition">
+              Creator KYC & Permissions
+            </span>
+            <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">
+              {stats.activeCreators} Verified
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Manage creator shop accounts, verify bank account / UPI details, and toggle direct asset upload permissions.
+          </p>
+        </Link>
       </div>
     </div>
   );

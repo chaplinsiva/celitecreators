@@ -13,10 +13,10 @@
 ---
 
 ## Design & Aesthetic Directives
-- **Primary Accent:** Sky Blue (`#0284C7` / `#00A3FF`)
-- **Base Background:** Dark Obsidian / Deep Slate (`#090D16` / `#0F172A`)
-- **Typography & High Contrast:** Crisp White (`#FFFFFF`) text with subtle glassmorphic glow borders (`rgba(2, 132, 199, 0.3)`).
-- **UX Style:** Concept A "Studio Showcase" — media-first layout with interactive preview players, hover video loops, audio visualizers, and sticky 1-click Razorpay purchase drawers.
+- **Primary Accent:** Sky Blue (`#0284C7` / `#0099FF`)
+- **Base Background:** Pure White / Soft Off-White Slate (`#FFFFFF` / `#F8FAFC`)
+- **Typography & High Contrast:** Dark Obsidian / Deep Slate (`#0F172A` / `#090D16`) text with subtle light glassmorphic borders (`#E2E8F0`).
+- **UX Style:** Concept A "Studio Showcase" (Light Edition) — media-first layout with interactive preview players, hover video loops, audio visualizers, and sticky 1-click Razorpay purchase drawers.
 
 ---
 
