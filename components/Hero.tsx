@@ -200,7 +200,7 @@ export default function Hero() {
                   <div className="p-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
                     <Download className="w-3 h-3" />
                   </div>
-                  Instant R2 Download
+                  Instant High-Res Download
                 </span>
               </div>
             </motion.div>

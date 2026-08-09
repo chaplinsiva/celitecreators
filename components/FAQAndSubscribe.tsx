@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     question: "How does Pay-Per-Product purchasing work?",
-    answer: "On Celite Market, you pay only for the individual assets you download. Browse 10,000+ verified templates, complete 1-click instant checkout via Razorpay (UPI, GPay, Cards, NetBanking), and receive instant R2 Cloudflare downloads."
+    answer: "On Celite Market, you pay only for the individual assets you download. Browse 10,000+ verified templates, complete 1-click instant checkout via Razorpay (UPI, GPay, Cards, NetBanking), and receive instant source file downloads."
   },
   {
     question: "What license is included with my purchases?",

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { getSupabaseBrowserClient } from "../../lib/supabaseClient";
-import { formatPriceWithDecimal, type Currency } from "../../lib/currency";
+import { formatPriceWithDecimal, convertInrToUsd, convertCurrency, type Currency } from "../../lib/currency";
 import { trackBeginCheckout, trackPurchase, trackSubscribe } from "../../lib/gtag";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import { GlowingEffect } from "../../components/ui/glowing-effect";
@@ -128,9 +128,11 @@ function CheckoutContent() {
     }
   }, [searchParams, cartCount, addToCart, cartItems, subscriptionPlan]);
 
-  const subtotal = subscriptionPlan && subscriptionPrice
+  const rawSubtotalInr = subscriptionPlan && subscriptionPrice
     ? subscriptionPrice
     : cartItems.reduce((sum, item) => sum + item.price, 0);
+
+  const subtotal = currency === 'USD' ? convertInrToUsd(rawSubtotalInr) : rawSubtotalInr;
 
   // Track begin_checkout event when checkout page loads with items
   useEffect(() => {
@@ -701,7 +703,7 @@ function CheckoutContent() {
           <p className="text-slate-400 font-medium text-sm sm:text-base">
             {subscriptionPlan
               ? `Secure payment for ${subscriptionPlan === 'pongal_weekly' ? 'Pongal Weekly Offer' : subscriptionPlan === 'monthly' ? 'monthly' : 'yearly'} Pro subscription.`
-              : 'Pay-Per-Product Purchase • Instant Cloudflare R2 Source Asset Download & Lifetime Access'
+              : 'Pay-Per-Product Purchase • Instant High-Res Source Asset Download & Lifetime Access'
             }
           </p>
         </div>
@@ -938,7 +940,7 @@ function CheckoutContent() {
                         <div className="mt-2 flex items-baseline justify-between">
                           <span className="text-xs text-slate-400 font-medium">Pay-Per-Product</span>
                           <span className="text-lg font-black text-sky-400">
-                            {formatPriceWithDecimal(item.price, currency)}
+                            {formatPriceWithDecimal(currency === 'USD' ? convertInrToUsd(item.price) : item.price, currency)}
                           </span>
                         </div>
                       </div>
