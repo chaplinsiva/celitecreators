@@ -74,7 +74,7 @@ const STATIC_PAGES = [
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://celite.in',
+  siteUrl: 'https://celitemarket.in',
   generateRobotsTxt: true,
   sitemapSize: 7000,
   exclude: [

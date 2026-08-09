@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'AI Prompts — ChatGPT, Midjourney & DALL-E Templates | Celite',
         description: 'Download professional AI prompts for ChatGPT, Midjourney, DALL-E, and Stable Diffusion.',
-        url: 'https://celite.in/prompts',
+        url: 'https://celitemarket.in/prompts',
         type: 'website',
         images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AI Prompts - Celite' }],
     },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
         images: ['/og-image.png'],
     },
     alternates: {
-        canonical: 'https://celite.in/prompts',
+        canonical: 'https://celitemarket.in/prompts',
     },
 };
 

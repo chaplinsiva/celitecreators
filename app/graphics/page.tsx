@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Graphics Templates — PSD Templates & Design Assets | Celite',
     description: 'Download professional graphics templates, Photoshop PSD files, and vector design assets.',
-    url: 'https://celite.in/graphics',
+    url: 'https://celitemarket.in/graphics',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Graphics Templates - Celite' }],
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/graphics',
+    canonical: 'https://celitemarket.in/graphics',
   },
 };
 

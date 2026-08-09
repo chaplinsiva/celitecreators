@@ -121,7 +121,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   const title = `${subSubName} After Effects Templates | ${subcatName} — Celite`;
   const description = `Download professional ${subSubName} templates for Adobe After Effects. Easy-to-customize AE project files for wedding videos, openers, titles, and creative motion graphics on Celite.`;
-  const canonicalUrl = `https://celite.in/video-templates/${data.subcategory.slug}/${data.subSubcategory.slug}`;
+  const canonicalUrl = `https://celitemarket.in/video-templates/${data.subcategory.slug}/${data.subSubcategory.slug}`;
 
   return {
     title,
@@ -180,12 +180,12 @@ export default async function SubSubcategoryPage(props: PageProps) {
     '@type': 'ItemList',
     name: `${subSubName} After Effects Templates`,
     description: `Download professional ${subSubName} templates for After Effects on Celite.`,
-    url: `https://celite.in/video-templates/${subcategory.slug}/${subSubcategory.slug}`,
+    url: `https://celitemarket.in/video-templates/${subcategory.slug}/${subSubcategory.slug}`,
     numberOfItems: subSubcatTemplates.length,
     itemListElement: subSubcatTemplates.slice(0, 20).map((t: any, i: number) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `https://celite.in/product/${t.slug}`,
+      url: `https://celitemarket.in/product/${t.slug}`,
       name: t.name,
     })),
   };
@@ -195,10 +195,10 @@ export default async function SubSubcategoryPage(props: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://celite.in' },
-      { '@type': 'ListItem', position: 2, name: 'Video Templates', item: 'https://celite.in/video-templates' },
-      { '@type': 'ListItem', position: 3, name: subcatName, item: `https://celite.in/video-templates/${subcategory.slug}` },
-      { '@type': 'ListItem', position: 4, name: subSubName, item: `https://celite.in/video-templates/${subcategory.slug}/${subSubcategory.slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://celitemarket.in' },
+      { '@type': 'ListItem', position: 2, name: 'Video Templates', item: 'https://celitemarket.in/video-templates' },
+      { '@type': 'ListItem', position: 3, name: subcatName, item: `https://celitemarket.in/video-templates/${subcategory.slug}` },
+      { '@type': 'ListItem', position: 4, name: subSubName, item: `https://celitemarket.in/video-templates/${subcategory.slug}/${subSubcategory.slug}` },
     ],
   };
 

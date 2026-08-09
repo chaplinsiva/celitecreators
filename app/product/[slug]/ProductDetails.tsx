@@ -1397,7 +1397,7 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
         {isSubActive ? (
           <p className="text-xs text-sky-300 font-medium">
             Active Celite Subscriber? Get unlimited downloads directly on{' '}
-            <a href={`https://celite.in/product/${productSlug}`} target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-white">
+            <a href={`https://celitemarket.in/product/${productSlug}`} target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-white">
               Celite.in →
             </a>
           </p>
@@ -1407,7 +1407,7 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
               Want unlimited downloads for ₹499/month?
             </p>
             <a
-              href="https://celite.in"
+              href="https://celitemarket.in"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline"

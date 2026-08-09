@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://celite.in'),
+  metadataBase: new URL('https://celitemarket.in'),
   title: {
     default: 'Celite – Premium After Effects Templates | Wedding, Save the Date & Video Templates',
     template: '%s | Celite',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://celite.in',
+    url: 'https://celitemarket.in',
     siteName: 'Celite',
     title: 'Celite – Premium After Effects Templates | Wedding & Save the Date Video Templates',
     description: 'Download premium After Effects templates for weddings, save the date videos, cinematic intros, and more. Free & premium AE templates with unlimited downloads.',
@@ -119,14 +119,14 @@ export default function RootLayout({
               "@type": "WebSite",
               "name": "Celite",
               "alternateName": ["Celite Digital Assets", "Celite Templates", "Celite Wedding Templates", "Celite After Effects Templates"],
-              "url": "https://celite.in",
+              "url": "https://celitemarket.in",
               "description": "Download premium After Effects templates for weddings, save the date videos, cinematic intros, logo reveals, and motion graphics. The best wedding video template marketplace with free & premium AE templates.",
               "potentialAction": [
                 {
                   "@type": "SearchAction",
                   "target": {
                     "@type": "EntryPoint",
-                    "urlTemplate": "https://celite.in/video-templates?search={search_term_string}"
+                    "urlTemplate": "https://celitemarket.in/video-templates?search={search_term_string}"
                   },
                   "query-input": "required name=search_term_string"
                 }
@@ -134,10 +134,10 @@ export default function RootLayout({
               "publisher": {
                 "@type": "Organization",
                 "name": "Celite",
-                "url": "https://celite.in",
+                "url": "https://celitemarket.in",
                 "logo": {
                   "@type": "ImageObject",
-                  "url": "https://celite.in/logo.png"
+                  "url": "https://celitemarket.in/logo.png"
                 }
               }
             })
@@ -153,8 +153,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "Celite",
-              "url": "https://celite.in",
-              "logo": "https://celite.in/logo.png",
+              "url": "https://celitemarket.in",
+              "logo": "https://celitemarket.in/logo.png",
               "description": "Premium digital assets marketplace offering After Effects templates for weddings, save the date videos, cinematic intros, 3D models, stock photos, music, SFX, and AI prompts. Download free and premium AE templates.",
               "sameAs": [
                 "https://twitter.com/celite",
@@ -164,7 +164,7 @@ export default function RootLayout({
               "contactPoint": {
                 "@type": "ContactPoint",
                 "contactType": "customer service",
-                "url": "https://celite.in/contact"
+                "url": "https://celitemarket.in/contact"
               },
               "hasOfferCatalog": {
                 "@type": "OfferCatalog",
@@ -174,17 +174,17 @@ export default function RootLayout({
                     "@type": "OfferCatalog",
                     "name": "Wedding & Save the Date Templates",
                     "itemListElement": [
-                      { "@type": "Offer", "name": "Save the Date After Effects Templates", "url": "https://celite.in/video-templates/after-effects/save-date" },
-                      { "@type": "Offer", "name": "Wedding Invitation Video Templates", "url": "https://celite.in/video-templates/after-effects" },
-                      { "@type": "Offer", "name": "Wedding Slideshow Templates", "url": "https://celite.in/video-templates/after-effects/slides" }
+                      { "@type": "Offer", "name": "Save the Date After Effects Templates", "url": "https://celitemarket.in/video-templates/after-effects/save-date" },
+                      { "@type": "Offer", "name": "Wedding Invitation Video Templates", "url": "https://celitemarket.in/video-templates/after-effects" },
+                      { "@type": "Offer", "name": "Wedding Slideshow Templates", "url": "https://celitemarket.in/video-templates/after-effects/slides" }
                     ]
                   },
                   {
                     "@type": "OfferCatalog",
                     "name": "Cinema & Video Templates",
                     "itemListElement": [
-                      { "@type": "Offer", "name": "Cinematic Intro Templates", "url": "https://celite.in/video-templates/after-effects/movie-templates" },
-                      { "@type": "Offer", "name": "Logo Reveal Templates", "url": "https://celite.in/video-templates/after-effects/logo-reveal" }
+                      { "@type": "Offer", "name": "Cinematic Intro Templates", "url": "https://celitemarket.in/video-templates/after-effects/movie-templates" },
+                      { "@type": "Offer", "name": "Logo Reveal Templates", "url": "https://celitemarket.in/video-templates/after-effects/logo-reveal" }
                     ]
                   }
                 ]
@@ -204,52 +204,52 @@ export default function RootLayout({
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Save the Date Templates",
-                  "url": "https://celite.in/video-templates/after-effects/save-date"
+                  "url": "https://celitemarket.in/video-templates/after-effects/save-date"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Wedding Templates",
-                  "url": "https://celite.in/video-templates/wedding"
+                  "url": "https://celitemarket.in/video-templates/wedding"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Video Templates",
-                  "url": "https://celite.in/video-templates"
+                  "url": "https://celitemarket.in/video-templates"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "3D Models",
-                  "url": "https://celite.in/3d-models"
+                  "url": "https://celitemarket.in/3d-models"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Stock Photos",
-                  "url": "https://celite.in/stock-photos"
+                  "url": "https://celitemarket.in/stock-photos"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Music & SFX",
-                  "url": "https://celite.in/music-sfx"
+                  "url": "https://celitemarket.in/music-sfx"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "AI Prompts",
-                  "url": "https://celite.in/prompts"
+                  "url": "https://celitemarket.in/prompts"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Graphics",
-                  "url": "https://celite.in/graphics"
+                  "url": "https://celitemarket.in/graphics"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Pricing",
-                  "url": "https://celite.in/pricing"
+                  "url": "https://celitemarket.in/pricing"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   "name": "Start Selling",
-                  "url": "https://celite.in/start-selling"
+                  "url": "https://celitemarket.in/start-selling"
                 }
               ]
             })

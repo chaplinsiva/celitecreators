@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Royalty-Free Stock Music Library | Celite',
     description: 'Download royalty-free stock music for YouTube, films, podcasts, and advertising videos.',
-    url: 'https://celite.in/stock-musics',
+    url: 'https://celitemarket.in/stock-musics',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Music Library - Celite' }],
   },
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/stock-musics',
+    canonical: 'https://celitemarket.in/stock-musics',
   },
 };
 

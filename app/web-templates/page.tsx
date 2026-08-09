@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Website Templates — HTML, CSS & JS Templates | Celite',
     description: 'Download responsive website templates and landing page themes for developers and businesses.',
-    url: 'https://celite.in/web-templates',
+    url: 'https://celitemarket.in/web-templates',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Website Templates - Celite' }],
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/web-templates',
+    canonical: 'https://celitemarket.in/web-templates',
   },
 };
 

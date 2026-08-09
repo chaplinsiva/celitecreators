@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'After Effects Video Templates | Wedding & Cinematic Templates — Celite',
     description: 'Download professional After Effects video templates for wedding save the date videos, cinematic intros, logo reveals, and motion graphics.',
-    url: 'https://celite.in/video-templates',
+    url: 'https://celitemarket.in/video-templates',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'After Effects Video Templates - Celite' }],
   },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/video-templates',
+    canonical: 'https://celitemarket.in/video-templates',
   },
 };
 

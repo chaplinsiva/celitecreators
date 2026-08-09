@@ -64,7 +64,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   // Fallback to default image if no image or video
   // For relative URLs, we need to make them absolute
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://celite.in';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://celitemarket.in';
   const finalImage = metaImage
     ? (metaImage.startsWith('http') ? metaImage : `${baseUrl}${metaImage}`)
     : `${baseUrl}/PNG1.png`;
@@ -220,7 +220,7 @@ export default async function ProductPage(props: PageProps) {
     isFeatured: false,
   }));
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://celite.in';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://celitemarket.in';
 
   // Structured Data: Product schema for rich snippets
   const metaImage = (row as any)?.thumbnail_path

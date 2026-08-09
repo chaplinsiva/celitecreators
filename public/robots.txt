@@ -22,4 +22,4 @@ User-agent: *
 Crawl-delay: 1
 
 # Sitemaps
-Sitemap: https://celite.in/sitemap.xml
+Sitemap: https://celitemarket.in/sitemap.xml

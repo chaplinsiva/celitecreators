@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'All Creative Digital Assets & Templates | Celite Marketplace',
         description: 'Explore the complete Celite marketplace. Download After Effects video templates, wedding save the date videos, 3D models, stock photos, royalty-free music, and AI prompts.',
-        url: 'https://celite.in/templates',
+        url: 'https://celitemarket.in/templates',
         type: 'website',
         images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite Digital Assets Marketplace' }],
     },
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
         images: ['/og-image.png'],
     },
     alternates: {
-        canonical: 'https://celite.in/templates',
+        canonical: 'https://celitemarket.in/templates',
     },
 };
 

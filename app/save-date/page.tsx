@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     'Download premium Save the Date video templates for Adobe After Effects. Beautiful wedding invitation templates, romantic motion graphics, and customizable wedding video intros. Free & premium AE templates.',
   alternates: {
-    canonical: 'https://celite.in/video-templates/after-effects/save-date',
+    canonical: 'https://celitemarket.in/video-templates/after-effects/save-date',
   },
 };
 

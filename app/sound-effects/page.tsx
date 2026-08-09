@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Sound Effects Library — Royalty-Free SFX | Celite',
     description: 'Download royalty-free sound effects for video editing, game development, and film production.',
-    url: 'https://celite.in/sound-effects',
+    url: 'https://celitemarket.in/sound-effects',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Sound Effects Library - Celite' }],
   },
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/sound-effects',
+    canonical: 'https://celitemarket.in/sound-effects',
   },
 };
 

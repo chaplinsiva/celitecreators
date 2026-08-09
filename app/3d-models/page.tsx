@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '3D Models — Free GLB, GLTF & OBJ Assets | Celite',
     description: 'Download high-quality 3D models for games, animation, and CGI. Free GLB, GLTF, and OBJ files.',
-    url: 'https://celite.in/3d-models',
+    url: 'https://celitemarket.in/3d-models',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: '3D Models - Celite' }],
   },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/3d-models',
+    canonical: 'https://celitemarket.in/3d-models',
   },
 };
 

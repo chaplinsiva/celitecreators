@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     'Download premium wedding video templates for Adobe After Effects. Save the date invitations, wedding slideshows, romantic motion graphics, and video intros on Celite.',
   alternates: {
-    canonical: 'https://celite.in/video-templates/after-effects/save-date',
+    canonical: 'https://celitemarket.in/video-templates/after-effects/save-date',
   },
 };
 

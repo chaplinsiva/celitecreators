@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Celite – Premium After Effects Templates | Wedding & Save the Date Video Templates',
     description: 'Download premium After Effects templates for weddings, save the date videos, cinematic intros, and more. Unlimited downloads with subscription.',
-    url: 'https://celite.in',
+    url: 'https://celitemarket.in',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite - Premium After Effects Templates' }],
   },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in',
+    canonical: 'https://celitemarket.in',
   },
 };
 

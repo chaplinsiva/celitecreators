@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Stock Photos — Royalty-Free High-Res Images | Celite',
     description: 'Download high-resolution stock photos and royalty-free images for marketing and web design.',
-    url: 'https://celite.in/stock-photos',
+    url: 'https://celitemarket.in/stock-photos',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Photos - Celite' }],
   },
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://celite.in/stock-photos',
+    canonical: 'https://celitemarket.in/stock-photos',
   },
 };
 
