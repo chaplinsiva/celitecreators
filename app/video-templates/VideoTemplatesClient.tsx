@@ -340,44 +340,44 @@ export default function VideoTemplatesClient({
   };
 
   return (
-    <main className="bg-background min-h-screen pt-20 pb-20">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20">
       {/* Header Section */}
-      <div className="bg-background border-b border-zinc-200 pb-8 mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="bg-[#090D16] border-b border-slate-800/80 pb-8 mb-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-              <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
-                <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+                <Link href="/" className="hover:text-sky-400 transition-colors">Home</Link>
                 {breadcrumbItems ? (
                   breadcrumbItems.map((item, i) => (
                     <span key={i} className="flex items-center gap-2">
                       <span>/</span>
                       {item.href ? (
-                        <Link href={item.href} className="hover:text-blue-600 transition-colors">{item.label}</Link>
+                        <Link href={item.href} className="hover:text-sky-400 transition-colors">{item.label}</Link>
                       ) : (
-                        <span className="text-zinc-900">{item.label}</span>
+                        <span className="text-white">{item.label}</span>
                       )}
                     </span>
                   ))
                 ) : (
                   <>
                     <span>/</span>
-                    <span className="text-zinc-900">{breadcrumbLabel}</span>
+                    <span className="text-white">{breadcrumbLabel}</span>
                   </>
                 )}
               </div>
               <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="text-3xl md:text-4xl font-bold text-zinc-900">{pageTitle}</h1>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-sky-400">{pageTitle}</h1>
                 <div className="flex items-center gap-3 flex-wrap">
 
-                  <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-xl p-1">
+                  <div className="flex items-center gap-2 bg-[#0F172A] border border-slate-800 rounded-xl p-1">
                     <button
                       onClick={() => setViewMode('discover')}
                       className={cn(
                         "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
                         viewMode === 'discover'
-                          ? "bg-blue-600 text-white shadow-sm"
-                          : "text-zinc-600 hover:text-zinc-900"
+                          ? "bg-sky-600 text-white shadow-sm"
+                          : "text-slate-400 hover:text-white"
                       )}
                     >
                       Discover
@@ -387,8 +387,8 @@ export default function VideoTemplatesClient({
                       className={cn(
                         "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
                         viewMode === 'following'
-                          ? "bg-blue-600 text-white shadow-sm"
-                          : "text-zinc-600 hover:text-zinc-900"
+                          ? "bg-sky-600 text-white shadow-sm"
+                          : "text-slate-400 hover:text-white"
                       )}
                     >
                       Following
@@ -400,21 +400,21 @@ export default function VideoTemplatesClient({
                       "px-4 py-1.5 text-sm font-medium rounded-lg transition-all border",
                       showFreeOnly
                         ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                        : "bg-white text-zinc-600 border-zinc-200 hover:border-emerald-400 hover:text-emerald-600"
+                        : "bg-[#0F172A] text-slate-300 border-slate-800 hover:border-emerald-400 hover:text-emerald-400"
                     )}
                   >
                     🎁 Free
                   </button>
                 </div>
               </div>
-              <p className="text-zinc-600 mt-4 max-w-3xl">{pageSubtitle}</p>
+              <p className="text-slate-300 mt-4 max-w-3xl font-medium">{pageSubtitle}</p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-zinc-500">Sort by:</span>
+              <span className="text-sm text-slate-400">Sort by:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-4 py-2 border border-zinc-200 rounded-xl bg-white text-sm font-medium text-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 border border-slate-800 rounded-xl bg-[#0F172A] text-sm font-medium text-white focus:outline-none focus:border-sky-500"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -425,27 +425,27 @@ export default function VideoTemplatesClient({
 
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search millions of creative assets..."
-              className="w-full pl-12 pr-4 py-4 border border-zinc-200 rounded-2xl bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-4 border border-slate-800/80 rounded-2xl bg-[#0F172A]/90 text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 shadow-inner"
             />
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="w-full">
-        <div className="flex">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6">
+        <div className="flex gap-6">
           {/* Sidebar */}
-          <aside className="w-64 flex-shrink-0 hidden lg:block pl-4">
-            <div className="bg-white rounded-2xl border border-zinc-200 p-4 sticky top-24">
+          <aside className="w-64 flex-shrink-0 hidden lg:block">
+            <div className="bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 p-4 sticky top-24 text-white">
               <button
                 onClick={() => setExpandedSections(prev => ({ ...prev, categories: !prev.categories }))}
-                className="w-full flex items-center justify-between text-sm font-semibold text-zinc-900 mb-4"
+                className="w-full flex items-center justify-between text-sm font-bold text-white mb-4"
               >
                 Categories
                 {expandedSections.categories ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}

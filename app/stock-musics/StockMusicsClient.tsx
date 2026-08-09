@@ -421,36 +421,36 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
     };
 
     return (
-        <main className="bg-background min-h-screen pt-20 pb-20">
+        <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="flex items-center gap-2 text-xs text-white/70 mb-2">
-                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <div className="bg-[#090D16] border-b border-slate-800/80 text-white">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                        <Link href="/" className="hover:text-purple-400 transition-colors">Home</Link>
                         <span>/</span>
                         <span className="text-white">Stock Music</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                    <h1 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-purple-400 mb-2">
                         Stock Music Library
                     </h1>
-                    <p className="text-sm text-white/80 max-w-2xl">
-                        Find the perfect track for your project. Use the filters to discover royalty-free music that matches your needs.
+                    <p className="text-sm text-slate-300 max-w-2xl font-medium">
+                        Find the perfect royalty-free music track for your video, YouTube channel, film, or podcast project.
                     </p>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Search Bar */}
                 <div className="mb-6">
                     <div className="relative max-w-2xl group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <Search className="h-5 w-5 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
+                            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-purple-400 transition-colors" />
                         </div>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="block w-full pl-12 pr-4 py-3 bg-white border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                            className="block w-full pl-12 pr-4 py-3.5 bg-[#0F172A]/90 border border-slate-800/80 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 transition-all shadow-inner"
                             placeholder="Search by name, keywords, or mood..."
                         />
                     </div>
@@ -459,13 +459,13 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Sidebar Filters */}
                     <aside className="w-full lg:w-64 flex-shrink-0">
-                        <div className="bg-white border border-zinc-200 rounded-xl p-4 lg:sticky lg:top-24">
+                        <div className="bg-[#0F172A]/90 border border-slate-800/80 rounded-xl p-4 lg:sticky lg:top-24 text-white">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-base font-bold text-zinc-900 flex items-center gap-2">
-                                    <Filter className="w-4 h-4" />
+                                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                                    <Filter className="w-4 h-4 text-purple-400" />
                                     Filters
                                     {activeFilterCount > 0 && (
-                                        <span className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                                        <span className="px-2 py-0.5 text-xs bg-purple-600 text-white rounded-full">
                                             {activeFilterCount}
                                         </span>
                                     )}
