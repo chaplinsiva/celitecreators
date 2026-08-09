@@ -361,66 +361,32 @@ function DashboardContent() {
             <div>
               <p className="uppercase tracking-wider text-xs font-black text-sky-400">Dashboard</p>
               <h1 className="mt-2 text-3xl font-black text-white">Welcome back, {displayName}</h1>
+              <p className="text-xs text-slate-400 font-medium mt-1">Manage your profile and access your lifetime purchased creative assets.</p>
             </div>
-            <div className="bg-[#0F172A] rounded-2xl border border-slate-800 px-6 py-4 text-right">
-              <p className="text-sm text-slate-400 font-medium">Current Plan</p>
-              <p className="mt-1 text-2xl font-black text-white">{subscriptionTier}</p>
-
-              {isActuallyActive && sub?.valid_until && (
-                <p className="mt-1 text-xs text-emerald-400 font-bold flex items-center justify-end gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Active{sub?.plan ? ` • ${sub.plan === 'yearly' ? 'Yearly' : 'Monthly'}` : ''}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Buyer / Seller mode toggle (only if user has a creator shop) */}
-          {creatorShop && (
-            <div className="mt-6 inline-flex rounded-full bg-[#0F172A] border border-slate-800 p-1 text-xs">
-              <button
-                type="button"
-                onClick={() => setViewMode("buyer")}
-                className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "buyer"
-                  ? "bg-sky-600 text-white shadow-sm"
-                  : "text-slate-400 hover:text-white"
-                  }`}
-              >
-                Buyer mode
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("seller")}
-                className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "seller"
-                  ? "bg-sky-600 text-white shadow-sm"
-                  : "text-slate-400 hover:text-white"
-                  }`}
-              >
-                Seller mode
-              </button>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="mt-6 flex flex-wrap gap-2 text-xs">
-            {!isActuallyActive && !isPaused && !hasExpiredPlan && (
-              <>
-                <Link href="/pricing" className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-extrabold text-white transition hover:bg-sky-500 shadow-md shadow-sky-600/30">
-                  Subscribe Monthly ({displayMonthlyPrice})
-                </Link>
-                <Link href="/pricing" className="inline-flex items-center rounded-xl border border-slate-800 bg-[#0F172A] px-5 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-800 hover:text-white">
-                  Subscribe Yearly ({displayYearlyPrice})
-                </Link>
-              </>
-            )}
-            {hasExpiredPlan && (
-              <button
-                onClick={handleRenewSubscription}
-                disabled={loading}
-                className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-extrabold text-white transition hover:bg-sky-500 shadow-md shadow-sky-600/30 disabled:opacity-60"
-              >
-                {loading ? 'Renewing...' : 'Renew Plan'}
-              </button>
+            {/* Buyer / Seller mode toggle (only if user has a creator shop) */}
+            {creatorShop && (
+              <div className="inline-flex rounded-full bg-[#0F172A] border border-slate-800 p-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("buyer")}
+                  className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "buyer"
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-slate-400 hover:text-white"
+                    }`}
+                >
+                  Buyer mode
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("seller")}
+                  className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "seller"
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-slate-400 hover:text-white"
+                    }`}
+                >
+                  Seller mode
+                </button>
+              </div>
             )}
           </div>
         </section>
@@ -496,7 +462,7 @@ function DashboardContent() {
               )}
             </section>
 
-            {/* Sidebar: Account & Subscription Info */}
+            {/* Sidebar: Account Info */}
             <div className="space-y-6">
               {/* Account Settings */}
               <section className="bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
@@ -512,10 +478,6 @@ function DashboardContent() {
                     Change Password
                     <span className="text-slate-400 group-hover:text-white">→</span>
                   </button>
-                  <button onClick={() => setShowManageSubscription(true)} className="w-full text-left px-4 py-3 rounded-xl bg-[#090D16] hover:bg-slate-800 border border-slate-800 text-sm font-medium text-slate-200 transition-colors flex justify-between group">
-                    Manage Subscription
-                    <span className="text-slate-400 group-hover:text-white">→</span>
-                  </button>
                   <button
                     onClick={logout}
                     className="w-full text-left px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-950/50 border border-transparent hover:border-rose-900 text-sm font-bold transition-colors mt-2"
@@ -523,38 +485,6 @@ function DashboardContent() {
                     Log Out
                   </button>
                 </div>
-              </section>
-
-              {/* Quick Sub Details */}
-              <section className="bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
-                <h2 className="text-lg font-bold text-white mb-4">Subscription Details</h2>
-                {!sub ? (
-                  <p className="text-sm text-slate-400 font-medium">No active subscription.</p>
-                ) : (
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between py-2 border-b border-slate-800">
-                      <span className="text-slate-400 font-medium">Status</span>
-                      <span className={`font-bold ${isActuallyActive ? 'text-emerald-400' : 'text-white'}`}>{subscriptionTier}</span>
-                    </div>
-                    {sub.valid_until && (
-                      <div className="flex justify-between py-2 border-b border-slate-800">
-                        <span className="text-slate-400 font-medium">{sub.plan === 'pongal_weekly' || sub.autopay_enabled === false ? 'Expires' : 'Renews'}</span>
-                        <span className="text-white font-medium">{new Date(sub.valid_until).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                    {sub.autopay_enabled !== null && (
-                      <div className="flex justify-between py-2 border-b border-slate-800">
-                        <span className="text-slate-400 font-medium">Autopay</span>
-                        <span className={`font-bold ${sub.autopay_enabled ? 'text-white' : 'text-amber-400'}`}>{sub.autopay_enabled ? 'On' : 'Off'}</span>
-                      </div>
-                    )}
-                    {isActuallyActive && sub.autopay_enabled === false && sub.valid_until && (
-                      <div className="mt-3 p-3 rounded-xl bg-amber-950/60 border border-amber-800">
-                        <p className="text-xs text-amber-300 font-medium">⚠️ Autopay is disabled. Your subscription will expire on {new Date(sub.valid_until).toLocaleDateString()} and won&apos;t auto-renew.</p>
-                      </div>
-                    )}
-                  </div>
-                )}
               </section>
             </div>
           </div>
@@ -612,81 +542,6 @@ function DashboardContent() {
       )}
 
       {/* Manage Subscription Modal */}
-      {showManageSubscription && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowManageSubscription(false)}>
-          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-extrabold mb-4 text-white">Manage Subscription</h2>
-            <ManageSubscriptionPanel
-              isActive={isActuallyActive}
-              isPaused={isPaused}
-              plan={sub?.plan ?? null}
-              validUntil={sub?.valid_until ?? null}
-              onCancel={handleCancelSubscription}
-              onRenew={handleRenewSubscription}
-              onUpgrade={() => { setShowManageSubscription(false); window.location.href = '/pricing'; }}
-              onClose={() => setShowManageSubscription(false)}
-              loading={loading}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Cancel Confirmation Modal */}
-      {showCancelConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowCancelConfirm(false)}>
-          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-extrabold mb-4 text-white">Cancel Subscription</h2>
-            <p className="text-sm text-slate-300 mb-6 font-medium">
-              {sub?.valid_until
-                ? `Are you sure you want to cancel auto-renewal? You will still have access to premium features until ${new Date(sub.valid_until).toLocaleDateString()}. After that, your subscription will not renew.`
-                : 'Are you sure you want to cancel auto-renewal? You will retain access until the end of your current billing period.'}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={confirmCancelSubscription}
-                disabled={loading}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 text-white font-extrabold hover:bg-rose-500 transition disabled:opacity-60 shadow-md shadow-rose-600/20"
-              >
-                {loading ? 'Cancelling...' : 'Yes, Cancel'}
-              </button>
-              <button
-                onClick={() => setShowCancelConfirm(false)}
-                disabled={loading}
-                className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
-              >
-                No, Keep It
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Renew Confirmation Modal */}
-      {showRenewConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowRenewConfirm(false)}>
-          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-extrabold mb-4 text-white">Renew Subscription</h2>
-            <p className="text-sm text-slate-300 mb-6 font-medium">
-              You will be redirected to checkout to complete payment and renew your subscription. Continue?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={confirmRenewSubscription}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition shadow-md shadow-sky-600/30"
-              >
-                Continue to Checkout
-              </button>
-              <button
-                onClick={() => setShowRenewConfirm(false)}
-                className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Message Toast */}
       {message && (
         <div className="fixed bottom-6 right-6 z-50">
@@ -806,107 +661,6 @@ function ChangePasswordForm({ onSubmit, onCancel, loading }: { onSubmit: (newPas
         </button>
       </div>
     </form>
-  );
-}
-
-function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCancel, onRenew, onUpgrade, onClose, loading }: {
-  isActive: boolean;
-  isPaused: boolean;
-  plan: string | null;
-  validUntil: string | null;
-  onCancel: () => void;
-  onRenew: () => void;
-  onUpgrade: () => void;
-  onClose: () => void;
-  loading: boolean;
-}) {
-  const hasExpiredPlan = !isActive && !isPaused && plan;
-  const planDisplayName = plan === 'yearly' ? 'Yearly' : 'Monthly';
-
-  return (
-    <div className="space-y-6">
-      <div className="p-5 rounded-2xl bg-[#090D16] border border-slate-800">
-        <p className="text-sm text-slate-400 mb-2 font-medium">Current Status</p>
-        <p className="text-xl font-black text-white">
-          {isActive
-            ? `${planDisplayName} Plan - Active`
-            : isPaused
-              ? `${planDisplayName} Plan - Paused`
-              : hasExpiredPlan
-                ? `${planDisplayName} Plan Expired`
-                : 'No Active Subscription'}
-        </p>
-        {validUntil && (
-          <p className={`text-xs mt-2 font-bold ${isActive ? 'text-emerald-400' : isPaused ? 'text-amber-400' : 'text-rose-400'}`}>
-            {isActive
-              ? `Valid until: ${new Date(validUntil).toLocaleDateString()}`
-              : isPaused
-                ? `Expired: ${new Date(validUntil).toLocaleDateString()} - Waiting for payment`
-                : `Expired on: ${new Date(validUntil).toLocaleDateString()}`}
-          </p>
-        )}
-      </div>
-
-      {isActive ? (
-        <div className="space-y-4">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className="w-full px-4 py-3 rounded-xl border border-rose-900 bg-rose-950/40 text-rose-400 font-extrabold hover:bg-rose-900/60 transition disabled:opacity-60"
-          >
-            {loading ? 'Cancelling...' : 'Cancel Subscription'}
-          </button>
-          <p className="text-xs text-slate-400 text-center font-medium">
-            You will keep access until the end of your current billing period. Autopay will be turned off.
-          </p>
-        </div>
-      ) : isPaused ? (
-        <div className="space-y-4">
-          <p className="text-sm text-amber-300 font-medium bg-amber-950/60 p-4 rounded-xl border border-amber-800">
-            Subscription paused. Payment will automatically retry.
-          </p>
-          <button
-            onClick={onRenew}
-            disabled={loading}
-            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
-          >
-            {loading ? 'Renewing...' : 'Renew Now'}
-          </button>
-        </div>
-      ) : hasExpiredPlan ? (
-        <div className="space-y-4">
-          <button
-            onClick={onRenew}
-            disabled={loading}
-            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
-          >
-            {loading ? 'Renewing...' : 'Renew Plan'}
-          </button>
-          <p className="text-xs text-slate-400 text-center font-medium">
-            Renew to regain premium access.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <button
-            onClick={onUpgrade}
-            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition shadow-md shadow-sky-600/30"
-          >
-            Upgrade to Pro
-          </button>
-          <p className="text-xs text-slate-400 text-center font-medium">
-            Unlocks unlimited templates.
-          </p>
-        </div>
-      )}
-
-      <button
-        onClick={onClose}
-        className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
-      >
-        Close
-      </button>
-    </div>
   );
 }
 
