@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../context/AppContext";
 import { getSupabaseBrowserClient } from "../../lib/supabaseClient";
+import { ShieldCheck, CheckCircle2 } from "lucide-react";
 
 function slugify(value: string): string {
   return value
@@ -24,6 +25,7 @@ export default function StartSellingPage() {
   const [bankAccountNumber, setBankAccountNumber] = useState("");
   const [bankIfsc, setBankIfsc] = useState("");
   const [bankUpiId, setBankUpiId] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -65,6 +67,7 @@ export default function StartSellingPage() {
       setBankAccountNumber(data.bank_account_number ?? "");
       setBankIfsc(data.bank_ifsc ?? "");
       setBankUpiId(data.bank_upi_id ?? "");
+      setAgreeTerms(true); // Pre-check if existing shop owner
     };
 
     loadExistingShop();
@@ -77,6 +80,11 @@ export default function StartSellingPage() {
 
     if (!user) {
       setError("Please log in to start selling.");
+      return;
+    }
+
+    if (!agreeTerms) {
+      setError("Please read and tick the box to agree to the Creator Rules & Seller Policy before creating your account.");
       return;
     }
 
@@ -254,6 +262,31 @@ export default function StartSellingPage() {
             </div>
           </div>
 
+          {/* Creator Rules & Selling Policy Agreement Box */}
+          <div className="bg-[#0F172A] border border-slate-800 rounded-2xl p-5 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-sky-400" />
+              Creator Rules &amp; Selling Policies
+            </h3>
+            <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside font-medium leading-relaxed">
+              <li>You must own 100% full copyright or valid commercial redistribution rights for all uploaded assets.</li>
+              <li>Pay-per-product model: Creators earn 80% net revenue on all direct marketplace sales.</li>
+              <li>Bank payouts are processed via Razorpay Automated Payouts upon reaching the ₹800 threshold.</li>
+            </ul>
+            <label className="flex items-start gap-3 pt-2 cursor-pointer text-xs sm:text-sm text-slate-200 font-semibold select-none">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-slate-700 bg-[#090D16] text-sky-500 focus:ring-sky-500 shrink-0"
+                required
+              />
+              <span>
+                I have read and agree to Celite Market's <a href="/faq" target="_blank" className="text-sky-400 underline hover:text-sky-300">Creator Rules, Seller Policy &amp; Commission Terms</a>.
+              </span>
+            </label>
+          </div>
+
           {error && (
             <p className="text-sm text-rose-300 bg-rose-950/80 border border-rose-800 rounded-xl px-4 py-3 font-medium">
               {error}
@@ -276,8 +309,8 @@ export default function StartSellingPage() {
 
             <button
               type="submit"
-              disabled={loading}
-              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white px-7 py-3.5 text-sm font-extrabold shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+              disabled={loading || !agreeTerms}
+              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white px-7 py-3.5 text-sm font-extrabold shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
               {loading ? "Saving Profile..." : existingSlug ? "Update Shop" : "Create Creator Shop"}
             </button>

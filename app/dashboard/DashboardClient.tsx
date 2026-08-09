@@ -8,7 +8,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabaseClient";
 import { formatPrice } from "../../lib/currency";
 import PurchaseDownloadButton from "./PurchaseDownloadButton";
 import { GlowingEffect } from "../../components/ui/glowing-effect";
-import { cn } from "../../lib/utils";
+import { cn, convertR2UrlToCdn } from "../../lib/utils";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import PongalProgressBar from "../../components/PongalProgressBar";
 
@@ -120,38 +120,52 @@ function DashboardContent() {
       setCreatorShop(null);
     }
 
-    // Load recent downloads (subscription-based) for this user
+    // Load strictly paid one-time purchased templates (from orders & order_items)
     try {
-      const { data: dl } = await supabase
-        .from('downloads')
-        .select('template_slug, downloaded_at')
+      const purchasedMap = new Map<string, DownloadItemRow>();
+
+      const { data: paidOrders } = await supabase
+        .from('orders')
+        .select('id, created_at')
         .eq('user_id', (user as any).id)
-        .order('downloaded_at', { ascending: false })
-        .limit(10);
+        .eq('status', 'paid');
 
-      if (dl && dl.length > 0) {
-        const slugs = Array.from(new Set(dl.map((d: any) => d.template_slug)));
-        const { data: tpls } = await supabase
-          .from('templates')
-          .select('slug,name,img')
-          .in('slug', slugs);
-        const tplMap: Record<string, { name: string; img: string | null }> = {};
-        (tpls ?? []).forEach((t: any) => {
-          tplMap[t.slug] = { name: t.name, img: t.img ?? null };
-        });
+      if (paidOrders && paidOrders.length > 0) {
+        const orderIds = paidOrders.map((o: any) => o.id);
+        const { data: items } = await supabase
+          .from('order_items')
+          .select('product_slug, product_name, created_at')
+          .in('order_id', orderIds);
 
-        const enriched: DownloadItemRow[] = dl.map((d: any) => ({
-          slug: d.template_slug,
-          name: tplMap[d.template_slug]?.name || d.template_slug,
-          img: tplMap[d.template_slug]?.img ?? null,
-          downloaded_at: d.downloaded_at,
-        }));
-        setRecentDownloads(enriched);
-      } else {
-        setRecentDownloads([]);
+        if (items && items.length > 0) {
+          const slugs = Array.from(new Set(items.map((i: any) => i.product_slug)));
+          const { data: tpls } = await supabase
+            .from('templates')
+            .select('slug, name, img')
+            .in('slug', slugs);
+
+          const tplMap: Record<string, { name: string; img: string | null }> = {};
+          (tpls ?? []).forEach((t: any) => {
+            tplMap[t.slug] = { name: t.name, img: t.img ?? null };
+          });
+
+          items.forEach((i: any) => {
+            if (i.product_slug && i.product_slug !== 'multiple') {
+              purchasedMap.set(i.product_slug, {
+                slug: i.product_slug,
+                name: tplMap[i.product_slug]?.name || i.product_name || i.product_slug,
+                img: tplMap[i.product_slug]?.img ?? null,
+                downloaded_at: i.created_at,
+              });
+            }
+          });
+        }
       }
+
+      const allPurchased = Array.from(purchasedMap.values());
+      setRecentDownloads(allPurchased);
     } catch (e) {
-      console.error('Failed to load recent downloads', e);
+      console.error('Failed to load purchased assets', e);
       setRecentDownloads([]);
     }
   }, [user]);
@@ -159,7 +173,7 @@ function DashboardContent() {
   useEffect(() => {
     reloadDashboardData();
 
-    // Set up periodic refresh every 30 seconds to catch subscription renewals
+    // Set up periodic refresh every 30 seconds to catch new purchases
     const refreshInterval = setInterval(() => {
       reloadDashboardData();
     }, 30000); // 30 seconds
@@ -424,7 +438,7 @@ function DashboardContent() {
                       <div className="flex items-center gap-4">
                         <div className="h-14 w-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 shadow-sm relative">
                           {d.img ? (
-                            <img src={d.img} alt={d.name} className="w-full h-full object-cover" />
+                            <img src={convertR2UrlToCdn(d.img) || undefined} alt={d.name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-500">
                               <span className="text-xs">No img</span>
