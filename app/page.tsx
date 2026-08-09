@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Hero from '../components/Hero';
 import HomeCreatorsSection from '../components/HomeCreatorsSection';
-import CinemaTemplatesShowcase from '../components/CinemaTemplatesShowcase';
-import SaveDateTemplatesShowcase from '../components/SaveDateTemplatesShowcase';
-import FreeTemplatesShowcase from '../components/FreeTemplatesShowcase';
+import VideoTemplatesShowcase from '../components/VideoTemplatesShowcase';
+import SaveDateShowcase from '../components/SaveDateShowcase';
 import RoyaltyFreeMusicShowcase from '../components/RoyaltyFreeMusicShowcase';
 import SfxShowcase from '../components/SfxShowcase';
 import LatestTemplatesCarousel from '../components/LatestTemplatesCarousel';
@@ -217,12 +216,11 @@ export default async function Home() {
   });
 
   return (
-    <main className="bg-background min-h-screen">
+    <main className="bg-[#090D16] min-h-screen">
       <Hero />
       <HomeCreatorsSection />
-      <FreeTemplatesShowcase initialTemplates={freeTemplates as any} />
-      <CinemaTemplatesShowcase initialTemplates={cinemaTemplates as any} />
-      <SaveDateTemplatesShowcase initialTemplates={saveDateTemplates as any} />
+      <VideoTemplatesShowcase initialTemplates={cinemaTemplates as any} />
+      <SaveDateShowcase initialTemplates={saveDateTemplates as any} />
       <RoyaltyFreeMusicShowcase initialTemplates={musicTemplates as any} />
       <SfxShowcase initialTemplates={sfxTemplates as any} />
       <CategoriesSection />

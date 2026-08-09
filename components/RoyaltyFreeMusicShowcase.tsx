@@ -247,14 +247,14 @@ export default function RoyaltyFreeMusicShowcase({ initialTemplates }: { initial
     }
 
     return (
-        <section className="relative w-full py-12 md:py-16 px-4 sm:px-6 bg-gradient-to-b from-zinc-950 to-zinc-900 overflow-hidden">
+        <section className="relative w-full py-12 md:py-16 px-4 sm:px-6 bg-[#090D16] border-t border-slate-800/80 text-white overflow-hidden">
             {/* Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
                 <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
             </div>
 
-            <div className="max-w-[1400px] mx-auto relative z-10">
+            <div className="max-w-[1440px] mx-auto relative z-10">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
                     <div className="flex items-start gap-4">

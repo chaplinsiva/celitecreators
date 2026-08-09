@@ -278,7 +278,7 @@ export default function SfxShowcase({ initialTemplates }: { initialTemplates?: S
     }
 
     return (
-        <section className="relative w-full py-12 md:py-16 px-4 sm:px-6 bg-zinc-900 overflow-hidden">
+        <section className="relative w-full py-12 md:py-16 px-4 sm:px-6 bg-[#0B0F17] border-t border-slate-800/80 text-white overflow-hidden">
             {/* Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 left-1/4 w-72 h-72 bg-cyan-600/5 rounded-full blur-3xl" />
@@ -290,7 +290,7 @@ export default function SfxShowcase({ initialTemplates }: { initialTemplates?: S
                 }} />
             </div>
 
-            <div className="max-w-[1400px] mx-auto relative z-10">
+            <div className="max-w-[1440px] mx-auto relative z-10">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
                     <div className="flex items-start gap-4">
