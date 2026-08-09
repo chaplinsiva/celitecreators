@@ -357,21 +357,21 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
   const hasActiveFilters = selectedSubcategory !== 'all' || searchQuery.trim() !== '';
 
   return (
-    <main className="bg-zinc-50 min-h-screen pt-20 pb-20">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20">
       {/* Header Section */}
-      <div className="bg-white border-b border-zinc-200 pb-4 mb-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-3">
+      <div className="bg-[#090D16] border-b border-slate-800/80 pb-4 mb-4">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-3">
           <div className="flex flex-col gap-3 mb-4">
             <div>
-              <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
-                <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+              <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
+                <Link href="/" className="hover:text-teal-400 transition-colors">Home</Link>
                 <span>/</span>
-                <span className="text-zinc-900">Sound Effects</span>
+                <span className="text-white">Sound Effects</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-zinc-900">
-                <span className="text-blue-600">Sound Effects</span> Library
+              <h1 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-teal-400">
+                Sound Effects Library
               </h1>
-              <p className="text-xs sm:text-sm text-zinc-500 mt-1 max-w-2xl">
+              <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl font-medium">
                 Browse professional sound effects. Hover over any sound to preview. Download high-quality royalty-free audio for your projects.
               </p>
             </div>
@@ -381,13 +381,13 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
           <div className="max-w-2xl">
             <div className="relative flex-1 group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
+                <Search className="h-4 w-4 text-slate-400 group-focus-within:text-teal-400 transition-colors" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                className="block w-full pl-9 pr-4 py-2.5 bg-[#0F172A]/90 border border-slate-800/80 rounded-lg text-sm text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 transition-all shadow-inner"
                 placeholder="Search sound effects..."
               />
             </div>
@@ -396,15 +396,15 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           {/* Sidebar Filters */}
           {subcategories.length > 0 && (
             <aside className="w-full lg:w-56 xl:w-64 flex-shrink-0">
-              <div className="bg-white border border-zinc-200 rounded-lg lg:rounded-xl p-3 sm:p-4 lg:sticky lg:top-24">
+              <div className="bg-[#0F172A]/90 border border-slate-800/80 text-white rounded-lg lg:rounded-xl p-3 sm:p-4 lg:sticky lg:top-24">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base sm:text-lg font-semibold text-zinc-900 flex items-center gap-2">
-                    <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-teal-400 sm:w-5 sm:h-5" />
                     <span className="hidden sm:inline">Filters</span>
                     <span className="sm:hidden">Filter</span>
                   </h3>

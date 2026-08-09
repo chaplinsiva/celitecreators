@@ -272,47 +272,44 @@ export default function Model3DClient({
   };
 
   return (
-    <main className="bg-zinc-50 min-h-screen pt-20 pb-20">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20">
       {/* Header Section */}
-      <div className="bg-white border-b border-zinc-200 pb-8 mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="bg-[#090D16] border-b border-slate-800/80 pb-8 mb-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-              <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
-                <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+                <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
                 <span>/</span>
-                <span className="text-zinc-900">{breadcrumbLabel}</span>
+                <span className="text-white">{breadcrumbLabel}</span>
               </div>
               <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="text-3xl md:text-4xl font-bold text-zinc-900">
-                  <span className="text-blue-600">{pageTitle.split(' ')[0]}</span> {pageTitle.split(' ').slice(1).join(' ')}
+                <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-amber-400">
+                  {pageTitle}
                 </h1>
               </div>
-              <p className="text-zinc-500 mt-2 max-w-2xl">
+              <p className="text-slate-300 mt-2 max-w-2xl font-medium">
                 {pageSubtitle}
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-zinc-600">Sort by:</span>
+              <span className="text-sm font-medium text-slate-400">Sort by:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 bg-white border border-zinc-200 rounded-lg text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium cursor-pointer"
+                className="px-4 py-2 border border-slate-800 rounded-xl bg-[#0F172A] text-sm font-medium text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
                 <option value="name">Name (A-Z)</option>
               </select>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto md:max-w-none md:mx-0">
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
-              </div>
+          <div className="relative">
+            <div className="relative max-w-3xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
@@ -338,7 +335,7 @@ export default function Model3DClient({
                     router.replace(`${basePath}?${params.toString()}`, { scroll: false });
                   }
                 }}
-                className="block w-full pl-11 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                className="block w-full pl-11 pr-4 py-4 bg-[#0F172A]/90 border border-slate-800/80 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 transition-all shadow-inner"
                 placeholder="Search 3D models..."
               />
             </div>
@@ -346,17 +343,17 @@ export default function Model3DClient({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar Filters */}
           <aside className="w-full lg:w-64 flex-shrink-0 space-y-8 hidden lg:block">
-            <div>
+            <div className="bg-[#0F172A]/90 border border-slate-800/80 rounded-2xl p-4 text-white">
               <div
                 className="flex items-center justify-between cursor-pointer mb-2"
                 onClick={() => toggleSection('categories')}
               >
-                <h3 className="font-bold text-zinc-900">Categories</h3>
-                <ChevronDown className={cn("w-4 h-4 text-zinc-400 transition-transform", !expandedSections.categories && "-rotate-90")} />
+                <h3 className="font-bold text-white">Categories</h3>
+                <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform", !expandedSections.categories && "-rotate-90")} />
               </div>
 
               {expandedSections.categories && (

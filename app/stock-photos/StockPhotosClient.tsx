@@ -180,21 +180,21 @@ export default function StockPhotosClient({ initialTemplates }: { initialTemplat
   };
 
   return (
-    <main className="bg-background min-h-screen pt-20 pb-20">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20">
       {/* Header Section */}
-      <div className="bg-background border-b border-zinc-200 pb-8 mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="bg-[#090D16] border-b border-slate-800/80 pb-8 mb-8 text-white">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-              <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
-                <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+                <Link href="/" className="hover:text-emerald-400 transition-colors">Home</Link>
                 <span>/</span>
-                <span className="text-zinc-900">Stock Photos</span>
+                <span className="text-white">Stock Photos</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-zinc-900">
-                <span className="text-blue-600">Stock Photos</span> Gallery
+              <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-emerald-400">
+                Stock Photos Gallery
               </h1>
-              <p className="text-zinc-500 mt-2 max-w-2xl">
+              <p className="text-slate-300 mt-2 max-w-2xl font-medium">
                 Browse our collection of high-quality royalty-free stock photos for your projects.
               </p>
             </div>
@@ -204,13 +204,13 @@ export default function StockPhotosClient({ initialTemplates }: { initialTemplat
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl">
             <div className="relative flex-1 group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
+                <Search className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-400 transition-colors" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-11 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                className="block w-full pl-11 pr-4 py-4 bg-[#0F172A]/90 border border-slate-800/80 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
                 placeholder="Search stock photos..."
               />
             </div>
