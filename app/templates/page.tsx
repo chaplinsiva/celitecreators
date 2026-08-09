@@ -39,7 +39,20 @@ export default async function TemplatesPage() {
 
     if (categoryError || !dbCategories) {
         console.error('Error loading categories on server:', categoryError);
-        return <TemplatesClient initialCategoryGroups={[]} />;
+        return (
+            <Suspense fallback={
+                <main className="bg-background min-h-screen pt-20 pb-20">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center py-20">
+                            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+                            <p className="mt-4 text-zinc-600">Loading templates...</p>
+                        </div>
+                    </div>
+                </main>
+            }>
+                <TemplatesClient initialCategoryGroups={[]} />
+            </Suspense>
+        );
     }
 
     // Fetch top 8 templates and total count for each category in parallel
