@@ -90,7 +90,7 @@ export default async function Home() {
     movieSubSubcatId
       ? supabase
           .from('templates')
-          .select('slug, name, subtitle, img, video_path, thumbnail_path, category_id')
+          .select('slug, name, subtitle, img, video_path, thumbnail_path, category_id, price, is_free')
           .eq('status', 'approved')
           .eq('sub_subcategory_id', movieSubSubcatId)
           .not('video_path', 'is', null)
@@ -101,7 +101,7 @@ export default async function Home() {
     saveDateSubSubcatId
       ? supabase
           .from('templates')
-          .select('slug, name, subtitle, img, video_path, thumbnail_path, category_id')
+          .select('slug, name, subtitle, img, video_path, thumbnail_path, category_id, price, is_free')
           .eq('status', 'approved')
           .eq('sub_subcategory_id', saveDateSubSubcatId)
           .order('created_at', { ascending: false })

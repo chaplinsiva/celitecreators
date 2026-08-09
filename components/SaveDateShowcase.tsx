@@ -13,7 +13,8 @@ type SaveDateItem = {
   img?: string | null;
   video_path?: string | null;
   thumbnail_path?: string | null;
-  price?: number;
+  price?: number | string | null;
+  is_free?: boolean | null;
 };
 
 type SaveDateShowcaseProps = {
@@ -94,9 +95,17 @@ function SaveDateCard({ template }: { template: SaveDateItem }) {
         </div>
 
         <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between">
-          <span className="text-xs font-black text-amber-400">
-            ₹299 <span className="text-[10px] text-slate-500 font-semibold">/ product</span>
-          </span>
+          {template.is_free ? (
+            <span className="text-xs font-black text-emerald-400">FREE</span>
+          ) : template.price ? (
+            <span className="text-xs font-black text-amber-400">
+              ₹{Number(template.price)} <span className="text-[10px] text-slate-500 font-semibold">/ product</span>
+            </span>
+          ) : (
+            <span className="text-xs font-black text-amber-400">
+              ₹449 <span className="text-[10px] text-slate-500 font-semibold">/ product</span>
+            </span>
+          )}
           <span className="text-xs font-bold text-slate-300 group-hover:text-white flex items-center gap-1 transition-colors">
             View Template <ArrowRight className="w-3 h-3 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
           </span>
@@ -127,7 +136,7 @@ export default function SaveDateShowcase({ initialTemplates }: SaveDateShowcaseP
         if (subCat?.id) {
           const { data } = await supabase
             .from("templates")
-            .select("slug, name, subtitle, img, video_path, thumbnail_path, price")
+            .select("slug, name, subtitle, img, video_path, thumbnail_path, price, is_free")
             .eq("status", "approved")
             .eq("sub_subcategory_id", subCat.id)
             .order("created_at", { ascending: false })
