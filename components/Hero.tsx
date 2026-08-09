@@ -41,7 +41,7 @@ const REAL_MARKETPLACE_TEMPLATES: RealVideoTemplate[] = [
   }
 ];
 
-function PreviewCard({ template, isFeatured = false }: { template: RealVideoTemplate; isFeatured?: boolean }) {
+function PreviewCard({ template }: { template: RealVideoTemplate }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   
@@ -67,9 +67,7 @@ function PreviewCard({ template, isFeatured = false }: { template: RealVideoTemp
       href={`/product/${template.slug}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`group relative flex flex-col rounded-xl bg-[#0F172A]/90 border border-slate-800/80 overflow-hidden shadow-xl hover:border-sky-500/50 hover:shadow-sky-500/10 transition-all duration-300 ${
-        isFeatured ? 'col-span-2 sm:col-span-2' : 'col-span-1'
-      }`}
+      className="group relative flex flex-col rounded-xl bg-[#0F172A]/90 border border-slate-800/80 overflow-hidden shadow-xl hover:border-sky-500/50 hover:shadow-sky-500/10 transition-all duration-300 w-full"
     >
       {/* Clean Media Box - No unwanted text overlays on video */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-950">
@@ -78,7 +76,7 @@ function PreviewCard({ template, isFeatured = false }: { template: RealVideoTemp
             ref={videoRef}
             src={videoUrl}
             poster={posterUrl || undefined}
-            autoPlay={isFeatured}
+            autoPlay
             muted
             loop
             playsInline
@@ -239,9 +237,9 @@ export default function Hero() {
             transition={{ delay: 0.15, duration: 0.4 }}
             className="lg:col-span-6 relative"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {templates.slice(0, 3).map((tpl, i) => (
-                <PreviewCard key={tpl.slug || i} template={tpl} isFeatured={i === 0} />
+                <PreviewCard key={tpl.slug || i} template={tpl} />
               ))}
             </div>
           </motion.div>
