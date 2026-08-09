@@ -3,7 +3,8 @@
 
 ## Project Overview
 
-**Project Name:** CeliteCreators Marketplace  
+**Project Name:** CeliteMarket (Pay-Per-Product Marketplace)  
+**Live Production Domain:** `https://celitemarket.in`  
 **Description:** Pay-Per-Product Digital Asset Marketplace for Digital Creators in India (Video Editors, 3D Artists, Sound Engineers, Graphic Designers).  
 **Tech Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Supabase (Auth & Postgres), Cloudflare R2, Razorpay  
 **Repository:** `https://github.com/chaplinsiva/celitecreators`  
@@ -14,9 +15,17 @@
 
 ## Design & Aesthetic Directives
 - **Primary Accent:** Sky Blue (`#0284C7` / `#0099FF`)
-- **Base Background:** Pure White / Soft Off-White Slate (`#FFFFFF` / `#F8FAFC`)
-- **Typography & High Contrast:** Dark Obsidian / Deep Slate (`#0F172A` / `#090D16`) text with subtle light glassmorphic borders (`#E2E8F0`).
-- **UX Style:** Concept A "Studio Showcase" (Light Edition) — media-first layout with interactive preview players, hover video loops, audio visualizers, and sticky 1-click Razorpay purchase drawers.
+- **Base Background:** Deep Dark Studio (`#0B0F17` / `#090D16`)
+- **Card Containers:** `#090D16` Dark Glassmorphic Cards with `#0F172A` Sub-cards & Light/Slate Borders (`border-slate-800`).
+- **Typography & High Contrast:** Crisp Pure White (`text-white`), Sky Blue Highlights (`text-sky-400`), and Subtle Slate (`text-slate-300` / `text-slate-400`).
+- **UX Style:** Concept A "Studio Showcase" (Dark Edition) — media-first layout with interactive preview players, hover video loops, audio visualizers, and sticky 1-click Razorpay purchase drawers.
+
+---
+
+## Core Business Model Directives (Pay-Per-Product & Lifetime Access)
+- **Pay-Per-Product Purchasing:** Celite Market operates on a strict single-asset / cart purchase model. All subscription-related UI components (plan cards, subscription status badges, subscription management modals) are removed.
+- **Automated Purchase Email Delivery:** Upon successful Razorpay payment verification (`app/api/payments/razorpay/verify/route.ts`), an immediate confirmation email is sent (`lib/emailService.ts`) with direct product download links (`https://celitemarket.in/product/[slug]`).
+- **Perpetual Lifetime Access:** Buyers retain permanent re-download access for purchased assets via the product page ("Re-Download File" CTA) and User Dashboard ("My Lifetime Purchased Assets").
 
 ---
 
