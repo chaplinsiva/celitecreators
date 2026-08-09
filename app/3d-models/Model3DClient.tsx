@@ -368,14 +368,14 @@ export default function Model3DClient({
                         }}
                         className={cn("block w-full text-left px-3 py-1.5 text-sm rounded-r-lg transition-colors border-l-2 -ml-[1px]",
                           selectedCategory === cat.id
-                            ? "border-blue-600 bg-blue-50 text-blue-700 font-medium"
-                            : "border-transparent text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+                            ? "border-amber-500 bg-amber-950/50 text-amber-400 font-bold"
+                            : "border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
                         )}
                       >
                         {cat.name}
                       </button>
                       {selectedCategory === cat.id && availableSubcategories.length > 0 && (
-                        <div className="ml-4 mt-1 space-y-1 border-l border-zinc-200 pl-2">
+                        <div className="ml-4 mt-1 space-y-1 border-l border-slate-800 pl-2">
                           <button
                             onClick={() => {
                               setSelectedSubcategory('all');
@@ -383,8 +383,8 @@ export default function Model3DClient({
                             }}
                             className={cn("block w-full text-left px-2 py-1 text-xs rounded-r transition-colors",
                               selectedSubcategory === 'all'
-                                ? "text-blue-600 font-medium"
-                                : "text-zinc-500 hover:text-zinc-700"
+                                ? "text-amber-400 font-bold"
+                                : "text-slate-400 hover:text-white"
                             )}
                           >
                             All {cat.name}
@@ -403,20 +403,20 @@ export default function Model3DClient({
                                     }}
                                     className={cn("block w-full text-left px-2 py-1 text-xs rounded-r transition-colors flex items-center justify-between",
                                       selectedSubcategory === subcat.id && selectedSubSubcategory === 'all'
-                                        ? "text-blue-600 font-medium"
-                                        : "text-zinc-500 hover:text-zinc-700"
+                                        ? "text-amber-400 font-bold"
+                                        : "text-slate-400 hover:text-white"
                                     )}
                                   >
                                     <span>{subcat.name}</span>
                                   </button>
                                   {selectedSubcategory === subcat.id && subSubcatsForThis.length > 0 && (
-                                    <div className="ml-4 mt-1 space-y-1 border-l border-zinc-200 pl-2">
+                                    <div className="ml-4 mt-1 space-y-1 border-l border-slate-800 pl-2">
                                       <button
                                         onClick={() => setSelectedSubSubcategory('all')}
                                         className={cn("block w-full text-left px-2 py-1 text-[10px] rounded-r transition-colors",
                                           selectedSubSubcategory === 'all'
-                                            ? "text-blue-600 font-medium"
-                                            : "text-zinc-500 hover:text-zinc-700"
+                                            ? "text-amber-400 font-bold"
+                                            : "text-slate-400 hover:text-white"
                                         )}
                                       >
                                         All {subcat.name}
@@ -429,8 +429,8 @@ export default function Model3DClient({
                                             onClick={() => setSelectedSubSubcategory(subSubcat.id)}
                                             className={cn("block w-full text-left px-2 py-1 text-[10px] rounded-r transition-colors flex items-center justify-between",
                                               selectedSubSubcategory === subSubcat.id
-                                                ? "text-blue-600 font-medium"
-                                                : "text-zinc-500 hover:text-zinc-700"
+                                                ? "text-amber-400 font-bold"
+                                                : "text-slate-400 hover:text-white"
                                             )}
                                           >
                                             <span>{subSubcat.name}</span>
@@ -455,55 +455,55 @@ export default function Model3DClient({
           <div className="flex-1">
             {/* Mobile Filters Toggle */}
             <div className="lg:hidden mb-6">
-              <button className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-zinc-200 rounded-xl text-zinc-700 font-medium hover:bg-zinc-50">
-                <Filter className="w-4 h-4" /> Filters & Categories
+              <button className="w-full flex items-center justify-center gap-2 py-3 bg-[#0F172A] border border-slate-800 rounded-xl text-white font-medium hover:bg-slate-800">
+                <Filter className="w-4 h-4 text-amber-400" /> Filters & Categories
               </button>
             </div>
 
             {filteredTemplates.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {paginatedTemplates.map((template) => (
-                  <div key={template.slug} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-zinc-200 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300">
+                  <div key={template.slug} className="group flex flex-col bg-[#0F172A]/90 rounded-xl overflow-hidden border border-slate-800/80 hover:border-amber-500/50 hover:shadow-xl transition-all duration-300 text-white">
                     {/* Thumbnail Preview */}
-                    <Link href={`/product/${template.slug}`} className="block relative aspect-video overflow-hidden bg-zinc-100">
+                    <Link href={`/product/${template.slug}`} className="block relative aspect-video overflow-hidden bg-slate-900">
                       {template.thumbnail_path ? (
                         <img
                           src={convertR2UrlToCdn(template.thumbnail_path) || template.thumbnail_path}
                           alt={template.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : template.img ? (
                         <img
                           src={convertR2UrlToCdn(template.img) || template.img}
                           alt={template.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-400">
+                        <div className="w-full h-full flex items-center justify-center bg-slate-900 text-slate-500">
                           No Preview
                         </div>
                       )}
                     </Link>
 
                     {/* Content */}
-                    <div className="p-4 flex flex-col flex-1 relative z-30 bg-white">
+                    <div className="p-4 flex flex-col flex-1 relative z-30 bg-[#0F172A]">
                       <Link href={`/product/${template.slug}`} className="block">
-                        <h3 className="font-bold text-zinc-900 text-lg leading-tight mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        <h3 className="font-bold text-white text-lg leading-tight mb-2 group-hover:text-amber-400 transition-colors line-clamp-2">
                           {template.name}
                         </h3>
                       </Link>
 
-                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-zinc-100">
+                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-800">
                         {template.vendor_name ? (
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">
+                            <div className="w-6 h-6 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center text-[10px] font-bold text-amber-400">
                               {template.vendor_name.charAt(0).toUpperCase() || "C"}
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-medium text-zinc-500">
+                              <span className="text-xs font-semibold text-slate-400">
                                 By {template.vendor_name}
                               </span>
-                              <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                              <div className="w-3 h-3 bg-amber-500 rounded-full flex items-center justify-center">
                                 <Check className="w-2 h-2 text-white" strokeWidth={3} />
                               </div>
                             </div>

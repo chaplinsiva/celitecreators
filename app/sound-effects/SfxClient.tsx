@@ -421,7 +421,7 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
 
                 {/* Categories */}
                 <div className="mb-4">
-                  <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-bold text-slate-400 mb-2">
                     Categories
                   </label>
                   <div className="flex flex-col gap-1">
@@ -430,8 +430,8 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                       className={cn(
                         "w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-left",
                         selectedSubcategory === 'all'
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-zinc-50 border border-zinc-200 text-zinc-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
+                          ? "bg-teal-600 text-white shadow-md font-bold"
+                          : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-teal-500 hover:text-white"
                       )}
                     >
                       <span className="flex items-center justify-between">
@@ -449,8 +449,8 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                           className={cn(
                             "w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-left",
                             isSelected
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "bg-zinc-50 border border-zinc-200 text-zinc-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
+                              ? "bg-teal-600 text-white shadow-md font-bold"
+                              : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-teal-500 hover:text-white"
                           )}
                         >
                           <span className="flex items-center justify-between">
@@ -471,12 +471,12 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
               <div>
                 <div className="mb-4 sm:mb-6 flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-zinc-900">
+                    <h2 className="text-xl sm:text-2xl font-bold text-white">
                       Sound Effects
                     </h2>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-zinc-500">
-                    <Volume2 className="w-4 h-4" />
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <Volume2 className="w-4 h-4 text-teal-400" />
                     <span className="hidden sm:inline">Hover to preview</span>
                   </div>
                 </div>
@@ -493,9 +493,9 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                       <div
                         key={template.slug}
                         className={cn(
-                          "group relative bg-white rounded-xl border border-zinc-200 overflow-hidden transition-all duration-300",
-                          isPlaying && "ring-2 ring-blue-500 shadow-lg shadow-blue-500/20",
-                          !isPlaying && "hover:shadow-md hover:border-zinc-300"
+                          "group relative bg-[#0F172A]/90 rounded-xl border border-slate-800/80 overflow-hidden transition-all duration-300 text-white",
+                          isPlaying && "ring-2 ring-teal-500 shadow-lg shadow-teal-500/20 border-teal-500/50",
+                          !isPlaying && "hover:shadow-md hover:border-slate-700"
                         )}
                         onMouseEnter={() => handleMouseEnter(template.slug, audioUrl)}
                         onMouseLeave={handleMouseLeave}
@@ -507,8 +507,8 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                             className={cn(
                               "flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300",
                               isPlaying
-                                ? "bg-blue-600 text-white shadow-lg scale-105"
-                                : "bg-zinc-100 text-zinc-700 hover:bg-blue-600 hover:text-white hover:scale-105",
+                                ? "bg-teal-600 text-white shadow-lg scale-105"
+                                : "bg-slate-800 text-slate-200 hover:bg-teal-600 hover:text-white hover:scale-105",
                               isLoadingThis && "animate-pulse"
                             )}
                           >
@@ -530,16 +530,16 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
 
                           {/* Track Info */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-semibold text-zinc-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                            <h3 className="text-base font-bold text-white line-clamp-1 group-hover:text-teal-400 transition-colors">
                               {template.name}
                             </h3>
                             {template.subtitle && (
-                              <p className="text-sm text-zinc-500 line-clamp-1 mt-0.5">
+                              <p className="text-sm text-slate-300 line-clamp-1 mt-0.5">
                                 {template.subtitle}
                               </p>
                             )}
                             {template.vendor_name && (
-                              <p className="text-xs text-zinc-400 mt-1">
+                              <p className="text-xs text-slate-400 mt-1">
                                 by {template.vendor_name}
                               </p>
                             )}
@@ -548,15 +548,15 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                           {/* Actions */}
                           <div className="flex items-center gap-2 flex-shrink-0">
                             {isPlaying && (
-                              <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
+                              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-teal-950 text-teal-400 border border-teal-800 rounded-full text-xs font-bold">
+                                <div className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" />
                                 Playing
                               </div>
                             )}
 
                             <button
                               onClick={(e) => handleDownload(template.slug, e)}
-                              className="p-2 text-zinc-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                              className="p-2 text-slate-300 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-all duration-200"
                               title="Download"
                             >
                               <Download className="w-5 h-5" />
@@ -564,7 +564,7 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
 
                             <Link
                               href={`/product/${template.slug}`}
-                              className="px-4 py-2 text-sm font-medium text-zinc-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                              className="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-all duration-200"
                               onClick={(e) => e.stopPropagation()}
                             >
                               View
@@ -575,7 +575,7 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
                         {/* Progress Bar */}
                         {isPlaying && (
                           <div
-                            className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-100 cursor-pointer"
+                            className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800 cursor-pointer"
                             onClick={(e) => handleSeek(e, template.slug)}
                             onMouseDown={(e) => e.stopPropagation()}
                           >

@@ -560,13 +560,13 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
   };
 
   return (
-    <main className="bg-white min-h-screen pb-20 pt-20 sm:pt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="bg-[#0B0F17] text-white min-h-screen pb-20 pt-20 sm:pt-24">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header Breadcrumbs / Title */}
         <div className="mb-8">
           {/* Mobile: Shorter breadcrumb */}
-          <div className="text-xs sm:text-sm text-zinc-500 mb-2">
+          <div className="text-xs sm:text-sm text-slate-400 mb-2">
             {(() => {
               const categorySlug = (product as any).category_slug?.toLowerCase() || '';
               const categoryName = (product as any).category_name || '';
@@ -629,8 +629,8 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
               // Check for After Effects / Video Templates
               else if (categorySlug === 'after-effects' ||
                 categorySlug === 'video-templates' ||
-                (categorySlug.includes('after-effects') || categorySlug.includes('video')) ||
-                (categoryName?.toLowerCase().includes('after effects') || categoryName?.toLowerCase().includes('video'))) {
+                (categorySlug.includes('video') || categorySlug.includes('template')) ||
+                (categoryName?.toLowerCase().includes('video') || categoryName?.toLowerCase().includes('template'))) {
                 categoryRoute = '/video-templates';
                 categoryDisplayName = 'Video Templates';
               }
@@ -660,13 +660,13 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                     {categoryDisplayName}
                   </Link>
                   <span className="mx-2 hidden sm:inline">›</span>
-                  <span className="text-zinc-900 font-medium truncate block sm:inline">{product.name}</span>
+                  <span className="text-white font-medium truncate block sm:inline">{product.name}</span>
                 </>
               );
             })()}
           </div>
           {/* Mobile: Smaller title */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight line-clamp-2 sm:line-clamp-none">{product.name}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight line-clamp-2 sm:line-clamp-none">{product.name}</h1>
           {/* Desktop: Vendor / brand info */}
           <div className="hidden sm:flex items-center gap-3 mt-3">
             {(() => {
@@ -675,11 +675,11 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
               const initial = vendor.charAt(0).toUpperCase() || 'C';
               return (
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">
+                  <div className="w-6 h-6 rounded-full bg-sky-950 border border-sky-800 flex items-center justify-center text-xs font-bold text-sky-400">
                     {initial}
                   </div>
-                  <span className="text-sm font-medium text-zinc-700">{vendor}</span>
-                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold text-slate-300">{vendor}</span>
+                  <div className="w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                   </div>
                 </div>
@@ -803,7 +803,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
             {/* Description / Prompt */}
             <div className="mb-10">
-              <h2 className="text-2xl font-bold text-zinc-900 mb-4">
+              <h2 className="text-2xl font-black text-white mb-4">
                 {isPromptProduct ? 'Prompt' : 'Description'}
               </h2>
 
@@ -811,23 +811,25 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                 /* Prompt Text - Selectable and Copyable */
                 <div className="relative">
                   <div
-                    className="bg-violet-50 border border-violet-200 rounded-xl p-4 text-zinc-800 leading-relaxed select-all cursor-text"
+                    className="bg-[#0F172A] border border-slate-800 rounded-xl p-5 text-slate-200 leading-relaxed select-all cursor-text"
                     style={{ userSelect: 'text' }}
                   >
                     {product.subtitle && (
-                      <p className="text-lg mb-3 font-medium text-violet-900">{product.subtitle}</p>
+                      <p className="text-lg mb-3 font-bold text-sky-400">{product.subtitle}</p>
                     )}
                     <div className="whitespace-pre-line font-mono text-sm">{product.desc}</div>
                   </div>
-                  <p className="text-xs text-zinc-500 mt-2 italic">
+                  <p className="text-xs text-slate-400 mt-2 italic">
                     💡 Tip: Select the text above to copy, or use the Copy Prompt button
                   </p>
                 </div>
               ) : (
                 /* Regular Description */
-                <div className="prose prose-zinc max-w-none text-zinc-600 leading-relaxed">
-                  <p className="text-lg mb-4 font-medium text-zinc-800">{product.subtitle}</p>
-                  <div className="whitespace-pre-line">{product.desc}</div>
+                <div className="text-slate-300 leading-relaxed space-y-3">
+                  {product.subtitle && (
+                    <p className="text-lg mb-3 font-bold text-white">{product.subtitle}</p>
+                  )}
+                  <div className="whitespace-pre-line text-sm sm:text-base font-normal">{product.desc}</div>
                 </div>
               )}
 
@@ -840,11 +842,11 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                     : [];
                 return features.length > 0 ? (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-zinc-900 mb-3">Key Features</h3>
-                    <ul className="grid sm:grid-cols-2 gap-2">
+                    <h3 className="text-lg font-bold text-white mb-3">Key Features</h3>
+                    <ul className="grid sm:grid-cols-2 gap-2.5">
                       {features.map((feature: any, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-zinc-600 text-sm">
-                          <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                        <li key={i} className="flex items-start gap-2 text-slate-300 text-xs sm:text-sm font-medium">
+                          <Check className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -856,7 +858,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
             {/* Tags */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-zinc-900 mb-4">Product Tags</h2>
+              <h2 className="text-xl font-bold text-white mb-4">Product Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {(() => {
                   const tags = product.tags && typeof product.tags === 'string'
@@ -865,7 +867,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                       ? product.tags
                       : [];
                   return tags.length > 0 ? tags.map((tag: any, i: number) => (
-                    <Link key={i} href={`/video-templates?search=${tag}`} className="px-4 py-2 rounded-lg bg-zinc-100 text-zinc-600 text-sm font-medium hover:bg-zinc-200 transition-colors">
+                    <Link key={i} href={`/video-templates?search=${tag}`} className="px-3.5 py-1.5 rounded-lg bg-[#0F172A] border border-slate-800 text-slate-300 text-xs font-semibold hover:border-sky-500 hover:text-sky-400 transition-colors">
                       {tag}
                     </Link>
                   )) : null;
@@ -900,8 +902,8 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
               {/* Features Table / Tech Specs - Hidden for Prompts */}
               {!isPromptProduct && (
-                <div className="bg-white p-2">
-                  <h3 className="text-xl font-bold text-zinc-900 mb-4">Features</h3>
+                <div className="bg-[#0F172A]/90 p-5 rounded-2xl border border-slate-800/80 text-white shadow-xl">
+                  <h3 className="text-lg font-extrabold text-white mb-4">Specifications</h3>
 
                   {/* Helper function to extract values from tags, features, and description */}
                   {(() => {
@@ -925,15 +927,10 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
                     // Extract resolution (check more specific first)
                     const getResolution = () => {
-                      // Check for 4K first (most specific)
                       if (allText.includes('4k') || allText.includes('3840') || allText.includes('2160')) return '4K';
-                      // Check for 1080p (more specific than just "1080")
                       if (allText.includes('1080p') || allText.includes('full hd') || allText.includes('fullhd')) return '1080p (Full HD)';
-                      // Check for 720p (more specific than just "720")
                       if (allText.includes('720p')) return '720p';
-                      // Check for vertical/portrait
                       if (allText.includes('vertical') || allText.includes('9:16') || allText.includes('portrait') || allText.includes('9x16')) return 'Vertical (9:16)';
-                      // Fallback to generic HD if found
                       if (allText.includes('1080') && !allText.includes('1080p')) return '1080p (Full HD)';
                       if (allText.includes('720') && !allText.includes('720p')) return '720p';
                       return null;
@@ -1025,11 +1022,11 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                     if (features.length === 0) return null;
 
                     return (
-                      <div className="grid grid-cols-[110px_1fr] gap-y-4 text-sm">
+                      <div className="grid grid-cols-[110px_1fr] gap-y-3.5 text-xs sm:text-sm">
                         {features.map((feature, idx) => (
-                          <div key={idx}>
-                            <div className="text-zinc-500 font-medium">{feature.label}</div>
-                            <div className="text-zinc-900 font-medium">{feature.value}</div>
+                          <div key={idx} className="contents">
+                            <div className="text-slate-400 font-medium">{feature.label}</div>
+                            <div className="text-white font-semibold">{feature.value}</div>
                           </div>
                         ))}
                       </div>
@@ -1039,12 +1036,12 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
               )}
 
               {/* Share Button Block */}
-              <div className="flex justify-end pt-4 border-t border-zinc-100">
+              <div className="flex justify-end pt-4 border-t border-slate-800/80">
                 <button
                   onClick={handleShare}
-                  className="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-blue-600 transition-colors"
+                  className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-sky-400 transition-colors"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-3.5 h-3.5" />
                   {shareFeedback || 'Share this item'}
                 </button>
               </div>
@@ -1065,13 +1062,13 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
         <div className="mt-12 w-full lg:w-2/3">
           {loadingMoreInStyle ? (
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-zinc-900 mb-6">More in This Style</h2>
+              <h2 className="text-2xl font-black text-white mb-6">More in This Style</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-video rounded-lg bg-zinc-200 mb-3"></div>
-                    <div className="h-4 bg-zinc-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-zinc-200 rounded w-1/2"></div>
+                    <div className="aspect-video rounded-xl bg-slate-800 mb-3"></div>
+                    <div className="h-4 bg-slate-800 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-slate-800 rounded w-1/2"></div>
                   </div>
                 ))}
               </div>
@@ -1079,13 +1076,13 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
           ) : moreInStyleTemplates.length > 0 ? (
             <div className="mb-12">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-zinc-900">More in This Style</h2>
+                <h2 className="text-2xl font-black text-white">More in This Style</h2>
                 {moreInStyleTemplates.length > 4 && (
                   <div className="flex gap-2">
                     <button
                       onClick={() => setMoreInStyleIndex(Math.max(0, moreInStyleIndex - 1))}
                       disabled={moreInStyleIndex === 0}
-                      className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                      className="w-8 h-8 rounded-full border border-slate-800 bg-[#0F172A] text-white flex items-center justify-center hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       aria-label="Previous templates"
                     >
                       ←
@@ -1093,7 +1090,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                     <button
                       onClick={() => setMoreInStyleIndex(Math.min(Math.floor((moreInStyleTemplates.length - 1) / 4), moreInStyleIndex + 1))}
                       disabled={moreInStyleIndex >= Math.floor((moreInStyleTemplates.length - 1) / 4)}
-                      className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                      className="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       aria-label="Next templates"
                     >
                       →
@@ -1106,7 +1103,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                   const itemIsMusic = isMusicItem(item);
                   return (
                     <Link key={item.slug} href={`/product/${item.slug}`} className="group">
-                      <div className="aspect-video rounded-lg overflow-hidden bg-zinc-100 mb-3 relative">
+                      <div className="aspect-video rounded-xl overflow-hidden bg-[#0F172A] border border-slate-800/80 mb-3 relative">
                         {itemIsMusic ? (
                           // Music items - show simple thumbnail with music icon
                           <div className="relative w-full h-full bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500">
@@ -1144,17 +1141,17 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                                 e.currentTarget.src = '/PNG1.png';
                               }}
                             />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                              <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-blue-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all">
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-sky-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all">
                                 <PlayCircle className="w-6 h-6 fill-current" />
                               </div>
                             </div>
                           </>
                         )}
                       </div>
-                      <h3 className="font-bold text-zinc-900 text-lg group-hover:text-blue-600 transition-colors">{item.name}</h3>
+                      <h3 className="font-bold text-white text-base group-hover:text-sky-400 transition-colors truncate">{item.name}</h3>
                       {(item as any).vendor_name && (
-                        <p className="text-sm text-zinc-500">By {(item as any).vendor_name}</p>
+                        <p className="text-xs text-slate-400">By {(item as any).vendor_name}</p>
                       )}
                     </Link>
                   );
@@ -1166,13 +1163,13 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
           {/* You May Also Like */}
           {loadingYouMayAlsoLike ? (
             <div>
-              <h2 className="text-2xl font-bold text-zinc-900 mb-6">You May Also Like</h2>
+              <h2 className="text-2xl font-black text-white mb-6">You May Also Like</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-video rounded-lg bg-zinc-200 mb-3"></div>
-                    <div className="h-4 bg-zinc-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-zinc-200 rounded w-1/2"></div>
+                    <div className="aspect-video rounded-xl bg-slate-800 mb-3"></div>
+                    <div className="h-4 bg-slate-800 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-slate-800 rounded w-1/2"></div>
                   </div>
                 ))}
               </div>
@@ -1180,15 +1177,15 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
           ) : youMayAlsoLikeTemplates.length > 0 ? (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-zinc-900">You May Also Like</h2>
-                <Link href="/video-templates" className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-all">→</Link>
+                <h2 className="text-2xl font-black text-white">You May Also Like</h2>
+                <Link href="/video-templates" className="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center hover:bg-sky-500 transition-all">→</Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {youMayAlsoLikeTemplates.slice(0, 4).map((item) => {
                   const itemIsMusic = isMusicItem(item);
                   return (
                     <Link key={item.slug} href={`/product/${item.slug}`} className="group">
-                      <div className="aspect-video rounded-lg overflow-hidden bg-zinc-100 mb-3 relative">
+                      <div className="aspect-video rounded-xl overflow-hidden bg-[#0F172A] border border-slate-800/80 mb-3 relative">
                         {itemIsMusic ? (
                           // Music items - show simple thumbnail with music icon
                           <div className="relative w-full h-full bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500">
@@ -1226,17 +1223,17 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                                 e.currentTarget.src = '/PNG1.png';
                               }}
                             />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                              <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-blue-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all">
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-sky-600 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all">
                                 <PlayCircle className="w-5 h-5 fill-current" />
                               </div>
                             </div>
                           </>
                         )}
                       </div>
-                      <h3 className="font-bold text-zinc-900 text-sm group-hover:text-blue-600 transition-colors truncate">{item.name}</h3>
+                      <h3 className="font-bold text-white text-sm group-hover:text-sky-400 transition-colors truncate">{item.name}</h3>
                       {(item as any).vendor_name && (
-                        <p className="text-xs text-zinc-500">By {(item as any).vendor_name}</p>
+                        <p className="text-xs text-slate-400">By {(item as any).vendor_name}</p>
                       )}
                     </Link>
                   );
@@ -1266,26 +1263,25 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
 }) {
   // For prompts: show Copy Prompt button (no login required)
   if (isPrompt) {
-    // ... existing prompt logic ...
     return (
-      <div className={cn("bg-violet-50/50 rounded-2xl p-6 border border-violet-100", className)}>
+      <div className={cn("bg-[#0F172A] rounded-2xl p-6 border border-slate-800 text-white shadow-xl", className)}>
         <div className="text-center mb-4">
-          <h3 className="text-lg font-bold text-violet-900 mb-1">AI Prompt</h3>
-          <p className="text-sm text-violet-600">Copy this prompt to use in your AI tools</p>
+          <h3 className="text-lg font-extrabold text-white mb-1">AI Prompt</h3>
+          <p className="text-sm text-slate-400 font-medium">Copy this prompt to use in Midjourney, ChatGPT, or AI tools</p>
         </div>
         <button
           onClick={handleCopyPrompt}
           className={cn(
-            "w-full py-3 rounded-lg font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2",
+            "w-full py-3.5 rounded-xl font-extrabold text-sm shadow-lg transition-all flex items-center justify-center gap-2",
             promptCopied
-              ? "bg-green-500 text-white"
-              : "bg-violet-600 text-white shadow-violet-600/20 hover:bg-violet-700 active:scale-[0.98]"
+              ? "bg-emerald-600 text-white"
+              : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/30 hover:shadow-purple-600/50 active:scale-[0.98]"
           )}
         >
           {promptCopied ? (
             <>
               <Check className="w-4 h-4" />
-              Copied!
+              Copied to Clipboard!
             </>
           ) : (
             <>
@@ -1301,23 +1297,23 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
   // For free templates: show download button regardless of subscription
   if (isFree) {
     return (
-      <div className={cn("bg-green-50/50 rounded-2xl p-6 border border-green-100", className)}>
+      <div className={cn("bg-[#0F172A] rounded-2xl p-6 border border-emerald-900/60 text-white shadow-xl", className)}>
         <div className="text-center mb-4">
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider mb-2">
-            <Gift className="w-3 h-3" />
-            3rd Anniversary Gift
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-extrabold uppercase tracking-wider mb-2">
+            <Gift className="w-3.5 h-3.5 text-emerald-400" />
+            Free Community Download
           </div>
-          <h3 className="text-lg font-bold text-green-900">Download for Free</h3>
-          <p className="text-xs text-green-600 mt-1">Sign in required to download</p>
+          <h3 className="text-xl font-black text-white">Download for Free</h3>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Free instant download asset</p>
         </div>
         <button
           onClick={handleDownload}
           disabled={downloading}
           className={cn(
-            "w-full py-3 rounded-lg font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2",
+            "w-full py-3.5 rounded-xl font-extrabold text-sm shadow-lg transition-all flex items-center justify-center gap-2",
             downloading
-              ? "bg-green-500 text-white cursor-wait"
-              : "bg-green-600 text-white shadow-green-600/20 hover:bg-green-700 active:scale-[0.98]"
+              ? "bg-emerald-600 text-white cursor-wait"
+              : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30 hover:shadow-emerald-600/50 active:scale-[0.98]"
           )}
         >
           {downloading ? (
@@ -1331,12 +1327,12 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
           ) : (
             <>
               <Download className="w-4 h-4" />
-              Download Now
+              Download Free Asset
             </>
           )}
         </button>
         {downloading && (
-          <p className="text-xs text-green-600 text-center mt-2 animate-pulse">
+          <p className="text-xs text-emerald-400 text-center mt-2 animate-pulse">
             Preparing your file for download...
           </p>
         )}
@@ -1351,7 +1347,7 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
   const productSlug = targetProduct.slug || '';
 
   return (
-    <div className={cn("bg-zinc-900/95 rounded-3xl p-6 border border-zinc-800 shadow-2xl space-y-6 text-white", className)}>
+    <div className={cn("bg-[#0F172A] rounded-3xl p-6 border border-slate-800 shadow-2xl space-y-6 text-white", className)}>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           {isCeliteOriginal ? (
@@ -1363,17 +1359,17 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
               ✓ Verified Creator
             </span>
           )}
-          <span className="text-xs text-zinc-400 font-medium">Single Commercial License</span>
+          <span className="text-xs text-slate-400 font-medium">Single Commercial License</span>
         </div>
         <h3 className="text-xl font-black text-white line-clamp-2">{targetProduct.name}</h3>
       </div>
 
-      <div className="flex items-baseline gap-2 py-3 border-y border-zinc-800/80">
+      <div className="flex items-baseline gap-2 py-3 border-y border-slate-800">
         <span className="text-4xl font-black text-white">₹{price}</span>
-        <span className="text-xs text-zinc-400 font-medium">Pay-Per-Product • Instant Download</span>
+        <span className="text-xs text-slate-400 font-medium">Pay-Per-Product • Instant Download</span>
       </div>
 
-      <ul className="space-y-2.5 text-xs text-zinc-300 font-medium">
+      <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
         <li className="flex items-center gap-2">
           <Check className="w-4 h-4 text-sky-400 shrink-0" /> Full High-Res Source Asset Included
         </li>
@@ -1393,7 +1389,7 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
       </button>
 
       {/* Secondary Celite Subscription Cross-Promotion */}
-      <div className="pt-4 border-t border-zinc-800/80 text-center space-y-2">
+      <div className="pt-4 border-t border-slate-800 text-center space-y-2">
         {isSubActive ? (
           <p className="text-xs text-sky-300 font-medium">
             Active Celite Subscriber? Get unlimited downloads directly on{' '}
@@ -1403,7 +1399,7 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
           </p>
         ) : (
           <>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-slate-400">
               Want unlimited downloads for ₹499/month?
             </p>
             <a

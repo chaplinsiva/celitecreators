@@ -452,7 +452,7 @@ export default function VideoTemplatesClient({
               </button>
 
               {expandedSections.categories && (
-                <div className="space-y-1 pl-2 border-l border-zinc-200">
+                <div className="space-y-1 pl-2 border-l border-slate-800">
                   {categories.filter(cat => cat.id !== 'featured' && cat.id !== MUSIC_SFX_CATEGORY_ID && cat.id !== STOCK_PHOTOS_CATEGORY_ID).map(cat => (
                     <div key={cat.id}>
                       <button
@@ -465,14 +465,14 @@ export default function VideoTemplatesClient({
                         className={cn(
                           "block w-full text-left px-3 py-1.5 text-sm rounded-r-lg transition-colors border-l-2 -ml-[1px] cursor-pointer",
                           selectedCategory === cat.id
-                            ? "border-blue-600 bg-blue-50 text-blue-700 font-medium"
-                            : "border-transparent text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+                            ? "border-sky-500 bg-sky-950/50 text-sky-400 font-bold"
+                            : "border-transparent text-slate-300 hover:border-slate-700 hover:text-white"
                         )}
                       >
                         {cat.name}
                       </button>
                       {selectedCategory === cat.id && availableSubcategories.length > 0 && (
-                        <div className="ml-4 mt-1 space-y-1 border-l border-zinc-200 pl-2">
+                        <div className="ml-4 mt-1 space-y-1 border-l border-slate-800 pl-2">
                           <button
                             type="button"
                             onClick={() => {
@@ -482,8 +482,8 @@ export default function VideoTemplatesClient({
                             className={cn(
                               "block w-full text-left px-2 py-1 text-xs rounded-r transition-colors cursor-pointer",
                               selectedSubcategory === 'all'
-                                ? "text-blue-600 font-medium"
-                                : "text-zinc-500 hover:text-zinc-700"
+                                ? "text-sky-400 font-bold"
+                                : "text-slate-400 hover:text-white"
                             )}
                           >
                             All {cat.name}
@@ -491,9 +491,6 @@ export default function VideoTemplatesClient({
                           {availableSubcategories
                             .filter(subcat => subcat.category_id === cat.id)
                             .map(subcat => {
-                              // Count ALL templates in this subcategory (including those with sub-subcategories)
-                              const templateCount = initialTemplates.filter(t => t.subcategory_id === subcat.id).length;
-                              // Get sub-subcategories for THIS subcategory (not just the selected one)
                               const subSubcatsForThis = subSubcategories.filter(s => s.subcategory_id === subcat.id);
                               return (
                                 <div key={subcat.id}>
@@ -506,29 +503,27 @@ export default function VideoTemplatesClient({
                                     className={cn(
                                       "block w-full text-left px-2 py-1 text-xs rounded-r transition-colors flex items-center justify-between cursor-pointer",
                                       selectedSubcategory === subcat.id && selectedSubSubcategory === 'all'
-                                        ? "text-blue-600 font-medium"
-                                        : "text-zinc-500 hover:text-zinc-700"
+                                        ? "text-sky-400 font-bold"
+                                        : "text-slate-400 hover:text-white"
                                     )}
                                   >
                                     <span>{subcat.name}</span>
                                   </button>
                                   {selectedSubcategory === subcat.id && subSubcatsForThis.length > 0 && (
-                                    <div className="ml-4 mt-1 space-y-1 border-l border-zinc-200 pl-2">
+                                    <div className="ml-4 mt-1 space-y-1 border-l border-slate-800 pl-2">
                                       <button
                                         type="button"
                                         onClick={() => setSelectedSubSubcategory('all')}
                                         className={cn(
                                           "block w-full text-left px-2 py-1 text-[10px] rounded-r transition-colors cursor-pointer",
                                           selectedSubSubcategory === 'all'
-                                            ? "text-blue-600 font-medium"
-                                            : "text-zinc-500 hover:text-zinc-700"
+                                            ? "text-sky-400 font-bold"
+                                            : "text-slate-400 hover:text-white"
                                         )}
                                       >
                                         All {subcat.name}
                                       </button>
                                       {subSubcatsForThis.map(subSubcat => {
-                                        const subSubTemplateCount = initialTemplates.filter(t => t.sub_subcategory_id === subSubcat.id).length;
-                                        // Show sub-subcategory even if it has 0 templates (so users can see it exists)
                                         return (
                                           <button
                                             key={subSubcat.id}
@@ -537,8 +532,8 @@ export default function VideoTemplatesClient({
                                             className={cn(
                                               "block w-full text-left px-2 py-1 text-[10px] rounded-r transition-colors flex items-center justify-between cursor-pointer",
                                               selectedSubSubcategory === subSubcat.id
-                                                ? "text-blue-600 font-medium"
-                                                : "text-zinc-500 hover:text-zinc-700"
+                                                ? "text-sky-400 font-bold"
+                                                : "text-slate-400 hover:text-white"
                                             )}
                                           >
                                             <span>{subSubcat.name}</span>
@@ -638,8 +633,8 @@ export default function VideoTemplatesClient({
               <div className="text-center py-20">
                 <div className="max-w-md mx-auto">
                   <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-bold text-zinc-900 mb-2">No templates found</h3>
-                  <p className="text-zinc-500 mb-6">
+                  <h3 className="text-xl font-bold text-white mb-2">No templates found</h3>
+                  <p className="text-slate-400 mb-6">
                     {searchQuery.trim()
                       ? `No templates match your search "${searchQuery}"`
                       : selectedSubcategory !== 'all' && selectedSubcategory !== ''
@@ -649,7 +644,7 @@ export default function VideoTemplatesClient({
                   {searchQuery.trim() && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
+                      className="text-sky-400 hover:text-sky-300 font-bold"
                     >
                       Clear search
                     </button>
@@ -667,10 +662,14 @@ export default function VideoTemplatesClient({
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   disabled={currentPage === 1}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-100 text-zinc-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0F172A] border border-slate-800 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-sky-600 hover:text-white transition-all shadow-md"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
+
+                <span className="text-sm font-semibold text-slate-400">
+                  Page {currentPage} of {totalPages}
+                </span>
 
                 <button
                   onClick={() => {
@@ -678,7 +677,7 @@ export default function VideoTemplatesClient({
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   disabled={currentPage === totalPages}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-100 text-zinc-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0F172A] border border-slate-800 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-sky-600 hover:text-white transition-all shadow-md"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>

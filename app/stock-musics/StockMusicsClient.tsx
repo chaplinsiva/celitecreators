@@ -378,37 +378,37 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
         const selectedCount = selected.size;
 
         return (
-            <div className="border-b border-zinc-100 last:border-b-0">
+            <div className="border-b border-slate-800 last:border-b-0">
                 <button
                     onClick={() => toggleSection(id)}
-                    className="w-full flex items-center justify-between py-3 text-left hover:bg-zinc-50 transition-colors"
+                    className="w-full flex items-center justify-between py-3 text-left hover:bg-slate-800/50 transition-colors"
                 >
-                    <span className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
+                    <span className="text-sm font-bold text-white flex items-center gap-2">
                         {title}
                         {selectedCount > 0 && (
-                            <span className="px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
+                            <span className="px-2 py-0.5 text-xs bg-purple-950 text-purple-400 border border-purple-800 rounded-full font-bold">
                                 {selectedCount}
                             </span>
                         )}
                     </span>
-                    <ChevronDown className={cn("w-4 h-4 text-zinc-400 transition-transform", isExpanded && "rotate-180")} />
+                    <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform", isExpanded && "rotate-180")} />
                 </button>
                 {isExpanded && (
                     <div className="pb-3 space-y-1 max-h-48 overflow-y-auto">
                         {options.map(option => (
                             <label
                                 key={option}
-                                className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-zinc-50 cursor-pointer group"
+                                className="flex items-center gap-2 py-1.5 px-1 rounded hover:bg-slate-800/50 cursor-pointer group"
                             >
                                 <input
                                     type="checkbox"
                                     checked={selected.has(option)}
                                     onChange={() => onToggle(option)}
-                                    className="w-4 h-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                                    className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
                                 />
                                 <span className={cn(
                                     "text-sm transition-colors",
-                                    selected.has(option) ? "text-blue-700 font-medium" : "text-zinc-600 group-hover:text-zinc-900"
+                                    selected.has(option) ? "text-purple-400 font-bold" : "text-slate-300 group-hover:text-white"
                                 )}>
                                     {option}
                                 </span>
@@ -465,7 +465,7 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                     <Filter className="w-4 h-4 text-purple-400" />
                                     Filters
                                     {activeFilterCount > 0 && (
-                                        <span className="px-2 py-0.5 text-xs bg-purple-600 text-white rounded-full">
+                                        <span className="px-2 py-0.5 text-xs bg-purple-600 text-white rounded-full font-bold">
                                             {activeFilterCount}
                                         </span>
                                     )}
@@ -473,7 +473,7 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                 {hasActiveFilters && (
                                     <button
                                         onClick={clearAllFilters}
-                                        className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                                        className="text-xs text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1"
                                     >
                                         <X className="w-3 h-3" />
                                         Clear
@@ -481,7 +481,7 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                 )}
                             </div>
 
-                            <div className="divide-y divide-zinc-100">
+                            <div className="divide-y divide-slate-800">
                                 <FilterSection
                                     id="genre"
                                     title="Genre"
@@ -533,10 +533,10 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                         {/* Results Header */}
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                                <h2 className="text-xl font-bold text-zinc-900">Tracks</h2>
+                                <h2 className="text-xl font-bold text-white">Tracks</h2>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-zinc-500">
-                                <Volume2 className="w-4 h-4" />
+                            <div className="flex items-center gap-2 text-sm text-slate-400">
+                                <Volume2 className="w-4 h-4 text-purple-400" />
                                 <span className="hidden sm:inline">Hover to preview</span>
                             </div>
                         </div>
@@ -555,9 +555,9 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                             <div
                                                 key={template.slug}
                                                 className={cn(
-                                                    "group relative bg-white rounded-xl border border-zinc-200 overflow-hidden transition-all duration-300",
-                                                    isPlaying && "ring-2 ring-blue-500 shadow-lg shadow-blue-500/20",
-                                                    !isPlaying && "hover:shadow-md hover:border-zinc-300"
+                                                    "group relative bg-[#0F172A]/90 rounded-xl border border-slate-800/80 overflow-hidden transition-all duration-300 text-white",
+                                                    isPlaying && "ring-2 ring-purple-500 shadow-lg shadow-purple-500/20 border-purple-500/50",
+                                                    !isPlaying && "hover:shadow-md hover:border-slate-700"
                                                 )}
                                                 onMouseEnter={() => handleMouseEnter(template.slug, audioUrl)}
                                                 onMouseLeave={handleMouseLeave}
@@ -568,8 +568,8 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                                         className={cn(
                                                             "flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300",
                                                             isPlaying
-                                                                ? "bg-blue-600 text-white shadow-lg scale-105"
-                                                                : "bg-zinc-100 text-zinc-700 hover:bg-blue-600 hover:text-white hover:scale-105",
+                                                                ? "bg-purple-600 text-white shadow-lg scale-105"
+                                                                : "bg-slate-800 text-slate-200 hover:bg-purple-600 hover:text-white hover:scale-105",
                                                             isLoadingThis && "animate-pulse"
                                                         )}
                                                     >
@@ -589,34 +589,34 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                                                     </button>
 
                                                     <div className="flex-1 min-w-0">
-                                                        <h3 className="text-base font-semibold text-zinc-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                                                        <h3 className="text-base font-bold text-white line-clamp-1 group-hover:text-purple-400 transition-colors">
                                                             {template.name}
                                                         </h3>
                                                         {template.subtitle && (
-                                                            <p className="text-sm text-zinc-500 line-clamp-1 mt-0.5">{template.subtitle}</p>
+                                                            <p className="text-sm text-slate-300 line-clamp-1 mt-0.5">{template.subtitle}</p>
                                                         )}
                                                         {template.vendor_name && (
-                                                            <p className="text-xs text-zinc-400 mt-1">by {template.vendor_name}</p>
+                                                            <p className="text-xs text-slate-400 mt-1">by {template.vendor_name}</p>
                                                         )}
                                                     </div>
 
                                                     <div className="flex items-center gap-2 flex-shrink-0">
                                                         {isPlaying && (
-                                                            <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                                                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
+                                                            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-950 text-purple-400 border border-purple-800 rounded-full text-xs font-bold">
+                                                                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse" />
                                                                 Playing
                                                             </div>
                                                         )}
                                                         <button
                                                             onClick={(e) => handleDownload(template.slug, e)}
-                                                            className="p-2 text-zinc-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                            className="p-2 text-slate-300 hover:text-purple-400 hover:bg-slate-800 rounded-lg transition-all"
                                                             title="Download"
                                                         >
                                                             <Download className="w-5 h-5" />
                                                         </button>
                                                         <Link
                                                             href={`/product/${template.slug}`}
-                                                            className="px-4 py-2 text-sm font-medium text-zinc-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                            className="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-purple-400 hover:bg-slate-800 rounded-lg transition-all"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             View
@@ -626,7 +626,7 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
 
                                                 {isPlaying && (
                                                     <div
-                                                        className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-100 cursor-pointer"
+                                                        className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800 cursor-pointer"
                                                         onClick={(e) => handleSeek(e, template.slug)}
                                                         onMouseDown={(e) => e.stopPropagation()}
                                                     >
