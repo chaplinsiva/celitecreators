@@ -53,7 +53,10 @@
   - All Category Pages (`app/video-templates/`, `app/3d-models/`, `app/sound-effects/`, `app/stock-musics/`, `app/website-templates/`)
   - Product Details Pages (`app/product/[slug]/ProductDetails.tsx`)
   - Creator Shop Pages (`app/[shopSlug]/page.tsx` & `CreatorShopClient.tsx`)
-  - User Dashboard (`app/dashboard/DashboardClient.tsx`)
+- **Checkout Page (`app/checkout/page.tsx`):**
+  - Converted to Dark Studio theme (`#0B0F17` background, `#090D16` card box, `#0F172A` item sub-card).
+  - Displays high-resolution template thumbnail previews via `convertR2UrlToCdn(item.img)`.
+  - Updated billing & summary copy for **Pay-Per-Product Single Item Purchase** with lifetime access guarantees (`✓ Full High-Res Source File Included`, `✓ Permanent Lifetime Re-Download Access`).
 
 ### 3. Production Webhook & Domain Configuration
 - **Live Domain:** `https://celitemarket.in`

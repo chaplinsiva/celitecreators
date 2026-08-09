@@ -10,7 +10,8 @@ import { trackBeginCheckout, trackPurchase, trackSubscribe } from "../../lib/gta
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import { GlowingEffect } from "../../components/ui/glowing-effect";
 import { CountryCodeSelect } from "../../components/ui/CountryCodeSelect";
-import { cn } from "../../lib/utils";
+import { cn, convertR2UrlToCdn } from "../../lib/utils";
+import { Check, ShieldCheck, Lock, Download, Sparkles, ShoppingBag } from "lucide-react";
 
 type BillingDetails = {
   name: string;
@@ -150,16 +151,19 @@ function CheckoutContent() {
 
   if (!user) {
     return (
-      <main className="bg-background min-h-screen flex items-center justify-center py-12 px-4">
+      <main className="bg-[#0B0F17] min-h-screen flex items-center justify-center py-20 px-4 text-white">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white rounded-xl border-2 border-zinc-200 p-8 shadow-lg">
-            <h1 className="text-2xl font-bold text-zinc-900 mb-2">Sign in to checkout</h1>
-            <p className="text-zinc-600 mb-6">Please log in to complete your purchase</p>
+          <div className="bg-[#090D16] rounded-3xl border border-slate-800 p-8 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-sky-950/60 border border-sky-800 flex items-center justify-center mx-auto mb-4 text-sky-400">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-black text-white mb-2">Sign in to checkout</h1>
+            <p className="text-slate-400 text-sm mb-6 font-medium">Please log in to complete your pay-per-product purchase</p>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 text-white px-6 py-3 font-semibold hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center w-full rounded-2xl bg-sky-600 hover:bg-sky-500 text-white px-6 py-3.5 font-extrabold transition-all shadow-lg shadow-sky-600/30"
             >
-              Sign in
+              Sign In to Continue
             </Link>
           </div>
         </div>
@@ -170,16 +174,19 @@ function CheckoutContent() {
   // Show empty cart message only if not a subscription checkout
   if (cartCount === 0 && !subscriptionPlan) {
     return (
-      <main className="bg-background min-h-screen flex items-center justify-center py-12 px-4">
+      <main className="bg-[#0B0F17] min-h-screen flex items-center justify-center py-20 px-4 text-white">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white rounded-xl border-2 border-zinc-200 p-8 shadow-lg">
-            <h1 className="text-2xl font-bold text-zinc-900 mb-2">Your cart is empty</h1>
-            <p className="text-zinc-600 mb-6">Add templates to begin checkout</p>
+          <div className="bg-[#090D16] rounded-3xl border border-slate-800 p-8 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-slate-800/80 flex items-center justify-center mx-auto mb-4 text-slate-400">
+              <ShoppingBag className="w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-black text-white mb-2">Your cart is empty</h1>
+            <p className="text-slate-400 text-sm mb-6 font-medium">Select a creative template to begin purchase</p>
             <Link
               href="/"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 text-white px-6 py-3 font-semibold hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center w-full rounded-2xl bg-sky-600 hover:bg-sky-500 text-white px-6 py-3.5 font-extrabold transition-all shadow-lg shadow-sky-600/30"
             >
-              Browse templates
+              Browse Creative Assets
             </Link>
           </div>
         </div>
@@ -684,56 +691,60 @@ function CheckoutContent() {
   };
 
   return (
-    <main className="bg-background min-h-screen pt-24 pb-24 px-4 sm:px-6">
+    <main className="bg-[#0B0F17] min-h-screen pt-28 pb-24 px-4 sm:px-6 text-white">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black text-sky-600 mb-2 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">
             {subscriptionPlan ? 'Celite Subscription' : 'CELITE MARKET Checkout'}
           </h1>
-          <p className="text-zinc-600 font-medium">
+          <p className="text-slate-400 font-medium text-sm sm:text-base">
             {subscriptionPlan
               ? `Secure payment for ${subscriptionPlan === 'pongal_weekly' ? 'Pongal Weekly Offer' : subscriptionPlan === 'monthly' ? 'monthly' : 'yearly'} Pro subscription.`
-              : 'Pay-per-product purchase • Instant Cloudflare R2 source asset download link.'
+              : 'Pay-Per-Product Purchase • Instant Cloudflare R2 Source Asset Download & Lifetime Access'
             }
           </p>
         </div>
 
         <div className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-[1.7fr_1fr]">
           {/* Billing Form */}
-          <section className="bg-white rounded-xl border-2 border-zinc-200 p-6 sm:p-8">
+          <section className="bg-[#090D16] rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-2xl text-white">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Billing Details */}
               <div>
-                <h2 className="text-xl font-bold text-zinc-900 mb-4">Billing Details</h2>
+                <h2 className="text-xl font-extrabold text-white mb-4 flex items-center gap-2">
+                  <span>Billing Details</span>
+                </h2>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-semibold text-zinc-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Full Name
                     </label>
                     <input
                       value={billing.name}
                       onChange={(evt) => setBilling((prev) => ({ ...prev, name: evt.target.value }))}
-                      className="w-full px-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors"
+                      className="w-full px-4 py-3.5 bg-[#0F172A] border border-slate-800 rounded-xl text-white focus:border-sky-500 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
+                      placeholder="Your Full Name"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-zinc-700 mb-2">
-                      Email Address
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
+                      Email Address (for download links & access)
                     </label>
                     <input
                       type="email"
                       value={billing.email}
                       onChange={(evt) => setBilling((prev) => ({ ...prev, email: evt.target.value }))}
-                      className="w-full px-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors"
+                      className="w-full px-4 py-3.5 bg-[#0F172A] border border-slate-800 rounded-xl text-white focus:border-sky-500 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
+                      placeholder="you@example.com"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-zinc-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Mobile Number
                     </label>
                     <div className="flex">
@@ -745,30 +756,29 @@ function CheckoutContent() {
                         type="tel"
                         value={billing.mobile}
                         onChange={(evt) => {
-                          // Only allow digits for phone number (country code is separate)
                           const value = evt.target.value.replace(/\D/g, '');
                           if (value.length <= 15) {
                             setBilling((prev) => ({ ...prev, mobile: value }));
                           }
                         }}
-                        className="flex-1 min-w-0 px-4 py-3 border-2 border-zinc-200 border-l-0 rounded-r-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors"
+                        className="flex-1 min-w-0 px-4 py-3.5 bg-[#0F172A] border border-slate-800 border-l-0 rounded-r-xl text-white focus:border-sky-500 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
                         placeholder="9876543210"
                         maxLength={15}
                         required
                       />
                     </div>
-                    <p className="text-xs text-zinc-500 mt-1">Select your country code from the dropdown</p>
+                    <p className="text-xs text-slate-400 mt-1">Direct SMS updates for order verification</p>
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-semibold text-zinc-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Company / Studio (optional)
                     </label>
                     <input
                       value={billing.company}
                       onChange={(evt) => setBilling((prev) => ({ ...prev, company: evt.target.value }))}
-                      className="w-full px-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors"
-                      placeholder="Celite Productions"
+                      className="w-full px-4 py-3.5 bg-[#0F172A] border border-slate-800 rounded-xl text-white focus:border-sky-500 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
+                      placeholder="Celite Studios / Production"
                     />
                   </div>
                 </div>
@@ -776,73 +786,71 @@ function CheckoutContent() {
 
               {/* Payment Info */}
               <div>
-                <h2 className="text-xl font-bold text-zinc-900 mb-4">Payment</h2>
-                <div className="bg-blue-50 border-2 border-blue-100 rounded-lg p-4">
+                <h2 className="text-xl font-extrabold text-white mb-4">Payment & Access</h2>
+                <div className="bg-sky-950/40 border border-sky-800/80 rounded-2xl p-5 text-sky-200">
                   <div className="flex items-start gap-3">
+                    <ShieldCheck className="w-6 h-6 text-sky-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm text-zinc-700 font-medium mb-1">Secure Payment</p>
-                      <p className="text-sm text-zinc-600">
-                        Payment will be processed securely through Razorpay. You'll be redirected to a secure payment gateway.
+                      <p className="text-sm text-white font-bold mb-1">Razorpay Secured Gateway</p>
+                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                        Payment is processed securely via Razorpay (UPI, Credit/Debit Card, Netbanking). Once completed, download access is activated instantly on your product page and Celite Dashboard.
                       </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Currency Toggle */}
-                <div className="mt-4">
-                  <label className="block text-sm font-semibold text-zinc-700 mb-2">Payment Currency</label>
-                  <div className="bg-zinc-100 p-1 rounded-xl flex items-center border border-zinc-200 w-fit">
+                <div className="mt-5">
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">Payment Currency</label>
+                  <div className="bg-[#0F172A] p-1.5 rounded-2xl flex items-center border border-slate-800 w-fit">
                     <button
                       type="button"
                       onClick={() => setCurrency('INR')}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${currency === 'INR'
-                        ? 'bg-white text-zinc-900 shadow-sm'
-                        : 'text-zinc-500 hover:text-zinc-700'
-                        }`}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-xs font-extrabold transition-all",
+                        currency === 'INR'
+                          ? "bg-sky-600 text-white shadow-md"
+                          : "text-slate-400 hover:text-white"
+                      )}
                     >
                       🇮🇳 INR (₹)
                     </button>
                     <button
                       type="button"
                       onClick={() => setCurrency('USD')}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${currency === 'USD'
-                        ? 'bg-white text-zinc-900 shadow-sm'
-                        : 'text-zinc-500 hover:text-zinc-700'
-                        }`}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-xs font-extrabold transition-all",
+                        currency === 'USD'
+                          ? "bg-sky-600 text-white shadow-md"
+                          : "text-slate-400 hover:text-white"
+                      )}
                     >
                       🌍 USD ($)
                     </button>
                   </div>
                   {currency === 'USD' && (
-                    <p className="text-xs text-green-600 mt-2 font-medium flex items-center gap-1">
-                      <span>✓</span> PayPal & international cards available with USD
+                    <p className="text-xs text-emerald-400 mt-2 font-medium flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> International cards & PayPal supported in USD
                     </p>
                   )}
                 </div>
               </div>
 
               {/* Terms */}
-              <div className="space-y-3">
-                <label className="flex items-start gap-3 text-sm text-zinc-700">
+              <div className="space-y-3 pt-2">
+                <label className="flex items-start gap-3 text-xs sm:text-sm text-slate-300 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="mt-0.5 shrink-0 w-4 h-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                    className="mt-0.5 shrink-0 w-4 h-4 rounded border-slate-800 bg-[#0F172A] text-sky-500 focus:ring-sky-500"
                     required
                   />
-                  <span>I agree to the Celite license and understand templates include one brand deployment.</span>
-                </label>
-                <label className="flex items-start gap-3 text-sm text-zinc-700">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 shrink-0 w-4 h-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>Email me about new template drops.</span>
+                  <span>I agree to Celite Market terms. Single commercial project usage included per purchase.</span>
                 </label>
               </div>
 
               {/* Error Message */}
               {paymentError && (
-                <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 text-sm text-red-600">
+                <div className="bg-rose-950/80 border border-rose-800 rounded-xl p-4 text-sm text-rose-300 font-medium">
                   {paymentError}
                 </div>
               )}
@@ -851,118 +859,122 @@ function CheckoutContent() {
               <button
                 type="submit"
                 disabled={processing}
-                className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl text-base"
+                className="w-full bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-2xl font-extrabold shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-base active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                {processing ? 'Processing…' : `Pay ${formatPriceWithDecimal(subtotal, currency)}`}
+                {processing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Processing Payment…</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4 fill-white" />
+                    <span>Pay {formatPriceWithDecimal(subtotal, currency)} & Download Asset</span>
+                  </>
+                )}
               </button>
             </form>
           </section>
 
-          {/* Order Summary */}
-          <aside className="bg-white rounded-xl border-2 border-zinc-200 p-6 sm:p-8 h-fit">
-            <h2 className="text-xl font-bold text-zinc-900 mb-4">
-              {subscriptionPlan ? 'Subscription Summary' : 'Order Summary'}
-            </h2>
+          {/* Order Summary Sidebar */}
+          <aside className="bg-[#090D16] rounded-3xl border border-slate-800 p-6 sm:p-8 text-white shadow-2xl h-fit space-y-6">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-950 text-sky-400 border border-sky-800 text-[10px] font-extrabold uppercase tracking-wider mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                Pay-Per-Product Purchase
+              </div>
+              <h2 className="text-xl font-black text-white">
+                {subscriptionPlan ? 'Subscription Summary' : 'Order Summary'}
+              </h2>
+            </div>
 
             {subscriptionPlan ? (
               <div className="space-y-4">
-                <div className="flex justify-between items-start py-3 border-b border-zinc-200">
+                <div className="flex justify-between items-start py-3 border-b border-slate-800">
                   <div className="flex-1">
-                    <p className="font-semibold text-zinc-900">
+                    <p className="font-bold text-white text-base">
                       {subscriptionPlan === 'pongal_weekly' ? 'Pongal Weekly Offer' : subscriptionPlan === 'monthly' ? 'Monthly' : 'Yearly'} Pro
                     </p>
-                    <p className="text-sm text-zinc-600">
+                    <p className="text-xs text-slate-400 mt-1">
                       {subscriptionPlan === 'pongal_weekly' ? '3 downloads per week for 3 weeks' : 'Unlimited access to all templates'}
                     </p>
-                    {subscriptionPlan === 'pongal_weekly' && (
-                      <div className="mt-2">
-                        <span className="inline-block px-2 py-1 bg-gradient-to-r from-yellow-100 to-amber-100 text-amber-700 text-xs font-semibold rounded border border-amber-200">
-                          🎉 Pongal Offer
-                        </span>
-                      </div>
-                    )}
-                    {subscriptionPlan === 'monthly' && (
-                      <div className="mt-2">
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                          Limited Offer
-                        </span>
-                      </div>
-                    )}
                   </div>
                   <div className="text-right">
-                    {subscriptionPlan === 'monthly' && (
-                      <p className="text-sm text-zinc-500 line-through mb-1">
-                        {currency === 'USD' ? '$14.99' : '₹899'}
-                      </p>
-                    )}
-                    <p className="font-bold text-zinc-900">
+                    <p className="font-extrabold text-sky-400 text-lg">
                       {formatPriceWithDecimal(subscriptionPrice || 0, currency)}
                     </p>
                   </div>
                 </div>
-
-                <div className="space-y-2 pt-2">
-                  {subscriptionPlan === 'pongal_weekly' ? (
-                    <>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">3 Downloads per week (limit)</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">Valid for 3 weeks</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">Auto-renewal with autopay</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">All Premium Templates</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">Unlimited downloads</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">New templates weekly</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm text-zinc-600">Priority support</span>
-                      </div>
-                    </>
-                  )}
-                </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {cartItems.map((item) => (
-                  <div key={item.slug} className="flex gap-4 py-3 border-b border-zinc-200">
-                    <img
-                      src={item.img}
-                      alt={item.name}
-                      className="w-20 h-20 shrink-0 object-cover rounded-lg"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-zinc-900 text-sm truncate">{item.name}</p>
-                      <p className="text-sm text-zinc-600 mt-1">{formatPriceWithDecimal(item.price, currency)}</p>
+                {cartItems.map((item) => {
+                  const itemImgCdn = convertR2UrlToCdn(item.img) || item.img || '/PNG1.png';
+                  return (
+                    <div key={item.slug} className="flex gap-4 p-3 bg-[#0F172A] border border-slate-800/80 rounded-2xl">
+                      {/* Rich Thumbnail Container */}
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-[#090D16] rounded-xl overflow-hidden border border-slate-800 relative">
+                        <img
+                          src={itemImgCdn}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = '/PNG1.png';
+                          }}
+                        />
+                      </div>
+
+                      {/* Item Details */}
+                      <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                        <div>
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-extrabold mb-1">
+                            ✓ Lifetime Access
+                          </span>
+                          <p className="font-bold text-white text-sm sm:text-base line-clamp-2 leading-tight">
+                            {item.name}
+                          </p>
+                        </div>
+
+                        <div className="mt-2 flex items-baseline justify-between">
+                          <span className="text-xs text-slate-400 font-medium">Pay-Per-Product</span>
+                          <span className="text-lg font-black text-sky-400">
+                            {formatPriceWithDecimal(item.price, currency)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
+            {/* Access Guarantees */}
+            <div className="pt-2 border-t border-slate-800 space-y-2 text-xs text-slate-300 font-medium">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-sky-400 shrink-0" /> Full High-Res Source File Included
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-sky-400 shrink-0" /> Permanent Lifetime Re-Download Access
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-sky-400 shrink-0" /> Instant Access Link Delivered via Email
+              </div>
+            </div>
+
             {/* Total */}
-            <div className="mt-6 pt-4 border-t-2 border-zinc-300">
+            <div className="pt-4 border-t border-slate-800">
               <div className="flex justify-between items-center">
-                <span className="text-lg font-bold text-zinc-900">Total</span>
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="text-base font-extrabold text-white">Total Amount</span>
+                <span className="text-3xl font-black text-sky-400">
                   {formatPriceWithDecimal(subtotal, currency)}
                 </span>
               </div>
             </div>
 
             {/* Security Badge */}
-            <div className="mt-6 flex items-center gap-2 text-xs text-zinc-500">
-              <span>Secured by Razorpay</span>
+            <div className="pt-2 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium">
+              <Lock className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Secured by 256-bit SSL & Razorpay</span>
             </div>
           </aside>
         </div>

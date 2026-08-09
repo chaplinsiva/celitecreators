@@ -91,12 +91,12 @@ export function CountryCodeSelect({ value, onChange }: CountryCodeSelectProps) {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1.5 px-3 py-3 border-2 border-zinc-200 border-r-0 rounded-l-lg bg-zinc-50 hover:bg-zinc-100 transition-colors min-w-[90px]"
+                className="flex items-center gap-1.5 px-3 py-3 border border-slate-800 border-r-0 rounded-l-xl bg-[#0F172A] hover:bg-slate-800/80 transition-colors min-w-[95px] text-white"
             >
                 <span className="text-xl">{selected.flag}</span>
-                <span className="text-sm font-medium text-zinc-700">{selected.code}</span>
+                <span className="text-sm font-semibold text-slate-200">{selected.code}</span>
                 <svg
-                    className={`w-4 h-4 text-zinc-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -106,23 +106,23 @@ export function CountryCodeSelect({ value, onChange }: CountryCodeSelectProps) {
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 top-full left-0 mt-1 w-64 bg-white border-2 border-zinc-200 rounded-lg shadow-xl max-h-72 overflow-hidden">
+                <div className="absolute z-50 top-full left-0 mt-1 w-64 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl max-h-72 overflow-hidden text-white">
                     {/* Search input */}
-                    <div className="p-2 border-b border-zinc-100">
+                    <div className="p-2.5 border-b border-slate-800/80">
                         <input
                             ref={inputRef}
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search country..."
-                            className="w-full px-3 py-2 text-sm border border-zinc-200 rounded-md focus:border-blue-500 focus:ring-0 outline-none"
+                            className="w-full px-3 py-2 text-sm bg-[#090D16] border border-slate-800 rounded-xl text-white placeholder:text-slate-500 focus:border-sky-500 outline-none"
                         />
                     </div>
 
                     {/* Country list */}
-                    <div className="overflow-y-auto max-h-52">
+                    <div className="overflow-y-auto max-h-52 divide-y divide-slate-800/40">
                         {filtered.length === 0 ? (
-                            <div className="px-3 py-4 text-sm text-zinc-500 text-center">No countries found</div>
+                            <div className="px-3 py-4 text-sm text-slate-400 text-center">No countries found</div>
                         ) : (
                             filtered.map((country) => (
                                 <button
@@ -133,12 +133,12 @@ export function CountryCodeSelect({ value, onChange }: CountryCodeSelectProps) {
                                         setIsOpen(false);
                                         setSearch("");
                                     }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 hover:bg-blue-50 transition-colors ${country.code === value ? "bg-blue-50" : ""
+                                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 transition-colors ${country.code === value ? "bg-slate-800/80 text-sky-400 font-bold" : "text-slate-200"
                                         }`}
                                 >
                                     <span className="text-xl">{country.flag}</span>
-                                    <span className="text-sm text-zinc-900 flex-1 text-left">{country.name}</span>
-                                    <span className="text-sm text-zinc-500">{country.code}</span>
+                                    <span className="text-sm flex-1 text-left truncate">{country.name}</span>
+                                    <span className="text-xs text-slate-400 font-mono">{country.code}</span>
                                 </button>
                             ))
                         )}
