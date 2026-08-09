@@ -502,7 +502,7 @@ function DashboardContent() {
               rel="noreferrer"
               className="inline-flex items-center text-sm font-bold text-sky-400 hover:text-sky-300 hover:underline"
             >
-              celite.in/{creatorShop.slug}
+              celitemarket.in/{creatorShop.slug}
             </a>
             <div className="mt-8 rounded-2xl border border-dashed border-slate-800 bg-[#090D16] px-6 py-10 text-center text-sm text-slate-400 font-medium">
               Seller Dashboard & Analytics. Manage your uploaded assets and view payout statistics.

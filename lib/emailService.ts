@@ -77,7 +77,7 @@ export const emailTemplates = {
               <li>Commercial license</li>
               <li>Priority support</li>
             </ul>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celite.netlify.app'}/dashboard" class="button">Go to Dashboard</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitemarket.in'}/dashboard" class="button">Go to Dashboard</a>
             <p style="margin-top: 30px; color: #666; font-size: 14px;">If you have any questions, feel free to reach out to our support team.</p>
             <p style="color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
           </div>
@@ -116,7 +116,7 @@ export const emailTemplates = {
               <li>Next billing date: ${new Date(nextBillingDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</li>
             </ul>
             <p>Your subscription continues to be active. Thank you for being a valued member!</p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celite.netlify.app'}/dashboard" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">View Dashboard</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitemarket.in'}/dashboard" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">View Dashboard</a>
             <p style="margin-top: 30px; color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
           </div>
         </div>
@@ -269,7 +269,7 @@ export const emailTemplates = {
             <p>Hi ${userName},</p>
             <p>This is a friendly reminder that your Celite <strong>${plan === 'monthly' ? 'Monthly' : plan === 'yearly' ? 'Yearly' : 'Pongal Weekly'}</strong> subscription will expire on <strong>${new Date(expiryDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</strong>.</p>
             <p>To continue enjoying unlimited access to premium templates, please renew your subscription before it expires.</p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celite.netlify.app'}/pricing" class="button">Renew Subscription</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitemarket.in'}/pricing" class="button">Renew Subscription</a>
             <p style="margin-top: 30px; color: #666; font-size: 14px;">If you have any questions, feel free to reach out to our support team.</p>
             <p style="color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
           </div>
@@ -334,7 +334,7 @@ export const emailTemplates = {
             <p>We're sorry to see you go. Your <strong>${plan === 'monthly' ? 'Monthly' : plan === 'yearly' ? 'Yearly' : 'Pongal Weekly'}</strong> subscription has been cancelled.</p>
             ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
             <p>We'd love to have you back! If you change your mind, you can resubscribe anytime:</p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitecreators.in'}/pricing" class="button">Resubscribe Now</a>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitemarket.in'}/pricing" class="button">Resubscribe Now</a>
             <p style="margin-top: 30px; color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
           </div>
         </div>
@@ -344,7 +344,7 @@ export const emailTemplates = {
   }),
 
   productPurchase: (userName: string, items: Array<{ name: string; slug: string; price: number }>, totalAmount: number) => {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://celitecreators.in';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://celitemarket.in';
     const mainItem = items[0];
     const itemsHtml = items.map(item => `
       <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
