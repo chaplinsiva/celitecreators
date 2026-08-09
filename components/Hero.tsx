@@ -1,10 +1,143 @@
 "use client";
 
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, ShoppingBag, ShieldCheck, Sparkles, Star, Download, Layers } from 'lucide-react';
+import { getSupabaseBrowserClient } from '@/lib/supabaseClient';
+import { convertR2UrlToCdn } from '@/lib/utils';
+import { Zap, ShoppingBag, ShieldCheck, Sparkles, Download, Play } from 'lucide-react';
+
+type RealVideoTemplate = {
+  slug: string;
+  name: string;
+  subtitle?: string | null;
+  video_path: string | null;
+  img?: string | null;
+  thumbnail_path?: string | null;
+};
+
+// REAL CELITE MARKET TEMPLATES WITH REAL CDN MP4 VIDEO & THUMBNAIL PREVIEWS
+const REAL_MARKETPLACE_TEMPLATES: RealVideoTemplate[] = [
+  {
+    slug: 'bum-baa-diga-lyrical-after-effects-template',
+    name: 'Bum Baa Diga Lyrical',
+    subtitle: 'Lyrical Video Template',
+    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/movie-templates/bum-baa-diga-lyrical-after-effects-template/bum-baa-diga-lyrical-after-effects-template.mp4',
+    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/movie-templates/bum-baa-diga-lyrical-after-effects-template/bum-baa-diga-lyrical-after-effects-template.jpg'
+  },
+  {
+    slug: 'classic-ivory-save-date-template',
+    name: 'Classic Ivory Save Date',
+    subtitle: 'Wedding Save Date',
+    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/save-date/classic-ivory-save-date-template/classic-ivory-save-date-template.mp4',
+    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/save-date/classic-ivory-save-date-template/classic-ivory-save-date-template.jpg'
+  },
+  {
+    slug: '3d-parallax-intro',
+    name: '3D Parallax Intro',
+    subtitle: '3D Motion Graphics',
+    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/motion-graphics/3d-parallax-intro/3d-parallax-intro.mp4',
+    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/motion-graphics/3d-parallax-intro/3d-parallax-intro.jpg'
+  }
+];
+
+function PreviewCard({ template, isFeatured = false }: { template: RealVideoTemplate; isFeatured?: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  
+  const rawVideo = template.video_path;
+  const videoUrl = rawVideo ? convertR2UrlToCdn(rawVideo) : null;
+  const rawThumb = template.thumbnail_path || template.img;
+  const posterUrl = rawThumb ? convertR2UrlToCdn(rawThumb) : undefined;
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (videoRef.current && videoUrl) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  return (
+    <Link
+      href={`/product/${template.slug}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`group relative flex flex-col rounded-xl bg-[#0F172A]/90 border border-slate-800/80 overflow-hidden shadow-xl hover:border-sky-500/50 hover:shadow-sky-500/10 transition-all duration-300 ${
+        isFeatured ? 'col-span-2 sm:col-span-2' : 'col-span-1'
+      }`}
+    >
+      {/* Clean Media Box - No unwanted text overlays on video */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-950">
+        {videoUrl ? (
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            poster={posterUrl || undefined}
+            autoPlay={isFeatured}
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <img
+            src={posterUrl || undefined}
+            alt={template.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        )}
+      </div>
+
+      {/* Clean Minimal Title Bar Below Video */}
+      <div className="p-2.5 sm:p-3 flex items-center justify-between bg-[#0D111A] border-t border-slate-800/60">
+        <div className="min-w-0 pr-2">
+          <p className="text-xs font-bold text-white truncate group-hover:text-sky-400 transition-colors">
+            {template.name}
+          </p>
+          <p className="text-[10px] text-slate-400 font-medium truncate">
+            {template.subtitle || 'Real Template Preview'}
+          </p>
+        </div>
+        <div className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 group-hover:bg-sky-500 group-hover:text-white transition-colors shrink-0">
+          <Play className="w-3 h-3 fill-current" />
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export default function Hero() {
+  const [templates, setTemplates] = useState<RealVideoTemplate[]>(REAL_MARKETPLACE_TEMPLATES);
+
+  // Fetch 3 real approved templates with video_path from Supabase
+  useEffect(() => {
+    const fetchThreeTemplates = async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data, error } = await supabase
+          .from('templates')
+          .select('slug, name, subtitle, video_path, img, thumbnail_path, status')
+          .eq('status', 'approved')
+          .not('video_path', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (data && data.length >= 3) {
+          setTemplates(data);
+        }
+      } catch (err) {
+        console.error('Error loading real 3 templates:', err);
+      }
+    };
+
+    fetchThreeTemplates();
+  }, []);
+
   return (
     <section className="relative w-full pt-4 pb-4 md:pt-6 md:pb-6 px-4 sm:px-6 bg-[#0B0F17] overflow-hidden">
       {/* Background Ambient Mesh Light FX */}
@@ -18,7 +151,7 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
           {/* Left Column: Headline, Value Proposition & Actions */}
-          <div className="lg:col-span-7 space-y-4 text-left">
+          <div className="lg:col-span-6 space-y-4 text-left">
             
             {/* Category Tag Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 text-xs font-bold shadow-sm">
@@ -63,7 +196,7 @@ export default function Hero() {
                   <div className="p-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
                     <ShieldCheck className="w-3 h-3" />
                   </div>
-                  Commercial License Included
+                  Commercial License
                 </span>
                 <span className="flex items-center gap-1.5">
                   <div className="p-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
@@ -99,48 +232,17 @@ export default function Hero() {
 
           </div>
 
-          {/* Right Column: Compact Cinematic Widescreen Glass Showcase */}
+          {/* Right Column: 3 Stylish Real Template Preview Cards */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.15, duration: 0.4 }}
-            className="lg:col-span-5 relative"
+            className="lg:col-span-6 relative"
           >
-            <div className="relative rounded-2xl bg-[#0F172A]/90 backdrop-blur-2xl border border-slate-800/80 p-2 sm:p-3 shadow-2xl group hover:border-slate-700/80 transition-all duration-500">
-              
-              {/* Media Preview Container */}
-              <div className="relative aspect-[16/10] rounded-xl overflow-hidden shadow-inner group">
-                <img
-                  src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&q=80"
-                  alt="Celite Market Creative Editing Studio Workstation"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                
-                {/* Gradient Shading */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-transparent to-transparent opacity-80" />
-
-                {/* Top Badge: Rating */}
-                <div className="absolute top-3 right-3 bg-[#0F172A]/90 backdrop-blur-xl border border-slate-700/80 px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-xl flex items-center gap-1.5">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  <span>4.9 / 5 Rating</span>
-                </div>
-
-                {/* Bottom Overlay Label */}
-                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-lg bg-[#0B0F17]/85 backdrop-blur-md border border-slate-800/80 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">
-                      <Layers className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">4K After Effects &amp; 3D Packs</p>
-                      <p className="text-[10px] text-slate-400 font-medium">Ready-to-use source project files</p>
-                    </div>
-                  </div>
-                  <div className="px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-400 text-[10px] font-extrabold border border-sky-500/30">
-                    Verified
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {templates.slice(0, 3).map((tpl, i) => (
+                <PreviewCard key={tpl.slug || i} template={tpl} isFeatured={i === 0} />
+              ))}
             </div>
           </motion.div>
 
