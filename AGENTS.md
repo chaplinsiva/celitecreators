@@ -29,6 +29,40 @@
 
 ---
 
+## Detailed Summary of Recent Architecture & Feature Changes
+
+### 1. Pay-Per-Product Model & Email Access Pipeline
+- **Payment Verification & Email Trigger:** In `app/api/payments/razorpay/verify/route.ts`, after Razorpay payment verification succeeds and order items are inserted into `orders` and `order_items` tables, `sendProductPurchaseEmail(...)` is triggered from `lib/emailService.ts`.
+- **HTML Email Template:** Sends rich order receipts with direct product access URLs (`https://celitemarket.in/product/[slug]`) and a button to view purchases in the Celite Dashboard (`https://celitemarket.in/dashboard`). Sends an admin notification copy to `celiteproofficial@gmail.com`.
+- **Download Authorization Endpoint (`app/api/download/[slug]/route.ts`):** Checks user purchase history in `orders` & `order_items` (`status = 'paid'`). If the user purchased the item once, single-product download access is granted permanently without requiring a subscription.
+- **Product Details Page (`app/product/[slug]/ProductDetails.tsx`):**
+  - Checks if logged-in user owns the template.
+  - Displays **`✓ Lifetime Access Owned`** badge and **`Re-Download File`** button when owned.
+- **User Dashboard (`app/dashboard/DashboardClient.tsx`):**
+  - Completely stripped of subscription upgrade banners, plan badges, and cancellation modals.
+  - Dedicated to **"My Lifetime Purchased Assets"**, allowing instant single-click re-downloads and account settings (Profile & Password management).
+
+### 2. Dark Studio Visual Design & High-Contrast Typography
+- **Design System:** Standardized Dark Studio aesthetic across the application.
+  - Base Background: `#0B0F17` (Deep Dark Studio)
+  - Hero & Section Containers: `#090D16` (Dark Glassmorphic Cards with `border-slate-800`)
+  - Item Cards & Sub-cards: `#0F172A` with hover scaling & sky blue accents (`#0284C7` / `text-sky-400`)
+  - High-Contrast Text: Crisp white (`text-white`) for headings, sky blue (`text-sky-400`) for interactive elements, and slate (`text-slate-300` / `text-slate-400`) for body/meta text.
+- **Updated Pages & Components:**
+  - Storefront & Hero (`components/Hero.tsx`, `components/CategoriesSection.tsx`, `components/Footer.tsx`)
+  - All Category Pages (`app/video-templates/`, `app/3d-models/`, `app/sound-effects/`, `app/stock-musics/`, `app/website-templates/`)
+  - Product Details Pages (`app/product/[slug]/ProductDetails.tsx`)
+  - Creator Shop Pages (`app/[shopSlug]/page.tsx` & `CreatorShopClient.tsx`)
+  - User Dashboard (`app/dashboard/DashboardClient.tsx`)
+
+### 3. Production Webhook & Domain Configuration
+- **Live Domain:** `https://celitemarket.in`
+- **Razorpay Webhook Endpoint:** `https://celitemarket.in/api/razorpay/webhook`
+- **Supported Webhook Events:** `payment.captured`, `order.paid`, `payment.failed`
+- Updated all email templates, dashboard links, and site metadata to reflect `celitemarket.in`.
+
+---
+
 ## MCP Server Integrations (MANDATORY TOOLING)
 - **Supabase MCP Server (`supabase`):** Utilized for database schema management, table listings, SQL execution, migrations, edge functions, and TypeScript type generation.
 - **Stitch MCP Server (`stitch`):** Utilized for UI screen generation, design system configuration, layout variants, and visual explorations.
