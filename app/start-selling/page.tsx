@@ -155,91 +155,93 @@ export default function StartSellingPage() {
   };
 
   return (
-    <main className="bg-zinc-50 min-h-screen pt-24 pb-20 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-zinc-200 shadow-sm p-6 sm:p-10">
-        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-2">
-          Start selling on Celite
-        </h1>
-        <p className="text-sm sm:text-base text-zinc-500 mb-6">
-          Create your creator hub with a unique link like{" "}
-          <span className="font-mono text-xs sm:text-sm text-zinc-700 bg-zinc-50 px-2 py-1 rounded">
-            celite.in/{previewSlug}
-          </span>
-        </p>
+    <main className="bg-[#0B0F17] min-h-screen pt-28 pb-20 px-4 text-white">
+      <div className="max-w-3xl mx-auto bg-[#090D16] rounded-3xl border border-slate-800 shadow-2xl p-6 sm:p-10 space-y-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight">
+            Start Selling on Celite Market
+          </h1>
+          <p className="text-sm sm:text-base text-slate-400 font-medium">
+            Create your verified creator shop with a direct storefront link:{" "}
+            <span className="font-mono text-xs sm:text-sm text-sky-400 bg-[#0F172A] border border-slate-800 px-3 py-1 rounded-xl inline-block mt-1 sm:mt-0 font-bold">
+              celitemarket.in/{previewSlug}
+            </span>
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-zinc-800 mb-2">
-              Shop name
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Shop Name
             </label>
             <input
               type="text"
               value={shopName}
               onChange={(e) => setShopName(e.target.value)}
               placeholder="e.g., DT Studios"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all font-medium"
               required
             />
-            <p className="mt-1 text-xs text-zinc-500">
-              This controls your public name and URL slug.
+            <p className="mt-1 text-xs text-slate-400">
+              This controls your public studio name and shop URL slug.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-zinc-800 mb-2">
-              Description
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Studio Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tell buyers what you create and sell."
+              placeholder="Tell buyers what After Effects templates, sound effects, or 3D models you create."
               rows={4}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
+              className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all resize-none font-medium"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-zinc-800 mb-2">
-                Bank account name
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Bank Account Name
               </label>
               <input
                 type="text"
                 value={bankAccountName}
                 onChange={(e) => setBankAccountName(e.target.value)}
                 placeholder="Name on bank account"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-zinc-800 mb-2">
-                Bank account number
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Bank Account Number
               </label>
               <input
                 type="text"
                 value={bankAccountNumber}
                 onChange={(e) => setBankAccountNumber(e.target.value)}
                 placeholder="Account number"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-zinc-800 mb-2">
-                IFSC code
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                IFSC Code
               </label>
               <input
                 type="text"
                 value={bankIfsc}
                 onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
-                placeholder="IFSC"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                placeholder="IFSC Code"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-zinc-800 mb-2">
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
                 UPI ID (optional)
               </label>
               <input
@@ -247,37 +249,37 @@ export default function StartSellingPage() {
                 value={bankUpiId}
                 onChange={(e) => setBankUpiId(e.target.value)}
                 placeholder="yourname@upi"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder:text-slate-500 focus:border-sky-500 outline-none transition-all font-medium"
               />
             </div>
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-2">
+            <p className="text-sm text-rose-300 bg-rose-950/80 border border-rose-800 rounded-xl px-4 py-3 font-medium">
               {error}
             </p>
           )}
 
           {message && (
-            <p className="text-sm text-green-600 bg-green-50 border border-green-100 rounded-xl px-4 py-2">
+            <p className="text-sm text-emerald-300 bg-emerald-950/80 border border-emerald-800 rounded-xl px-4 py-3 font-medium">
               {message}
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-2">
-            <div className="text-xs text-zinc-500">
-              Your public page will be:
-              <span className="ml-1 font-mono text-[11px] text-zinc-700">
-                celite.in/{previewSlug}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-800">
+            <div className="text-xs text-slate-400 font-medium">
+              Your public storefront page:
+              <span className="ml-1.5 font-mono text-xs text-sky-400 font-bold">
+                celitemarket.in/{previewSlug}
               </span>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 hover:bg-sky-500 text-white px-7 py-3.5 text-sm font-extrabold shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
-              {loading ? "Saving..." : existingSlug ? "Update shop" : "Create shop"}
+              {loading ? "Saving Profile..." : existingSlug ? "Update Shop" : "Create Creator Shop"}
             </button>
           </div>
         </form>

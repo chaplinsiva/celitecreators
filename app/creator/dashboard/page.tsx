@@ -1077,7 +1077,7 @@ export default function CreatorDashboardPage() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center rounded-full bg-indigo-950 text-indigo-200 border border-indigo-800 px-3 py-1 text-[11px] font-semibold hover:bg-indigo-900 transition-colors"
                         >
-                          celite.in/{shop.slug} (Subscription)
+                          celitemarket.in/{shop.slug}
                         </a>
                       )}
                     </div>
@@ -1187,7 +1187,7 @@ export default function CreatorDashboardPage() {
                             <div className="pt-1 border-t border-zinc-200/60">
                               <span className="text-[10px] uppercase font-bold text-indigo-600 block">Celite Subscription Profile:</span>
                               <a href={`https://celitemarket.in/${shop.slug}`} target="_blank" rel="noopener noreferrer" className="text-indigo-700 hover:underline font-semibold break-all">
-                                celite.in/{shop.slug}
+                                celitemarket.in/{shop.slug}
                               </a>
                             </div>
                           )}
