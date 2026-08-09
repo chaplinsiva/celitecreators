@@ -118,23 +118,23 @@ export default async function CreatorShopPage(props: PageProps) {
   const followers = followerCount ?? 0;
 
   return (
-    <main className="bg-background min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto space-y-12">
         {/* Header */}
-        <section className="bg-background rounded-3xl border border-zinc-200 shadow-lg p-8 sm:p-12 relative overflow-hidden">
+        <section className="bg-[#090D16] rounded-3xl border border-slate-800/80 shadow-2xl p-8 sm:p-12 relative overflow-hidden text-white">
           {/* Decorative background elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-500/10 to-orange-500/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-sky-500/10 to-purple-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-sky-500/10 to-emerald-500/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
 
           <div className="relative z-10">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 mb-3 inline-block px-3 py-1 bg-blue-50 rounded-full">
-              Creator Hub
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-400 mb-3 inline-block px-3.5 py-1 bg-sky-950 border border-sky-800 rounded-full">
+              Creator Shop
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-zinc-900 mb-4 bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
               {shop.name}
             </h1>
             {shop.description && (
-              <p className="text-base sm:text-lg text-zinc-600 max-w-3xl leading-relaxed mb-6">
+              <p className="text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed mb-6 font-medium">
                 {shop.description}
               </p>
             )}
@@ -152,14 +152,14 @@ export default async function CreatorShopPage(props: PageProps) {
 
         {/* Templates by this creator */}
         {creatorTemplates.length === 0 ? (
-          <section className="bg-white rounded-3xl border border-zinc-200 shadow-sm p-12 text-center">
+          <section className="bg-[#0F172A] rounded-3xl border border-slate-800 shadow-sm p-12 text-center text-white">
             <div className="max-w-md mx-auto">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-zinc-100 flex items-center justify-center">
-                <svg className="w-10 h-10 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-slate-800 flex items-center justify-center">
+                <svg className="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
-              <p className="text-base text-zinc-600 font-medium">
+              <p className="text-base text-slate-300 font-medium">
                 This creator hasn&apos;t published any templates yet.
               </p>
             </div>

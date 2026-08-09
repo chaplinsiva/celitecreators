@@ -330,14 +330,14 @@ function DashboardContent() {
 
   if (!user) {
     return (
-      <main className="bg-background min-h-screen pt-20 pb-20 px-6 relative">
+      <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20 px-6 relative">
         <div className="relative max-w-3xl mx-auto text-center mt-20">
-          <div className="bg-white rounded-3xl border border-zinc-200 p-12 shadow-xl shadow-blue-900/5">
-            <h1 className="text-3xl font-bold text-zinc-900">Please sign in to view your dashboard</h1>
-            <p className="mt-4 text-zinc-500 text-lg">Access your downloads, subscription, and account settings.</p>
+          <div className="bg-[#090D16] rounded-3xl border border-slate-800/80 p-12 shadow-2xl text-white">
+            <h1 className="text-3xl font-black text-white">Please sign in to view your dashboard</h1>
+            <p className="mt-4 text-slate-300 text-lg font-medium">Access your purchased assets, subscription, and account settings.</p>
             <Link
               href="/login"
-              className="mt-8 inline-flex items-center rounded-2xl bg-blue-600 px-8 py-3 text-base font-semibold text-white transition hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+              className="mt-8 inline-flex items-center rounded-2xl bg-sky-600 px-8 py-3.5 text-base font-extrabold text-white transition hover:bg-sky-500 shadow-lg shadow-sky-600/30"
             >
               Go to Login
             </Link>
@@ -353,22 +353,22 @@ function DashboardContent() {
     : user.email.split("@")[0];
 
   return (
-    <main className="bg-background min-h-screen pt-20 pb-20 px-6 relative">
-      <div className="relative max-w-6xl mx-auto space-y-6">
+    <main className="bg-[#0B0F17] text-white min-h-screen pt-20 pb-20 px-4 sm:px-6 relative">
+      <div className="relative max-w-[1440px] mx-auto space-y-6">
         {/* Welcome Section */}
-        <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
+        <section className="bg-[#090D16] rounded-3xl border border-slate-800/80 p-8 shadow-2xl text-white">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <p className="uppercase tracking-wider text-xs font-bold text-blue-600">Dashboard</p>
-              <h1 className="mt-2 text-3xl font-bold text-zinc-900">Welcome back, {displayName}</h1>
+              <p className="uppercase tracking-wider text-xs font-black text-sky-400">Dashboard</p>
+              <h1 className="mt-2 text-3xl font-black text-white">Welcome back, {displayName}</h1>
             </div>
-            <div className="bg-zinc-50 rounded-2xl border border-zinc-100 px-6 py-4 text-right">
-              <p className="text-sm text-zinc-500 font-medium">Current Plan</p>
-              <p className="mt-1 text-2xl font-bold text-zinc-900">{subscriptionTier}</p>
+            <div className="bg-[#0F172A] rounded-2xl border border-slate-800 px-6 py-4 text-right">
+              <p className="text-sm text-slate-400 font-medium">Current Plan</p>
+              <p className="mt-1 text-2xl font-black text-white">{subscriptionTier}</p>
 
               {isActuallyActive && sub?.valid_until && (
-                <p className="mt-1 text-xs text-green-600 font-medium flex items-center justify-end gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <p className="mt-1 text-xs text-emerald-400 font-bold flex items-center justify-end gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   Active{sub?.plan ? ` • ${sub.plan === 'yearly' ? 'Yearly' : 'Monthly'}` : ''}
                 </p>
               )}
@@ -377,13 +377,13 @@ function DashboardContent() {
 
           {/* Buyer / Seller mode toggle (only if user has a creator shop) */}
           {creatorShop && (
-            <div className="mt-6 inline-flex rounded-full bg-zinc-100 p-1 text-xs">
+            <div className="mt-6 inline-flex rounded-full bg-[#0F172A] border border-slate-800 p-1 text-xs">
               <button
                 type="button"
                 onClick={() => setViewMode("buyer")}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${viewMode === "buyer"
-                  ? "bg-white text-zinc-900 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-900"
+                className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "buyer"
+                  ? "bg-sky-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-white"
                   }`}
               >
                 Buyer mode
@@ -391,9 +391,9 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setViewMode("seller")}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${viewMode === "seller"
-                  ? "bg-white text-zinc-900 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-900"
+                className={`px-4 py-1.5 rounded-full font-bold transition-colors ${viewMode === "seller"
+                  ? "bg-sky-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-white"
                   }`}
               >
                 Seller mode
@@ -405,10 +405,10 @@ function DashboardContent() {
           <div className="mt-6 flex flex-wrap gap-2 text-xs">
             {!isActuallyActive && !isPaused && !hasExpiredPlan && (
               <>
-                <Link href="/pricing" className="inline-flex items-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-md shadow-blue-600/10">
+                <Link href="/pricing" className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-extrabold text-white transition hover:bg-sky-500 shadow-md shadow-sky-600/30">
                   Subscribe Monthly ({displayMonthlyPrice})
                 </Link>
-                <Link href="/pricing" className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 hover:border-zinc-300">
+                <Link href="/pricing" className="inline-flex items-center rounded-xl border border-slate-800 bg-[#0F172A] px-5 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-800 hover:text-white">
                   Subscribe Yearly ({displayYearlyPrice})
                 </Link>
               </>
@@ -417,7 +417,7 @@ function DashboardContent() {
               <button
                 onClick={handleRenewSubscription}
                 disabled={loading}
-                className="inline-flex items-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-md shadow-blue-600/10 disabled:opacity-60"
+                className="inline-flex items-center rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-extrabold text-white transition hover:bg-sky-500 shadow-md shadow-sky-600/30 disabled:opacity-60"
               >
                 {loading ? 'Renewing...' : 'Renew Plan'}
               </button>
@@ -428,23 +428,23 @@ function DashboardContent() {
         {viewMode === "buyer" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Downloads & Lifetime Purchases (Main Column) */}
-            <section className="lg:col-span-2 bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm h-fit space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-zinc-100 pb-4">
+            <section className="lg:col-span-2 bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl space-y-6 text-white">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-4">
                 <div>
-                  <h2 className="text-xl font-black text-zinc-900 tracking-tight">My Lifetime Purchased Assets</h2>
-                  <p className="text-xs text-zinc-500 font-medium mt-0.5">
+                  <h2 className="text-xl font-black text-white tracking-tight">My Lifetime Purchased Assets</h2>
+                  <p className="text-xs text-slate-400 font-medium mt-0.5">
                     Pay once, own forever. Re-download any of your purchased templates anytime below.
                   </p>
                 </div>
-                <Link href="/video-templates" className="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline shrink-0">
+                <Link href="/video-templates" className="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline shrink-0">
                   Explore More Assets →
                 </Link>
               </div>
 
               {recentDownloads.length === 0 ? (
-                <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-zinc-200/80 border-dashed space-y-3">
-                  <p className="text-sm text-zinc-600 font-medium">You haven&apos;t purchased any single templates yet.</p>
-                  <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+                <div className="text-center py-12 bg-[#090D16] rounded-2xl border border-slate-800 border-dashed space-y-3">
+                  <p className="text-sm text-slate-300 font-medium">You haven&apos;t purchased any single templates yet.</p>
+                  <p className="text-xs text-slate-400 max-w-sm mx-auto">
                     All single product purchases on Celite Market come with lifetime access and permanent re-download capabilities.
                   </p>
                   <Link href="/video-templates" className="inline-flex items-center rounded-xl bg-sky-600 text-white px-4 py-2 text-xs font-extrabold shadow-sm hover:bg-sky-500 transition">
@@ -454,13 +454,13 @@ function DashboardContent() {
               ) : (
                 <ul className="space-y-3">
                   {recentDownloads.map((d) => (
-                    <li key={`${d.slug}-${d.downloaded_at}`} className="group flex items-center justify-between p-4 rounded-2xl bg-zinc-50/50 hover:bg-zinc-50 transition-colors border border-zinc-200/70">
+                    <li key={`${d.slug}-${d.downloaded_at}`} className="group flex items-center justify-between p-4 rounded-2xl bg-[#090D16] hover:bg-slate-800/50 transition-colors border border-slate-800/80">
                       <div className="flex items-center gap-4">
-                        <div className="h-14 w-20 overflow-hidden rounded-xl bg-zinc-100 border border-zinc-200 shadow-sm relative">
+                        <div className="h-14 w-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 shadow-sm relative">
                           {d.img ? (
                             <img src={d.img} alt={d.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-zinc-300">
+                            <div className="w-full h-full flex items-center justify-center text-slate-500">
                               <span className="text-xs">No img</span>
                             </div>
                           )}
@@ -468,15 +468,15 @@ function DashboardContent() {
                         <div>
                           <Link
                             href={`/product/${d.slug}`}
-                            className="text-sm font-extrabold text-zinc-900 hover:text-sky-600 transition-colors"
+                            className="text-sm font-black text-white hover:text-sky-400 transition-colors"
                           >
                             {d.name}
                           </Link>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-full">
                               ✓ Lifetime Owned
                             </span>
-                            <span className="text-[11px] text-zinc-400 font-medium">
+                            <span className="text-[11px] text-slate-400 font-medium">
                               Purchased on {new Date(d.downloaded_at).toLocaleDateString()}
                             </span>
                           </div>
@@ -499,61 +499,58 @@ function DashboardContent() {
             {/* Sidebar: Account & Subscription Info */}
             <div className="space-y-6">
               {/* Account Settings */}
-              <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
-                <h2 className="text-xl font-bold text-zinc-900 mb-2">Account Settings</h2>
-                <p className="text-sm text-zinc-500 mb-6">Manage your profile and security.</p>
+              <section className="bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
+                <h2 className="text-xl font-bold text-white mb-2">Account Settings</h2>
+                <p className="text-sm text-slate-400 mb-6">Manage your profile and security.</p>
 
                 <div className="flex flex-col gap-3">
-                  <button onClick={() => setShowEditProfile(true)} className="w-full text-left px-4 py-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-100 text-sm font-medium text-zinc-700 transition-colors flex justify-between group">
+                  <button onClick={() => setShowEditProfile(true)} className="w-full text-left px-4 py-3 rounded-xl bg-[#090D16] hover:bg-slate-800 border border-slate-800 text-sm font-medium text-slate-200 transition-colors flex justify-between group">
                     Edit Profile
-                    <span className="text-zinc-400 group-hover:text-zinc-600">→</span>
+                    <span className="text-slate-400 group-hover:text-white">→</span>
                   </button>
-                  <button onClick={() => setShowChangePassword(true)} className="w-full text-left px-4 py-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-100 text-sm font-medium text-zinc-700 transition-colors flex justify-between group">
+                  <button onClick={() => setShowChangePassword(true)} className="w-full text-left px-4 py-3 rounded-xl bg-[#090D16] hover:bg-slate-800 border border-slate-800 text-sm font-medium text-slate-200 transition-colors flex justify-between group">
                     Change Password
-                    <span className="text-zinc-400 group-hover:text-zinc-600">→</span>
+                    <span className="text-slate-400 group-hover:text-white">→</span>
                   </button>
-                  <button onClick={() => setShowManageSubscription(true)} className="w-full text-left px-4 py-3 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-100 text-sm font-medium text-zinc-700 transition-colors flex justify-between group">
+                  <button onClick={() => setShowManageSubscription(true)} className="w-full text-left px-4 py-3 rounded-xl bg-[#090D16] hover:bg-slate-800 border border-slate-800 text-sm font-medium text-slate-200 transition-colors flex justify-between group">
                     Manage Subscription
-                    <span className="text-zinc-400 group-hover:text-zinc-600">→</span>
+                    <span className="text-slate-400 group-hover:text-white">→</span>
                   </button>
                   <button
                     onClick={logout}
-                    className="w-full text-left px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 text-sm font-medium transition-colors mt-2"
+                    className="w-full text-left px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-950/50 border border-transparent hover:border-rose-900 text-sm font-bold transition-colors mt-2"
                   >
                     Log Out
                   </button>
                 </div>
               </section>
 
-              {/* Pongal Progress Bar */}
-              {/* {sub?.plan === 'pongal_weekly' && <PongalProgressBar />} */}
-
               {/* Quick Sub Details */}
-              <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
-                <h2 className="text-lg font-bold text-zinc-900 mb-4">Subscription Details</h2>
+              <section className="bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
+                <h2 className="text-lg font-bold text-white mb-4">Subscription Details</h2>
                 {!sub ? (
-                  <p className="text-sm text-zinc-500">No active subscription.</p>
+                  <p className="text-sm text-slate-400 font-medium">No active subscription.</p>
                 ) : (
                   <div className="space-y-3 text-sm">
-                    <div className="flex justify-between py-2 border-b border-zinc-100">
-                      <span className="text-zinc-500">Status</span>
-                      <span className={`font-semibold ${isActuallyActive ? 'text-green-600' : 'text-zinc-900'}`}>{subscriptionTier}</span>
+                    <div className="flex justify-between py-2 border-b border-slate-800">
+                      <span className="text-slate-400 font-medium">Status</span>
+                      <span className={`font-bold ${isActuallyActive ? 'text-emerald-400' : 'text-white'}`}>{subscriptionTier}</span>
                     </div>
                     {sub.valid_until && (
-                      <div className="flex justify-between py-2 border-b border-zinc-100">
-                        <span className="text-zinc-500">{sub.plan === 'pongal_weekly' || sub.autopay_enabled === false ? 'Expires' : 'Renews'}</span>
-                        <span className="text-zinc-900 font-medium">{new Date(sub.valid_until).toLocaleDateString()}</span>
+                      <div className="flex justify-between py-2 border-b border-slate-800">
+                        <span className="text-slate-400 font-medium">{sub.plan === 'pongal_weekly' || sub.autopay_enabled === false ? 'Expires' : 'Renews'}</span>
+                        <span className="text-white font-medium">{new Date(sub.valid_until).toLocaleDateString()}</span>
                       </div>
                     )}
                     {sub.autopay_enabled !== null && (
-                      <div className="flex justify-between py-2 border-b border-zinc-100">
-                        <span className="text-zinc-500">Autopay</span>
-                        <span className={`font-medium ${sub.autopay_enabled ? 'text-zinc-900' : 'text-amber-600'}`}>{sub.autopay_enabled ? 'On' : 'Off'}</span>
+                      <div className="flex justify-between py-2 border-b border-slate-800">
+                        <span className="text-slate-400 font-medium">Autopay</span>
+                        <span className={`font-bold ${sub.autopay_enabled ? 'text-white' : 'text-amber-400'}`}>{sub.autopay_enabled ? 'On' : 'Off'}</span>
                       </div>
                     )}
                     {isActuallyActive && sub.autopay_enabled === false && sub.valid_until && (
-                      <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
-                        <p className="text-xs text-amber-700 font-medium">⚠️ Autopay is disabled. Your subscription will expire on {new Date(sub.valid_until).toLocaleDateString()} and won&apos;t auto-renew.</p>
+                      <div className="mt-3 p-3 rounded-xl bg-amber-950/60 border border-amber-800">
+                        <p className="text-xs text-amber-300 font-medium">⚠️ Autopay is disabled. Your subscription will expire on {new Date(sub.valid_until).toLocaleDateString()} and won&apos;t auto-renew.</p>
                       </div>
                     )}
                   </div>
@@ -564,21 +561,21 @@ function DashboardContent() {
         )}
 
         {viewMode === "seller" && creatorShop && (
-          <section className="mt-6 bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-zinc-900 mb-2">Seller mode</h2>
-            <p className="text-sm text-zinc-500 mb-4">
-              This is your creator hub view. Your public page is live at:
+          <section className="mt-6 bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
+            <h2 className="text-xl font-bold text-white mb-2">Seller mode</h2>
+            <p className="text-sm text-slate-400 mb-4 font-medium">
+              This is your creator hub view. Your public store page is live at:
             </p>
             <a
               href={`/${creatorShop.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+              className="inline-flex items-center text-sm font-bold text-sky-400 hover:text-sky-300 hover:underline"
             >
               celite.in/{creatorShop.slug}
             </a>
-            <div className="mt-8 rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-400">
-              Blank seller page for now. We&apos;ll add uploads and stats here later.
+            <div className="mt-8 rounded-2xl border border-dashed border-slate-800 bg-[#090D16] px-6 py-10 text-center text-sm text-slate-400 font-medium">
+              Seller Dashboard & Analytics. Manage your uploaded assets and view payout statistics.
             </div>
           </section>
         )}
@@ -586,9 +583,9 @@ function DashboardContent() {
 
       {/* Edit Profile Modal */}
       {showEditProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 backdrop-blur-sm" onClick={() => setShowEditProfile(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-zinc-100" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4 text-zinc-900">Edit Profile</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowEditProfile(false)}>
+          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-extrabold mb-4 text-white">Edit Profile</h2>
             <EditProfileForm
               firstName={userMetadata.first_name || ''}
               lastName={userMetadata.last_name || ''}
@@ -602,9 +599,9 @@ function DashboardContent() {
 
       {/* Change Password Modal */}
       {showChangePassword && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 backdrop-blur-sm" onClick={() => setShowChangePassword(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-zinc-100" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4 text-zinc-900">Change Password</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowChangePassword(false)}>
+          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-extrabold mb-4 text-white">Change Password</h2>
             <ChangePasswordForm
               onSubmit={handleChangePassword}
               onCancel={() => setShowChangePassword(false)}
@@ -616,9 +613,9 @@ function DashboardContent() {
 
       {/* Manage Subscription Modal */}
       {showManageSubscription && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 backdrop-blur-sm" onClick={() => setShowManageSubscription(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-zinc-100" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4 text-zinc-900">Manage Subscription</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowManageSubscription(false)}>
+          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-extrabold mb-4 text-white">Manage Subscription</h2>
             <ManageSubscriptionPanel
               isActive={isActuallyActive}
               isPaused={isPaused}
@@ -636,10 +633,10 @@ function DashboardContent() {
 
       {/* Cancel Confirmation Modal */}
       {showCancelConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 backdrop-blur-sm" onClick={() => setShowCancelConfirm(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-zinc-100" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4 text-zinc-900">Cancel Subscription</h2>
-            <p className="text-sm text-zinc-500 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowCancelConfirm(false)}>
+          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-extrabold mb-4 text-white">Cancel Subscription</h2>
+            <p className="text-sm text-slate-300 mb-6 font-medium">
               {sub?.valid_until
                 ? `Are you sure you want to cancel auto-renewal? You will still have access to premium features until ${new Date(sub.valid_until).toLocaleDateString()}. After that, your subscription will not renew.`
                 : 'Are you sure you want to cancel auto-renewal? You will retain access until the end of your current billing period.'}
@@ -648,14 +645,14 @@ function DashboardContent() {
               <button
                 onClick={confirmCancelSubscription}
                 disabled={loading}
-                className="flex-1 px-4 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition disabled:opacity-60 shadow-md shadow-red-600/10"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 text-white font-extrabold hover:bg-rose-500 transition disabled:opacity-60 shadow-md shadow-rose-600/20"
               >
                 {loading ? 'Cancelling...' : 'Yes, Cancel'}
               </button>
               <button
                 onClick={() => setShowCancelConfirm(false)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition"
+                className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
               >
                 No, Keep It
               </button>
@@ -666,22 +663,22 @@ function DashboardContent() {
 
       {/* Renew Confirmation Modal */}
       {showRenewConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50 backdrop-blur-sm" onClick={() => setShowRenewConfirm(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-zinc-100" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4 text-zinc-900">Renew Subscription</h2>
-            <p className="text-sm text-zinc-500 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md" onClick={() => setShowRenewConfirm(false)}>
+          <div className="bg-[#0F172A] text-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-800" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-extrabold mb-4 text-white">Renew Subscription</h2>
+            <p className="text-sm text-slate-300 mb-6 font-medium">
               You will be redirected to checkout to complete payment and renew your subscription. Continue?
             </p>
             <div className="flex gap-3">
               <button
                 onClick={confirmRenewSubscription}
-                className="flex-1 px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-md shadow-blue-600/10"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition shadow-md shadow-sky-600/30"
               >
                 Continue to Checkout
               </button>
               <button
                 onClick={() => setShowRenewConfirm(false)}
-                className="px-4 py-2 rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition"
+                className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
               >
                 Cancel
               </button>
@@ -693,9 +690,9 @@ function DashboardContent() {
       {/* Message Toast */}
       {message && (
         <div className="fixed bottom-6 right-6 z-50">
-          <div className="bg-zinc-900 rounded-xl px-6 py-4 shadow-2xl flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <p className="text-sm font-medium text-white">{message}</p>
+          <div className="bg-[#090D16] border border-slate-800 rounded-xl px-6 py-4 shadow-2xl flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <p className="text-sm font-bold text-white">{message}</p>
           </div>
         </div>
       )}
@@ -720,22 +717,22 @@ function EditProfileForm({ firstName, lastName, onSubmit, onCancel, loading }: {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 mb-2">First Name</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">First Name</label>
         <input
           type="text"
           value={first}
           onChange={(e) => setFirst(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-[#090D16] border border-slate-800 text-white text-sm focus:outline-none focus:border-sky-500 transition-all"
           required
         />
       </div>
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 mb-2">Last Name</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">Last Name</label>
         <input
           type="text"
           value={last}
           onChange={(e) => setLast(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-[#090D16] border border-slate-800 text-white text-sm focus:outline-none focus:border-sky-500 transition-all"
           required
         />
       </div>
@@ -743,14 +740,14 @@ function EditProfileForm({ firstName, lastName, onSubmit, onCancel, loading }: {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-60 shadow-md shadow-blue-600/10"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
         >
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition"
+          className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
         >
           Cancel
         </button>
@@ -771,23 +768,23 @@ function ChangePasswordForm({ onSubmit, onCancel, loading }: { onSubmit: (newPas
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 mb-2">New Password</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">New Password</label>
         <input
           type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-[#090D16] border border-slate-800 text-white text-sm focus:outline-none focus:border-sky-500 transition-all"
           minLength={6}
           required
         />
       </div>
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 mb-2">Confirm Password</label>
+        <label className="block text-sm font-semibold text-slate-300 mb-2">Confirm Password</label>
         <input
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-[#090D16] border border-slate-800 text-white text-sm focus:outline-none focus:border-sky-500 transition-all"
           minLength={6}
           required
         />
@@ -796,14 +793,14 @@ function ChangePasswordForm({ onSubmit, onCancel, loading }: { onSubmit: (newPas
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-60 shadow-md shadow-blue-600/10"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
         >
           {loading ? 'Changing...' : 'Change Password'}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition"
+          className="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
         >
           Cancel
         </button>
@@ -823,14 +820,14 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
   onClose: () => void;
   loading: boolean;
 }) {
-  const hasExpiredPlan = !isActive && !isPaused && plan; // Subscription expired and inactive
+  const hasExpiredPlan = !isActive && !isPaused && plan;
   const planDisplayName = plan === 'yearly' ? 'Yearly' : 'Monthly';
 
   return (
     <div className="space-y-6">
-      <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100">
-        <p className="text-sm text-zinc-500 mb-2 font-medium">Current Status</p>
-        <p className="text-xl font-bold text-zinc-900">
+      <div className="p-5 rounded-2xl bg-[#090D16] border border-slate-800">
+        <p className="text-sm text-slate-400 mb-2 font-medium">Current Status</p>
+        <p className="text-xl font-black text-white">
           {isActive
             ? `${planDisplayName} Plan - Active`
             : isPaused
@@ -840,7 +837,7 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
                 : 'No Active Subscription'}
         </p>
         {validUntil && (
-          <p className={`text-xs mt-2 font-medium ${isActive ? 'text-green-600' : isPaused ? 'text-yellow-600' : 'text-red-500'}`}>
+          <p className={`text-xs mt-2 font-bold ${isActive ? 'text-emerald-400' : isPaused ? 'text-amber-400' : 'text-rose-400'}`}>
             {isActive
               ? `Valid until: ${new Date(validUntil).toLocaleDateString()}`
               : isPaused
@@ -855,23 +852,23 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
           <button
             onClick={onCancel}
             disabled={loading}
-            className="w-full px-4 py-3 rounded-xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition disabled:opacity-60"
+            className="w-full px-4 py-3 rounded-xl border border-rose-900 bg-rose-950/40 text-rose-400 font-extrabold hover:bg-rose-900/60 transition disabled:opacity-60"
           >
             {loading ? 'Cancelling...' : 'Cancel Subscription'}
           </button>
-          <p className="text-xs text-zinc-500 text-center">
+          <p className="text-xs text-slate-400 text-center font-medium">
             You will keep access until the end of your current billing period. Autopay will be turned off.
           </p>
         </div>
       ) : isPaused ? (
         <div className="space-y-4">
-          <p className="text-sm text-yellow-600 font-medium bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+          <p className="text-sm text-amber-300 font-medium bg-amber-950/60 p-4 rounded-xl border border-amber-800">
             Subscription paused. Payment will automatically retry.
           </p>
           <button
             onClick={onRenew}
             disabled={loading}
-            className="w-full px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-60 shadow-md shadow-blue-600/10"
+            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
           >
             {loading ? 'Renewing...' : 'Renew Now'}
           </button>
@@ -881,11 +878,11 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
           <button
             onClick={onRenew}
             disabled={loading}
-            className="w-full px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-60 shadow-md shadow-blue-600/10"
+            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition disabled:opacity-60 shadow-md shadow-sky-600/30"
           >
             {loading ? 'Renewing...' : 'Renew Plan'}
           </button>
-          <p className="text-xs text-zinc-500 text-center">
+          <p className="text-xs text-slate-400 text-center font-medium">
             Renew to regain premium access.
           </p>
         </div>
@@ -893,11 +890,11 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
         <div className="space-y-4">
           <button
             onClick={onUpgrade}
-            className="w-full px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-md shadow-blue-600/10"
+            className="w-full px-4 py-3 rounded-xl bg-sky-600 text-white font-extrabold hover:bg-sky-500 transition shadow-md shadow-sky-600/30"
           >
             Upgrade to Pro
           </button>
-          <p className="text-xs text-zinc-500 text-center">
+          <p className="text-xs text-slate-400 text-center font-medium">
             Unlocks unlimited templates.
           </p>
         </div>
@@ -905,7 +902,7 @@ function ManageSubscriptionPanel({ isActive, isPaused, plan, validUntil, onCance
 
       <button
         onClick={onClose}
-        className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-zinc-700 font-semibold hover:bg-zinc-50 transition"
+        className="w-full px-4 py-3 rounded-xl border border-slate-800 bg-[#090D16] text-slate-300 font-bold hover:bg-slate-800 transition"
       >
         Close
       </button>

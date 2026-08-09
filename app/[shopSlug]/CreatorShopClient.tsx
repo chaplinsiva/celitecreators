@@ -130,14 +130,14 @@ function TemplateCard({ template, category }: { template: CreatorTemplate; categ
   return (
     <Link
       href={`/product/${template.slug}`}
-      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-zinc-200 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300"
+      className="group flex flex-col bg-[#0F172A]/90 rounded-2xl overflow-hidden border border-slate-800/80 hover:border-sky-500/50 hover:shadow-xl transition-all duration-300 text-white"
     >
-      <div className="relative aspect-video overflow-hidden bg-zinc-100">
+      <div className="relative aspect-video overflow-hidden bg-slate-900">
         {renderPreview()}
       </div>
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-bold text-zinc-900 text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors flex-1">
+          <h3 className="font-bold text-white text-lg leading-tight line-clamp-2 group-hover:text-sky-400 transition-colors flex-1">
             {template.name}
           </h3>
           {isMusicSfx && (
@@ -157,12 +157,12 @@ function TemplateCard({ template, category }: { template: CreatorTemplate; categ
           )}
         </div>
         {template.subtitle && (
-          <p className="text-sm text-zinc-600 line-clamp-2 mb-2">
+          <p className="text-sm text-slate-300 line-clamp-2 mb-2">
             {template.subtitle}
           </p>
         )}
-        <div className="mt-auto pt-3 border-t border-zinc-100">
-          <span className="text-xs text-zinc-500 font-medium">
+        <div className="mt-auto pt-3 border-t border-slate-800">
+          <span className="text-xs text-sky-400 font-semibold group-hover:underline">
             View Details →
           </span>
         </div>
@@ -181,11 +181,11 @@ export default function CreatorShopClient({
       {groupedSections.map((group, idx) => (
         <div key={group.category?.id || `uncat-${idx}`} className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="h-1 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
+            <div className="h-1 w-12 bg-gradient-to-r from-sky-500 to-purple-500 rounded-full"></div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
               {group.category ? group.category.name : "Other Templates"}
             </h2>
-            <span className="text-sm text-zinc-500 font-medium bg-zinc-100 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold text-slate-300 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full">
               {group.items.length} {group.items.length === 1 ? 'item' : 'items'}
             </span>
           </div>
