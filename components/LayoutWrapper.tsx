@@ -118,7 +118,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     <div className="isolate flex flex-col min-h-screen">
       <Header />
       <CategoryNav />
-      <div className="lg:mt-[140px] mt-24">
+      <div className="lg:mt-[124px] mt-[80px]">
         <PromoBanner />
       </div>
       <main className="flex-1">

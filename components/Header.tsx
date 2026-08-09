@@ -183,7 +183,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full fixed top-0 left-0 z-[100] backdrop-blur-md bg-[#0D111A]/95 border-b border-zinc-800/60 shadow-lg transition-all duration-300">
+      <header className="w-full fixed top-0 left-0 z-[100] bg-black border-b border-zinc-800/80 shadow-lg transition-all duration-300">
         <nav className="max-w-[1440px] mx-auto h-20 px-6 sm:px-8 flex items-center justify-between">
           {/* Left: Logo & Nav */}
           <div className="flex items-center gap-10">
@@ -196,7 +196,7 @@ export default function Header() {
             </Link>
 
             {/* Global Search Bar */}
-            <div className="hidden lg:flex items-center ml-4 bg-zinc-900/90 hover:bg-zinc-900 rounded-xl border border-zinc-800 focus-within:border-zinc-700 focus-within:ring-1 focus-within:ring-zinc-700 transition-all group">
+            <div className="hidden lg:flex items-center ml-4 bg-zinc-950 rounded-xl border border-zinc-800 focus-within:border-zinc-700 focus-within:ring-1 focus-within:ring-zinc-700 transition-all group">
               {/* Category Dropdown */}
               <div className="relative">
                 <button
@@ -208,7 +208,7 @@ export default function Header() {
                 </button>
 
                 {isCategoryMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#141A26] rounded-xl shadow-xl border border-zinc-800 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-zinc-950 rounded-xl shadow-2xl border border-zinc-800 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
                     <button
                       onClick={() => {
                         setSelectedCategory({ name: 'All Categories', slug: '' });
