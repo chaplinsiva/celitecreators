@@ -1,40 +1,70 @@
 ---
-agent-notes: { ctx: "performance targets and budget specs", deps: ["2026-07-23-celitecreators-prd.md"], state: active, last: "archie@2026-07-23" }
+agent-notes:
+  ctx: "performance thresholds and budget tracking"
+  deps: []
+  state: stub
+  last: "vik@2026-02-15"
+  key: ["Vik owns perf review, Ines checks at pre-release"]
 ---
+# Performance Budget
 
-# Performance Budget: CeliteCreators Marketplace
+<!-- Vik owns performance review during code review. Ines verifies at pre-release. -->
+<!-- Created during kickoff or first sprint. Updated when requirements change. -->
 
-**Date:** 2026-07-23  
-**Lead:** Archie  
+**Project:** [Project Name]
+**Last reviewed:** [Date]
 
----
+## Response Time Targets
 
-## 1. Core Web Vitals Targets (Mobile & Desktop)
+| Endpoint / Operation | P50 target | P95 target | P99 target | Current | Status |
+|---------------------|------------|------------|------------|---------|--------|
+| <!-- e.g. GET /api/users --> | <!-- 50ms --> | <!-- 200ms --> | <!-- 500ms --> | <!-- TBD --> | <!-- TBD --> |
 
-- **Largest Contentful Paint (LCP):** < 1.5s
-- **Interaction to Next Paint (INP):** < 100ms
-- **Cumulative Layout Shift (CLS):** < 0.05
-- **First Contentful Paint (FCP):** < 0.9s
+## Resource Budgets
 
----
+| Metric | Budget | Current | Status |
+|--------|--------|---------|--------|
+| JS bundle size (gzipped) | | | |
+| CSS bundle size (gzipped) | | | |
+| Docker image size | | | |
+| Memory (RSS, idle) | | | |
+| Memory (RSS, peak) | | | |
+| Cold start time | | | |
+| Database connections (pool) | | | |
+| Build time | | | |
 
-## 2. Asset & Media Constraints (Concept A: Studio Showcase)
+## Database Query Budgets
 
-- **Video Previews (`celite-public`):**
-  - Max video preview size: 3MB per clip.
-  - Video format: H.264 / MP4 or WebM compressed at 1080p, muted autoplay on hover.
-  - Preload policy: `preload="none"` by default; load streams on thumbnail hover.
-- **Image Thumbnails:**
-  - Format: Next.js `<Image />` with WebP / AVIF conversion.
-  - Max uncompressed image payload: < 150KB.
-- **Audio Previews:**
-  - Format: MP3 128kbps, max size < 1MB.
+| Query pattern | Max execution time | Max rows scanned | Index required? | Status |
+|--------------|-------------------|-----------------|----------------|--------|
+| <!-- e.g. user lookup by email --> | <!-- 5ms --> | <!-- 1 --> | <!-- Yes --> | <!-- OK --> |
 
----
+## Load Targets
 
-## 3. Server Response & API Latency Budgets
+| Scenario | Target | Current | Test method |
+|----------|--------|---------|-------------|
+| Concurrent users | | | |
+| Requests/sec (sustained) | | | |
+| Requests/sec (burst) | | | |
 
-- **Product Page Server Render (Next.js SSR):** < 200ms
-- **Razorpay Order Creation Server Action:** < 300ms
-- **R2 Presigned Download Link Generation:** < 150ms
-- **Category Search & Filter Queries:** < 100ms (indexed Postgres queries)
+## Regressions
+
+Track any performance regressions detected:
+
+| Date | What regressed | From | To | Cause | Resolution |
+|------|---------------|------|-----|-------|------------|
+| | | | | | |
+
+## How to Measure
+
+<!-- Document the tools and methods used to measure performance. -->
+<!-- e.g., "Run `npm run bench` for microbenchmarks", "Use k6 for load testing" -->
+
+### Benchmarks
+- **Command:** [how to run benchmarks]
+- **Environment:** [where to measure — local, staging, etc.]
+
+### Profiling
+- **CPU:** [tool and method]
+- **Memory:** [tool and method]
+- **Bundle analysis:** [tool and method]

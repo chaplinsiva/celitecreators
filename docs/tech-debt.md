@@ -1,23 +1,48 @@
 ---
-agent-notes: { ctx: "tech debt tracking register", deps: [], state: active, last: "grace@2026-07-23" }
+agent-notes:
+  ctx: "technical debt register, persists across sprints"
+  deps: []
+  state: stub
+  last: "grace@2026-02-15"
+  key: ["Grace tracks, Pat prioritizes against features"]
 ---
+# Technical Debt Register
 
-# Tech Debt Register: CeliteCreators Marketplace
+<!-- Grace maintains this register. Pat prioritizes debt against feature work. -->
+<!-- This persists across sprints — board items get closed, but debt lives here until resolved. -->
 
-**Date:** 2026-07-23  
-**Lead:** Grace  
+**Project:** [Project Name]
+**Last reviewed:** [Date]
 
----
+## Active Debt
 
-## Active Tech Debt Items
+| ID | Description | Incurred | Why (business reason) | Est. cost to fix | Risk if left | Sprint to fix | Status |
+|----|-------------|----------|----------------------|-----------------|-------------|--------------|--------|
+| TD-001 | <!-- e.g. Auth module has no unit tests --> | <!-- Sprint 1 --> | <!-- Shipped MVP fast --> | <!-- M (1-2 days) --> | <!-- High: can't refactor safely --> | <!-- TBD --> | <!-- Open --> |
 
-| ID | Title | Component | Severity | Description / Impact | Remediation Plan |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| *No tech debt logged yet. Initial project kickoff clean slate.* |
+## Resolved Debt
 
----
+| ID | Description | Incurred | Resolved | How it was fixed |
+|----|-------------|----------|----------|-----------------|
+| | | | | |
 
-## Guidelines for Adding Tech Debt
-1. Log debt as soon as a temporary trade-off or workaround is accepted during development.
-2. Assign severity (`Low`, `Medium`, `High`, `Critical`).
-3. Include target sprint/milestone for remediation.
+## Debt Categories
+
+Tag each debt item to track patterns:
+
+| Category | Count | Trend |
+|----------|-------|-------|
+| Missing tests | | |
+| Hardcoded values | | |
+| Missing error handling | | |
+| Copy-paste duplication | | |
+| Outdated dependencies | | |
+| Missing docs | | |
+| Performance | | |
+| Security | | |
+| Accessibility | | |
+
+## Review Cadence
+
+- **Sprint boundary:** Grace reviews the register. New debt discovered during the sprint is added. Pat decides what to pay down next sprint.
+- **Every 3 sprints:** Full debt review. Re-estimate costs. Re-assess risks. Anything that's been open for 3+ sprints gets escalated.

@@ -1,28 +1,37 @@
+# Tracking: CeliteCreators.in Pay-Per-Product Marketplace Plan
+
+> **Date:** July 23, 2026  
+> **Topic:** CeliteCreators.in Pay-Per-Product Marketplace Architecture & Implementation Plan  
+> **PRD & Plan Document:** [`docs/plans/2026-07-23-celitecreators-prd.md`](file:///d:/cp/NC/celite-main/celite-main/docs/plans/2026-07-23-celitecreators-prd.md)  
+> **Prior Phase:** None
+
 ---
-agent-notes: { ctx: "plan phase tracking for celitecreators marketplace", deps: ["docs/tracking/2026-07-23-celitecreators-architecture.md", "docs/plans/2026-07-23-celitecreators-plan.md", "docs/test-strategy.md", "docs/tech-debt.md"], state: active, last: "grace@2026-07-23" }
+
+## Plan Overview
+
+| Metric | Details |
+| :--- | :--- |
+| **Domain** | `celitecreators.in` |
+| **Business Model** | Pay-Per-Product (A La Carte Creator Asset Purchases) |
+| **Core Architecture** | Next.js 16 (App Router), React 19, Supabase Auth/PostgreSQL, Cloudflare R2, Razorpay |
+| **Key Workflows** | Creator Onboarding, Product Upload, Pay-Per-Product Checkout, Presigned R2 Delivery |
+
 ---
 
-# Plan: CeliteCreators Marketplace
+## Implementation Roadmap & Milestones
 
-**Date:** 2026-07-23
-**Lead:** Grace
-**Status:** Complete
-**Prior Phase:** [docs/tracking/2026-07-23-celitecreators-architecture.md](file:///d:/cp/celitecreators.in/docs/tracking/2026-07-23-celitecreators-architecture.md)
+- [ ] **Phase 1**: Database Schema & Cloudflare R2 Private/Public Bucket Setup
+- [ ] **Phase 2**: Creator Onboarding (`/creator/register`) & Shop Page (`/creator/[slug]`)
+- [ ] **Phase 3**: Asset Upload Portal (`/creator/upload`) & Admin Moderation Panel
+- [ ] **Phase 4**: Public Home Page (`/`), Category Filter (`/category/[slug]`), & Search Grid
+- [ ] **Phase 5**: Product Landing Page (`/product/[slug]`) with Interactive Preview Player
+- [ ] **Phase 6**: Pay-Per-Product Razorpay Checkout & Presigned R2 Instant Delivery
 
-## Key Decisions
-- Structured implementation into 4 discrete sprints: Foundation & Database (Sprint 1), Creator Portal & Uploads (Sprint 2), Storefront & 1-Click Razorpay (Sprint 3), Admin Panel & E2E Verification (Sprint 4).
-- Added Admin Moderation & Payout Processing to Sprint 4 per user requirement.
-- Created test strategy specifying 80%+ unit coverage, 100% integration coverage for RLS & payment HMAC, and Playwright E2E flows (docs/test-strategy.md).
-- Initialized tech debt register (docs/tech-debt.md).
+---
 
-## Artifacts Produced
-- `docs/plans/2026-07-23-celitecreators-plan.md`
-- `docs/test-strategy.md`
-- `docs/tech-debt.md`
-- `docs/tracking/2026-07-23-celitecreators-plan.md`
+## Acceptance Criteria
 
-## Open Questions
-- None. Implementation plan and sprint scopes finalized.
-
-## Next Phase
-- Implementation (Sprint 1) & GitHub Project Board Setup
+1. **Creator Onboarding**: Creators can sign up, create custom shops, and provide bank/UPI payout details.
+2. **Asset Upload**: Creators can upload preview videos/images and source `.zip` files directly to Cloudflare R2.
+3. **Pay-Per-Product Checkout**: Buyers can purchase individual products without a monthly subscription via Razorpay.
+4. **Presigned R2 Delivery**: Validated purchases immediately issue a 60-minute presigned download URL for the private source asset.
