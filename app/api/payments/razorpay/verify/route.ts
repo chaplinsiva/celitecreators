@@ -117,6 +117,8 @@ export async function POST(req: Request) {
     const name = notes.name as string | undefined;
 
     // Insert order items - handle multiple cart items
+    let purchasedItemsList: Array<{ name: string; slug: string; price: number }> = [];
+
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
       const orderItems = cartItems.map((item: any) => ({
         order_id: dbOrder.id,
@@ -127,10 +129,15 @@ export async function POST(req: Request) {
         img: item.img || '',
       }));
       await admin.from('order_items').insert(orderItems);
+      purchasedItemsList = cartItems.map((item: any) => ({
+        name: item.name,
+        slug: item.slug,
+        price: Number(item.price) || 0
+      }));
     } else {
       // Fallback for single product
       const img = notes.img as string | undefined;
-    if (slug && name) {
+      if (slug && name) {
         await admin.from('order_items').insert({ 
           order_id: dbOrder.id, 
           slug, 
@@ -139,7 +146,23 @@ export async function POST(req: Request) {
           quantity: 1, 
           img: img || '' 
         });
+        purchasedItemsList = [{ name, slug, price: totalAmount }];
+      }
     }
+
+    // Send confirmation email with lifetime access link
+    if (billingEmail && purchasedItemsList.length > 0) {
+      try {
+        const { sendProductPurchaseEmail } = await import('../../../../../lib/emailService');
+        await sendProductPurchaseEmail(
+          billingEmail,
+          billingName || 'Valued Creator',
+          purchasedItemsList,
+          totalAmount
+        );
+      } catch (emailErr) {
+        console.error('Failed to send purchase confirmation email:', emailErr);
+      }
     }
 
     

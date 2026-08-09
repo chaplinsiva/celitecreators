@@ -94,6 +94,41 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
     });
   }, [product.slug, product.name]);
 
+  const [isPurchased, setIsPurchased] = useState<boolean>(false);
+
+  // Check purchase status for this user & product
+  const loadPurchaseStatus = useCallback(async () => {
+    try {
+      if (!user) {
+        setIsPurchased(false);
+        return;
+      }
+      const supabase = getSupabaseBrowserClient();
+      const { data: orders } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('user_id', (user as any).id)
+        .eq('status', 'paid');
+
+      if (!orders || orders.length === 0) {
+        setIsPurchased(false);
+        return;
+      }
+
+      const orderIds = orders.map((o: any) => o.id);
+      const { data: item } = await supabase
+        .from('order_items')
+        .select('id')
+        .in('order_id', orderIds)
+        .eq('slug', product.slug)
+        .maybeSingle();
+
+      setIsPurchased(!!item);
+    } catch (e) {
+      setIsPurchased(false);
+    }
+  }, [user, product.slug]);
+
   // Function to load subscription status from backend
   const loadSubscriptionStatus = useCallback(async () => {
     try {
@@ -126,7 +161,8 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
   useEffect(() => {
     loadSubscriptionStatus();
-  }, [loadSubscriptionStatus, product.slug]);
+    loadPurchaseStatus();
+  }, [loadSubscriptionStatus, loadPurchaseStatus, product.slug]);
 
   // Fetch "More in This Style" templates based on keyword matching
   useEffect(() => {
@@ -887,6 +923,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
               {/* Desktop Subscription Card (Hidden on Mobile) */}
               <SubscriptionCard
                 isSubActive={isSubActive}
+                isPurchased={isPurchased}
                 downloading={downloading}
                 handleDownload={handleDownload}
                 router={router}
@@ -1247,8 +1284,9 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
   );
 }
 
-function SubscriptionCard({ isSubActive, downloading, handleDownload, router, className, isPrompt, handleCopyPrompt, promptCopied, user, isFree, monthlyPrice, product }: {
+function SubscriptionCard({ isSubActive, isPurchased, downloading, handleDownload, router, className, isPrompt, handleCopyPrompt, promptCopied, user, isFree, monthlyPrice, product }: {
   isSubActive: boolean;
+  isPurchased?: boolean;
   downloading: boolean;
   handleDownload: () => void;
   router: any;
@@ -1340,7 +1378,54 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
     );
   }
 
-  // On Celite Market, ALL users (subscribed or non-subscribed) purchase products individually
+  // If user already purchased this product (or has active subscription): show Re-Download Asset button
+  if (isPurchased) {
+    return (
+      <div className={cn("bg-[#0F172A] rounded-3xl p-6 border border-emerald-900/80 shadow-2xl space-y-6 text-white", className)}>
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[11px] font-extrabold uppercase tracking-wider">
+            ✓ Lifetime Access Owned
+          </div>
+          <h3 className="text-xl font-black text-white">You Own This Template</h3>
+          <p className="text-xs text-slate-400 font-medium">Re-download your asset anytime below or from your Dashboard</p>
+        </div>
+
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className={cn(
+            "w-full py-4 rounded-2xl font-extrabold text-sm shadow-lg transition-all flex items-center justify-center gap-2",
+            downloading
+              ? "bg-sky-600 text-white cursor-wait"
+              : "bg-sky-600 hover:bg-sky-500 text-white shadow-sky-600/30 hover:shadow-sky-600/50 active:scale-[0.98]"
+          )}
+        >
+          {downloading ? (
+            <>
+              <div className="relative w-5 h-5">
+                <div className="absolute inset-0 rounded-full border-2 border-white/30"></div>
+                <div className="absolute inset-0 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+              </div>
+              <span className="animate-pulse">Preparing Download...</span>
+            </>
+          ) : (
+            <>
+              <Download className="w-5 h-5" />
+              Re-Download File
+            </>
+          )}
+        </button>
+
+        <div className="pt-3 border-t border-slate-800 text-center">
+          <Link href="/dashboard" className="text-xs font-bold text-slate-400 hover:text-sky-400 transition-colors">
+            View all my purchased assets in Dashboard →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Otherwise: show Pay-Per-Product Buy Now button
   const targetProduct = product || {};
   const price = targetProduct.price ? Number(targetProduct.price) : 399;
   const isCeliteOriginal = targetProduct.ownership_type === 'CELITE_ORIGINAL' || !targetProduct.vendor_name;
@@ -1387,32 +1472,6 @@ function SubscriptionCard({ isSubActive, downloading, handleDownload, router, cl
       >
         <Zap className="w-4 h-4 fill-white" /> Buy Now — ₹{price}
       </button>
-
-      {/* Secondary Celite Subscription Cross-Promotion */}
-      <div className="pt-4 border-t border-slate-800 text-center space-y-2">
-        {isSubActive ? (
-          <p className="text-xs text-sky-300 font-medium">
-            Active Celite Subscriber? Get unlimited downloads directly on{' '}
-            <a href={`https://celitemarket.in/product/${productSlug}`} target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-white">
-              Celite.in →
-            </a>
-          </p>
-        ) : (
-          <>
-            <p className="text-xs text-slate-400">
-              Want unlimited downloads for ₹499/month?
-            </p>
-            <a
-              href="https://celitemarket.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline"
-            >
-              Explore Celite Subscription →
-            </a>
-          </>
-        )}
-      </div>
     </div>
   );
 }

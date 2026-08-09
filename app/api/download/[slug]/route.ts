@@ -56,7 +56,7 @@ export async function GET(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 });
     }
 
-    // Check subscription (skip for free templates)
+    // Check subscription or pay-per-product purchase
     const { data: sub } = await admin
       .from('subscriptions')
       .select('id, is_active, valid_until, plan, autopay_enabled')
@@ -66,8 +66,28 @@ export async function GET(
     const active = !!sub?.is_active && (!sub?.valid_until || new Date(sub.valid_until as any).getTime() > Date.now());
     const isFreeTemplate = template?.is_free === true;
 
-    if (!active && !isFreeTemplate) {
-      return NextResponse.json({ error: 'Access denied. Please subscribe to download.' }, { status: 403 });
+    // Check if user purchased this template directly (lifetime pay-per-product)
+    const { data: userOrders } = await admin
+      .from('orders')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('status', 'paid');
+
+    let isPurchasedTemplate = false;
+    if (userOrders && userOrders.length > 0) {
+      const orderIds = userOrders.map((o: any) => o.id);
+      const { data: orderItem } = await admin
+        .from('order_items')
+        .select('id')
+        .in('order_id', orderIds)
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (orderItem) isPurchasedTemplate = true;
+    }
+
+    if (!active && !isFreeTemplate && !isPurchasedTemplate) {
+      return NextResponse.json({ error: 'Access denied. Please purchase this template to download.' }, { status: 403 });
     }
 
     // Check pongal_weekly download limits

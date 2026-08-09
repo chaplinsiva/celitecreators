@@ -333,23 +333,82 @@ export const emailTemplates = {
             <p>Hi ${userName},</p>
             <p>We're sorry to see you go. Your <strong>${plan === 'monthly' ? 'Monthly' : plan === 'yearly' ? 'Yearly' : 'Pongal Weekly'}</strong> subscription has been cancelled.</p>
             ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
-            <p>You will no longer have access to:</p>
-            <ul>
-              <li>Premium After Effects templates</li>
-              <li>Full source file downloads</li>
-              <li>Commercial license</li>
-              <li>Priority support</li>
-            </ul>
             <p>We'd love to have you back! If you change your mind, you can resubscribe anytime:</p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celite.netlify.app'}/pricing" class="button">Resubscribe Now</a>
-            <p style="margin-top: 30px; color: #666; font-size: 14px;">If you have any questions or feedback, please don't hesitate to reach out to our support team.</p>
-            <p style="color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://celitecreators.in'}/pricing" class="button">Resubscribe Now</a>
+            <p style="margin-top: 30px; color: #666; font-size: 14px;">Best regards,<br>The Celite Team</p>
           </div>
         </div>
       </body>
       </html>
     `,
   }),
+
+  productPurchase: (userName: string, items: Array<{ name: string; slug: string; price: number }>, totalAmount: number) => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://celitecreators.in';
+    const mainItem = items[0];
+    const itemsHtml = items.map(item => `
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+        <h3 style="margin: 0 0 8px 0; color: #0f172a; font-size: 16px;">${item.name}</h3>
+        <p style="margin: 0 0 12px 0; color: #64748b; font-size: 14px;">Price: ₹${item.price.toLocaleString('en-IN')}</p>
+        <a href="${siteUrl}/product/${item.slug}" style="display: inline-block; background: #0284c7; color: #ffffff; text-decoration: none; font-weight: bold; font-size: 13px; padding: 8px 16px; border-radius: 6px;">
+          Access & Download Asset →
+        </a>
+      </div>
+    `).join('');
+
+    return {
+      subject: `🎉 Payment Successful - ${mainItem ? mainItem.name : 'Your Purchased Asset'}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
+            .content { background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e2e8f0; border-top: none; }
+            .badge { display: inline-block; background: #dcfce7; color: #15803d; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin:0; font-size: 24px;">Thank You for Your Order!</h1>
+              <p style="margin: 8px 0 0 0; opacity: 0.9;">Celite Market - Pay-Per-Product Purchase</p>
+            </div>
+            <div class="content">
+              <p>Hi ${userName},</p>
+              <div class="badge">✓ Lifetime Access Unlocked</div>
+              <p>Your payment of <strong>₹${totalAmount.toLocaleString('en-IN')}</strong> was successful. You now have permanent, lifetime access to your purchased creative asset(s).</p>
+              
+              <h2 style="font-size: 18px; color: #0f172a; margin-top: 24px;">Your Purchased Template(s):</h2>
+              ${itemsHtml}
+
+              <div style="background: #f1f5f9; border-left: 4px solid #0284c7; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 24px;">
+                <p style="margin: 0; font-size: 14px; color: #334155;">
+                  <strong>💡 Lifetime Re-download Access:</strong><br>
+                  You can re-download this template at any time by visiting the product page directly or checking <strong>"My Lifetime Purchased Assets"</strong> in your <a href="${siteUrl}/dashboard" style="color: #0284c7; text-decoration: underline;">Celite Dashboard</a>.
+                </p>
+              </div>
+
+              <div style="margin-top: 30px; text-align: center;">
+                <a href="${siteUrl}/dashboard" style="display: inline-block; background: #0f172a; color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; padding: 12px 28px; border-radius: 8px;">
+                  Go to My Dashboard
+                </a>
+              </div>
+
+              <p style="margin-top: 30px; color: #64748b; font-size: 13px; text-align: center;">
+                Need assistance? Contact support at <a href="mailto:celitecontactsupport@celite.in" style="color: #0284c7;">celitecontactsupport@celite.in</a><br>
+                © Celite Market. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+  },
 };
 
 // Admin email for notifications
@@ -479,6 +538,40 @@ export async function sendSubscriptionCancelledEmail(
     console.log(`Admin notification sent for subscription cancellation: ${userEmail}`);
   } catch (adminError) {
     console.error('Failed to send admin notification for cancellation:', adminError);
+  }
+
+  return result;
+}
+
+export async function sendProductPurchaseEmail(
+  userEmail: string,
+  userName: string,
+  items: Array<{ name: string; slug: string; price: number }>,
+  totalAmount: number
+) {
+  const template = emailTemplates.productPurchase(userName, items, totalAmount);
+  const result = await sendEmail(userEmail, template.subject, template.html);
+
+  // Send admin notification copy
+  try {
+    const mainItemName = items[0]?.name || 'Pay-Per-Product Item';
+    const adminSubject = `[Admin Order] Pay-Per-Product Purchased - ${userEmail} - ₹${totalAmount}`;
+    const itemsListHtml = items.map(i => `<li>${i.name} (slug: ${i.slug}) - ₹${i.price}</li>`).join('');
+    const adminHtml = `
+      <p>A pay-per-product order has been completed on Celite Market:</p>
+      <ul>
+        <li><strong>Customer Email:</strong> ${userEmail}</li>
+        <li><strong>Customer Name:</strong> ${userName}</li>
+        <li><strong>Total Paid:</strong> ₹${totalAmount.toLocaleString('en-IN')}</li>
+        <li><strong>Date:</strong> ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>
+      </ul>
+      <p><strong>Purchased Asset(s):</strong></p>
+      <ul>${itemsListHtml}</ul>
+    `;
+    await sendEmail(ADMIN_EMAIL, adminSubject, adminHtml);
+    console.log(`Admin notification sent for single product purchase: ${userEmail}`);
+  } catch (adminError) {
+    console.error('Failed to send admin notification for product purchase:', adminError);
   }
 
   return result;
