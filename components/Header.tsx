@@ -183,38 +183,38 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full fixed top-0 left-0 z-[100] backdrop-blur-md bg-background/90 border-b border-zinc-100 transition-all duration-300">
+      <header className="w-full fixed top-0 left-0 z-[100] backdrop-blur-md bg-[#0D111A]/95 border-b border-zinc-800/60 shadow-lg transition-all duration-300">
         <nav className="max-w-[1440px] mx-auto h-20 px-6 sm:px-8 flex items-center justify-between">
           {/* Left: Logo & Nav */}
           <div className="flex items-center gap-10">
-            <Link href="/" className="flex items-center gap-2 focus:outline-none hover:opacity-90 transition-opacity shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 focus:outline-none hover:opacity-90 transition-opacity shrink-0">
               <img src={isDecember ? "/chirtsmaslogo.png" : "/logo/logo.png"} alt="Celite Market Logo" className="h-9 w-auto object-contain" />
               <div className="flex flex-col">
-                <span className="text-xl font-black text-zinc-900 tracking-tight leading-none">CELITE MARKET</span>
-                <span className="text-[10px] font-bold text-sky-600 tracking-wider uppercase">Digital Asset Marketplace</span>
+                <span className="text-xl font-bold text-white tracking-tight leading-none">CELITE MARKET</span>
+                <span className="text-[10px] font-semibold text-zinc-400 tracking-wider uppercase">Digital Asset Marketplace</span>
               </div>
             </Link>
 
             {/* Global Search Bar */}
-            <div className="hidden lg:flex items-center ml-4 bg-zinc-100/80 hover:bg-zinc-100 rounded-full border border-zinc-200/50 transition-all focus-within:ring-2 focus-within:ring-sky-600/20 focus-within:border-sky-600/30 group">
+            <div className="hidden lg:flex items-center ml-4 bg-zinc-900/90 hover:bg-zinc-900 rounded-xl border border-zinc-800 focus-within:border-zinc-700 focus-within:ring-1 focus-within:ring-zinc-700 transition-all group">
               {/* Category Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
-                  className="flex items-center gap-1.5 px-4 h-10 text-[13px] font-semibold text-zinc-600 hover:text-black border-r border-zinc-200 transition-colors"
+                  className="flex items-center gap-1.5 px-4 h-10 text-[13px] font-medium text-zinc-300 hover:text-white border-r border-zinc-800 transition-colors"
                 >
                   <span className="max-w-[100px] truncate">{selectedCategory.name}</span>
-                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", isCategoryMenuOpen && "rotate-180")} />
+                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200 text-zinc-400 group-hover:text-zinc-200", isCategoryMenuOpen && "rotate-180")} />
                 </button>
 
                 {isCategoryMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-zinc-100 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#141A26] rounded-xl shadow-xl border border-zinc-800 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
                     <button
                       onClick={() => {
                         setSelectedCategory({ name: 'All Categories', slug: '' });
                         setIsCategoryMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-50 transition-colors font-medium text-zinc-700"
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-800/80 transition-colors font-medium text-zinc-300 hover:text-white"
                     >
                       All Categories
                     </button>
@@ -232,7 +232,7 @@ export default function Header() {
                           setSelectedCategory(cat);
                           setIsCategoryMenuOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-50 transition-colors font-medium text-zinc-700"
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-800/80 transition-colors font-medium text-zinc-300 hover:text-white"
                       >
                         {cat.name}
                       </button>
@@ -257,9 +257,9 @@ export default function Header() {
                   placeholder={`Search After Effects, SFX, Music, 3D Assets...`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium placeholder:text-zinc-400 px-4"
+                  className="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-white placeholder:text-zinc-500 px-4"
                 />
-                <button type="submit" className="p-2 mr-1 rounded-full text-zinc-400 group-hover:text-black transition-colors">
+                <button type="submit" className="p-2 mr-1 text-zinc-400 group-hover:text-zinc-200 transition-colors">
                   <Search className="w-4 h-4" />
                 </button>
               </form>
@@ -270,19 +270,19 @@ export default function Header() {
           <div className="flex items-center gap-4">
             {/* Celite Subscription External Redirect Link */}
             <a
-              href="https://celite.in"
+              href="https://celitemarket.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1 text-xs font-bold text-sky-700 hover:text-sky-900 bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-full transition shadow-sm hover:shadow"
+              className="hidden lg:inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 bg-sky-950/40 border border-sky-800/40 px-3.5 py-1.5 rounded-lg transition shadow-sm hover:bg-sky-900/40"
             >
               Celite Subscription ₹499/mo →
             </a>
 
-            {/* Creator link (Desktop) - show Sell on Celite Market until shop exists, then Creator Dashboard */}
+            {/* Creator link (Desktop) */}
             {!isAuthLoading && user && !hasCreatorShop && (
               <Link
                 href="/start-selling"
-                className="hidden md:block text-[13px] font-semibold text-zinc-700 hover:text-black transition-colors"
+                className="hidden md:block text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
               >
                 Sell on Celite Market
               </Link>
@@ -290,7 +290,7 @@ export default function Header() {
             {!isAuthLoading && user && hasCreatorShop && (
               <Link
                 href="/creator/dashboard"
-                className="hidden md:block text-[13px] font-semibold text-zinc-700 hover:text-black transition-colors"
+                className="hidden md:block text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
               >
                 Creator Dashboard
               </Link>
@@ -299,30 +299,28 @@ export default function Header() {
             {/* Auth Buttons */}
             <div className="flex items-center gap-3">
               {isAuthLoading ? (
-                /* Skeleton loader while auth is loading */
                 <div className="flex items-center gap-3">
-                  <div className="hidden sm:block w-20 h-9 bg-zinc-100 rounded-full animate-pulse" />
-                  <div className="w-8 h-8 sm:w-28 sm:h-10 bg-zinc-100 rounded-lg animate-pulse" />
+                  <div className="hidden sm:block w-20 h-9 bg-zinc-900 rounded-lg animate-pulse" />
+                  <div className="w-8 h-8 sm:w-28 sm:h-10 bg-zinc-900 rounded-lg animate-pulse" />
                 </div>
               ) : !user ? (
                 <>
-                  <Link href="/login" className="hidden sm:block text-[13px] font-semibold text-zinc-800 px-4 py-2 hover:bg-zinc-100 rounded-full transition-colors">
+                  <Link href="/login" className="hidden sm:block text-[13px] font-medium text-zinc-300 px-4 py-2 hover:bg-zinc-800/60 hover:text-white rounded-lg transition-colors">
                     Log in
                   </Link>
                   <Link
                     href="/signup"
-                    className="bg-sky-600 hover:bg-sky-500 text-white px-4 sm:px-5 py-2 text-xs sm:text-sm font-extrabold rounded-xl transition-all shadow-md shadow-sky-600/20 active:scale-95"
+                    className="bg-sky-600 hover:bg-sky-500 text-white px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all shadow-sm active:scale-95"
                   >
                     Join Celite Market
                   </Link>
                 </>
               ) : (
                 <>
-                  {/* Show Subscribe Now button if user is not subscribed */}
                   {!isSubscribed && (
                     <Link
                       href="/pricing"
-                      className="hidden sm:block bg-blue-600 text-white px-4 py-2 text-xs font-semibold rounded-lg border-2 border-blue-700 hover:bg-blue-700 hover:border-blue-800 transition-all shadow-sm hover:shadow-md"
+                      className="hidden sm:block bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 text-xs font-semibold rounded-lg border border-sky-500 transition-all shadow-sm"
                     >
                       Subscribe Now
                     </Link>
@@ -330,20 +328,20 @@ export default function Header() {
 
                   {/* User Profile */}
                   <Link href="/dashboard" className="relative group">
-                    <div className="flex items-center gap-3 pl-3 pr-1 py-1 rounded-full border border-zinc-200 hover:shadow-md transition-all bg-white">
-                      <span className="text-xs font-semibold text-zinc-700 hidden sm:block">
+                    <div className="flex items-center gap-3 pl-3 pr-1.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all bg-zinc-900 text-zinc-200">
+                      <span className="text-xs font-medium text-zinc-200 hidden sm:block">
                         My Account
                       </span>
                       {isSubscribed ? (
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 p-[2px]">
-                          <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-                            <span className="font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-r from-sky-400 to-blue-500 p-[1.5px]">
+                          <div className="h-full w-full rounded-full bg-[#0D111A] flex items-center justify-center">
+                            <span className="font-bold text-xs text-sky-400">
                               {(user.email || 'U').charAt(0).toUpperCase()}
                             </span>
                           </div>
                         </div>
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 text-xs font-bold">
+                        <div className="h-7 w-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-300 text-xs font-bold">
                           {(user.email || 'U').charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -355,7 +353,7 @@ export default function Header() {
 
             {/* Mobile Menu Toggle */}
             <button
-              className="lg:hidden p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
+              className="lg:hidden p-2 text-zinc-300 hover:bg-zinc-900 rounded-lg"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -365,8 +363,8 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 w-full bg-background border-b border-zinc-100 shadow-xl py-6 px-6 flex flex-col gap-4 animate-in slide-in-from-top-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
-            {/* Mobile nav in specific order */}
+          <div className="lg:hidden absolute top-20 left-0 w-full bg-[#0D111A] border-b border-zinc-800/60 shadow-xl py-6 px-6 flex flex-col gap-4 animate-in slide-in-from-top-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            {/* Mobile nav */}
             {[
               { name: 'Video Templates', route: '/video-templates', slug: 'video-templates' },
               { name: 'Photos', route: '/stock-photos', slug: 'stock-images' },
@@ -389,10 +387,10 @@ export default function Header() {
               );
 
               return (
-                <div key={navItem.slug} className="border-b border-zinc-50 pb-2">
+                <div key={navItem.slug} className="border-b border-zinc-900 pb-2">
                   <Link
                     href={navItem.route}
-                    className="text-lg font-semibold text-zinc-900 py-2 block"
+                    className="text-lg font-medium text-white py-2 block"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {navItem.name}
@@ -403,7 +401,7 @@ export default function Header() {
                         <Link
                           key={subcategory.id}
                           href={`${navItem.route}?subcategory=${subcategory.slug}`}
-                          className="text-xs text-zinc-600 py-0.5 block hover:text-zinc-900"
+                          className="text-xs text-zinc-400 py-0.5 block hover:text-white"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {subcategory.name}
@@ -417,7 +415,7 @@ export default function Header() {
             {!isAuthLoading && user && !hasCreatorShop && (
               <Link
                 href="/start-selling"
-                className="text-lg font-medium text-zinc-500 py-2"
+                className="text-lg font-medium text-zinc-300 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Start Selling
@@ -426,7 +424,7 @@ export default function Header() {
             {!isAuthLoading && user && hasCreatorShop && (
               <Link
                 href="/creator/dashboard"
-                className="text-lg font-medium text-zinc-500 py-2"
+                className="text-lg font-medium text-zinc-300 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Creator Dashboard
@@ -434,7 +432,7 @@ export default function Header() {
             )}
             <Link
               href="/video-templates"
-              className="text-lg font-medium text-zinc-800 py-2 border-b border-zinc-50"
+              className="text-lg font-medium text-zinc-300 py-2 border-b border-zinc-900"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Search Templates
@@ -442,7 +440,7 @@ export default function Header() {
             {!isAuthLoading && !user && (
               <Link
                 href="/login"
-                className="text-lg font-medium text-zinc-800 py-2"
+                className="text-lg font-medium text-white py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Log in
