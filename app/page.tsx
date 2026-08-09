@@ -5,8 +5,6 @@ import VideoTemplatesShowcase from '../components/VideoTemplatesShowcase';
 import SaveDateShowcase from '../components/SaveDateShowcase';
 import RoyaltyFreeMusicShowcase from '../components/RoyaltyFreeMusicShowcase';
 import SfxShowcase from '../components/SfxShowcase';
-import LatestTemplatesCarousel from '../components/LatestTemplatesCarousel';
-import WebsiteShowcaseCarousel from '../components/WebsiteShowcaseCarousel';
 import CategoriesSection from '../components/CategoriesSection';
 import VideoCollectionsCarousel from '../components/VideoCollectionsCarousel';
 import FAQAndSubscribe from '../components/FAQAndSubscribe';
@@ -85,7 +83,7 @@ export default async function Home() {
   const saveDateSubSubcatId = saveDateSubSubcat?.id;
 
   // Fetch in parallel
-  const [cinemaRes, saveDateRes, freeRes, musicRes, sfxRes, webRes] = await Promise.all([
+  const [cinemaRes, saveDateRes, freeRes, musicRes, sfxRes] = await Promise.all([
     // Cinema: Only fetch templates from "Movie Templates" sub-subcategory
     movieSubSubcatId
       ? supabase
@@ -165,22 +163,12 @@ export default async function Home() {
           .order('created_at', { ascending: false })
           .limit(12)
       : Promise.resolve({ data: null }),
-    webCatId
-      ? supabase
-          .from('templates')
-          .select('slug, name, subtitle, description, img, video, video_path, thumbnail_path, features, tags, created_at, category_id, categories(id, name, slug)')
-          .eq('status', 'approved')
-          .eq('category_id', webCatId)
-          .order('created_at', { ascending: false })
-          .limit(24)
-      : Promise.resolve({ data: null }),
   ]);
 
   const cinemaTemplates = (cinemaRes.data || []).map((t: any) => ({
     ...t,
     category: { id: videoCatId, name: 'Video Templates', slug: 'video-templates' }
   }));
-  const freeTemplates = freeRes.data || [];
   const saveDateTemplates = (saveDateRes.data || []).map((t: any) => ({
     ...t,
     category: { id: videoCatId, name: 'Video Templates', slug: 'video-templates' }
@@ -194,27 +182,6 @@ export default async function Home() {
     category: { id: sfxCatId, name: 'Sound Effects', slug: 'sound-effects' }
   }));
 
-  // Handle the nested structure for websites showcase
-  const webTemplates = (webRes.data ?? []).map((tpl: any) => {
-    const category = tpl.categories ? (Array.isArray(tpl.categories) ? tpl.categories[0] : tpl.categories) : null;
-    return {
-      slug: tpl.slug,
-      name: tpl.name,
-      subtitle: tpl.subtitle,
-      desc: tpl.description ?? '',
-      price: 0,
-      img: tpl.img,
-      video: tpl.video,
-      video_path: tpl.video_path,
-      thumbnail_path: tpl.thumbnail_path,
-      features: tpl.features ?? [],
-      software: tpl.software ?? [],
-      plugins: tpl.plugins ?? [],
-      tags: tpl.tags ?? [],
-      category: category ? { id: category.id, name: category.name, slug: category.slug } : null,
-    };
-  });
-
   return (
     <main className="bg-[#090D16] min-h-screen">
       <Hero />
@@ -225,7 +192,6 @@ export default async function Home() {
       <SfxShowcase initialTemplates={sfxTemplates as any} />
       <CategoriesSection />
       <VideoCollectionsCarousel />
-      <WebsiteShowcaseCarousel initialTemplates={webTemplates as any} />
       <FAQAndSubscribe />
     </main>
   );
