@@ -2,8 +2,24 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Cloudflare R2 is S3-compatible, so we use AWS SDK
+function getR2Endpoint(): string {
+  const accountId = process.env.R2_ACCOUNT_ID || '';
+  let endpoint = process.env.R2_ENDPOINT || '';
+  if (endpoint && (endpoint.includes('${') || endpoint.includes('${r2_account_id}'))) {
+    if (accountId) {
+      endpoint = endpoint.replace(/\$\{R2_ACCOUNT_ID\}/gi, accountId);
+    } else {
+      endpoint = '';
+    }
+  }
+  if (!endpoint && accountId) {
+    endpoint = `https://${accountId}.r2.cloudflarestorage.com`;
+  }
+  return endpoint;
+}
+
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID || '';
-const R2_ENDPOINT = process.env.R2_ENDPOINT || (R2_ACCOUNT_ID ? `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : '');
+const R2_ENDPOINT = getR2Endpoint();
 const R2_SOURCE_BUCKET = process.env.R2_SOURCE_BUCKET || 'celite-source-files';
 const R2_PREVIEWS_BUCKET = process.env.R2_PREVIEWS_BUCKET || 'celite-previews';
 const R2_PREVIEWS_DOMAIN = process.env.R2_PREVIEWS_DOMAIN || 'preview.celite.in';
@@ -12,14 +28,6 @@ const R2_PREVIEWS_DOMAIN = process.env.R2_PREVIEWS_DOMAIN || 'preview.celite.in'
 function validateR2Config() {
   if (!R2_ENDPOINT || R2_ENDPOINT.trim() === '') {
     throw new Error('Cloudflare R2 is not configured. Please add R2_ACCOUNT_ID (or R2_ENDPOINT), R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY to your .env.local file.');
-  }
-  // Validate that R2_ENDPOINT doesn't contain template strings
-  if (R2_ENDPOINT && (R2_ENDPOINT.includes('${') || R2_ENDPOINT.includes('${r2_account_id}'))) {
-    console.error('Invalid R2_ENDPOINT: contains template string. Please set the actual endpoint URL.');
-    const suggestion = R2_ACCOUNT_ID 
-      ? `\n\nSOLUTION: Either:\n1. Set R2_ENDPOINT=https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com\n2. Or remove R2_ENDPOINT and let it auto-generate from R2_ACCOUNT_ID`
-      : '\n\nSOLUTION: Set R2_ENDPOINT to your actual endpoint URL (e.g., https://your-account-id.r2.cloudflarestorage.com) or set R2_ACCOUNT_ID to auto-generate it.';
-    throw new Error('R2_ENDPOINT environment variable contains template string. Set it to the actual endpoint URL (e.g., https://your-account-id.r2.cloudflarestorage.com)' + suggestion);
   }
 }
 

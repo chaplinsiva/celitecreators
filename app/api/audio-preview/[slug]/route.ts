@@ -6,7 +6,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 // R2 configuration
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID || '';
-const R2_ENDPOINT = process.env.R2_ENDPOINT || (R2_ACCOUNT_ID ? `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : '');
+let rawEndpoint = process.env.R2_ENDPOINT || '';
+if (rawEndpoint && rawEndpoint.includes('${')) {
+  rawEndpoint = R2_ACCOUNT_ID ? rawEndpoint.replace(/\$\{R2_ACCOUNT_ID\}/gi, R2_ACCOUNT_ID) : '';
+}
+const R2_ENDPOINT = rawEndpoint || (R2_ACCOUNT_ID ? `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : '');
 const R2_PREVIEWS_BUCKET = process.env.R2_PREVIEWS_BUCKET || 'celite-previews';
 
 const r2Client = new S3Client({
