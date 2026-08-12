@@ -102,11 +102,40 @@ export async function GET(req: Request) {
       uniqueUserPeriods = 0;
     }
 
-    // Revenue breakdown calculations
+    // Query marketplace sales items and payout requests in parallel
+    const [orderItemsResult, payoutsResult] = await Promise.all([
+      admin
+        .from('order_items')
+        .select('price, creator_earnings, orders!inner(status)')
+        .eq('creator_shop_id', shop.id)
+        .eq('orders.status', 'paid'),
+      admin
+        .from('payout_requests')
+        .select('amount, status')
+        .eq('creator_shop_id', shop.id)
+    ]);
+
+    const orderItems = orderItemsResult.data || [];
+    const payoutRequests = payoutsResult.data || [];
+
+    const marketplaceSalesCount = orderItems.length;
+    const marketplaceSalesRevenue = orderItems.reduce((sum: number, item: any) => {
+      const earnings = Number(item.creator_earnings) || (Number(item.price || 0) * 0.8);
+      return sum + earnings;
+    }, 0);
+
     const subscriptionPoolRevenue = uniqueUserPeriods * 40;
-    const marketplaceSalesCount = 0;
-    const marketplaceSalesRevenue = 0;
-    const totalRevenue = subscriptionPoolRevenue + marketplaceSalesRevenue;
+    const totalEarnings = subscriptionPoolRevenue + marketplaceSalesRevenue;
+
+    const paidOutAmount = payoutRequests
+      .filter((p: any) => p.status === 'paid')
+      .reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+
+    const pendingPayoutAmount = payoutRequests
+      .filter((p: any) => p.status === 'pending')
+      .reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+
+    const availableBalance = Math.max(0, totalEarnings - paidOutAmount - pendingPayoutAmount);
 
     return NextResponse.json({
       ok: true,
@@ -118,7 +147,10 @@ export async function GET(req: Request) {
         subscriptionPoolRevenue,
         marketplaceSalesCount,
         marketplaceSalesRevenue,
-        revenue: totalRevenue,
+        totalEarnings,
+        paidOutAmount,
+        pendingPayoutAmount,
+        revenue: availableBalance, // Available withdrawable balance after deducting paid & pending payouts
       },
     });
   } catch (e: any) {

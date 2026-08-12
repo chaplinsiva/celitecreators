@@ -61,7 +61,10 @@ export default function CreatorDashboardPage() {
   const [subscriptionPoolRevenue, setSubscriptionPoolRevenue] = useState<number>(0);
   const [marketplaceSalesRevenue, setMarketplaceSalesRevenue] = useState<number>(0);
   const [marketplaceSalesCount, setMarketplaceSalesCount] = useState<number>(0);
-  const [revenue, setRevenue] = useState<number>(0);
+  const [revenue, setRevenue] = useState<number>(0); // Available balance
+  const [totalEarnings, setTotalEarnings] = useState<number>(0);
+  const [paidOutAmount, setPaidOutAmount] = useState<number>(0);
+  const [pendingPayoutAmount, setPendingPayoutAmount] = useState<number>(0);
 
   const [formOpen, setFormOpen] = useState(false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -591,6 +594,9 @@ export default function CreatorDashboardPage() {
         setSubscriptionPoolRevenue(json.stats.subscriptionPoolRevenue ?? 0);
         setMarketplaceSalesRevenue(json.stats.marketplaceSalesRevenue ?? 0);
         setMarketplaceSalesCount(json.stats.marketplaceSalesCount ?? 0);
+        setTotalEarnings(json.stats.totalEarnings ?? json.stats.revenue ?? 0);
+        setPaidOutAmount(json.stats.paidOutAmount ?? 0);
+        setPendingPayoutAmount(json.stats.pendingPayoutAmount ?? 0);
         setRevenue(json.stats.revenue ?? 0);
       } else {
         const fallbackDownloads = (json.templates || []).reduce(
@@ -602,6 +608,9 @@ export default function CreatorDashboardPage() {
         setSubscriptionPoolRevenue(0);
         setMarketplaceSalesRevenue(0);
         setMarketplaceSalesCount(0);
+        setTotalEarnings(0);
+        setPaidOutAmount(0);
+        setPendingPayoutAmount(0);
         setRevenue(0);
       }
 
