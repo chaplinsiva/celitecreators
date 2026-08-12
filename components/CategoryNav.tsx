@@ -105,7 +105,7 @@ export default function CategoryNav() {
     };
 
     return (
-        <div className="w-full bg-white border-b border-zinc-100 hidden lg:block fixed top-[80px] left-0 z-[90]">
+        <div className="w-full bg-[#131B2E] border-b border-slate-700/60 hidden lg:block fixed top-[80px] left-0 z-[90]">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-8 h-11 flex items-center justify-center">
                 <nav className="flex items-center gap-1">
                     {navItems.map((item) => (
@@ -115,8 +115,8 @@ export default function CategoryNav() {
                             className={`
                                 px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200
                                 ${isActive(item.route)
-                                    ? 'bg-zinc-900 text-white'
-                                    : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+                                    ? 'bg-sky-600 text-white font-bold shadow-md shadow-sky-500/20'
+                                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
                                 }
                             `}
                         >

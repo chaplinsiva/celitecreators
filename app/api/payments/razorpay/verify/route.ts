@@ -77,13 +77,14 @@ export async function POST(req: Request) {
     const billingMobile = billing?.mobile || notes.billing_mobile || notes.customer_mobile || '';
     const billingCompany = billing?.company || notes.billing_company || null;
 
-    // Record order in DB with billing details including mobile
+    // Record order in DB with billing details and platform source ('celitemarket')
     const { data: dbOrder, error: oErr } = await admin
       .from('orders')
       .insert({ 
         user_id: userId, 
         total: totalAmount, 
         status: 'paid',
+        platform: 'celitemarket',
         billing_name: billingName || null,
         billing_email: billingEmail || null,
         billing_mobile: billingMobile || null,

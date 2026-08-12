@@ -183,7 +183,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full fixed top-0 left-0 z-[100] bg-black border-b border-zinc-800/80 shadow-lg transition-all duration-300">
+      <header className="w-full fixed top-0 left-0 z-[100] bg-[#0B0F17] border-b border-slate-800/90 shadow-xl transition-all duration-300">
         <nav className="max-w-[1440px] mx-auto h-20 px-6 sm:px-8 flex items-center justify-between">
           {/* Left: Logo & Nav */}
           <div className="flex items-center gap-10">
@@ -191,24 +191,24 @@ export default function Header() {
               <img src={isDecember ? "/chirtsmaslogo.png" : "/logo/logo.png"} alt="Celite Market Logo" className="h-9 w-auto object-contain" />
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-white tracking-tight leading-none">CELITE MARKET</span>
-                <span className="text-[10px] font-semibold text-zinc-400 tracking-wider uppercase">Digital Asset Marketplace</span>
+                <span className="text-[10px] font-semibold text-sky-400 tracking-wider uppercase">Digital Asset Marketplace</span>
               </div>
             </Link>
 
             {/* Global Search Bar */}
-            <div className="hidden lg:flex items-center ml-4 bg-zinc-950 rounded-xl border border-zinc-800 focus-within:border-zinc-700 focus-within:ring-1 focus-within:ring-zinc-700 transition-all group">
+            <div className="hidden lg:flex items-center ml-4 bg-slate-900 rounded-xl border border-slate-700/80 focus-within:border-sky-500/60 focus-within:ring-1 focus-within:ring-sky-500/40 transition-all group">
               {/* Category Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
-                  className="flex items-center gap-1.5 px-4 h-10 text-[13px] font-medium text-zinc-300 hover:text-white border-r border-zinc-800 transition-colors"
+                  className="flex items-center gap-1.5 px-4 h-10 text-[13px] font-medium text-slate-300 hover:text-white border-r border-slate-700/80 transition-colors"
                 >
                   <span className="max-w-[100px] truncate">{selectedCategory.name}</span>
-                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200 text-zinc-400 group-hover:text-zinc-200", isCategoryMenuOpen && "rotate-180")} />
+                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200 text-slate-400 group-hover:text-sky-400", isCategoryMenuOpen && "rotate-180")} />
                 </button>
 
                 {isCategoryMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-zinc-950 rounded-xl shadow-2xl border border-zinc-800 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#0F172A] rounded-xl shadow-2xl border border-slate-700/80 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
                     <button
                       onClick={() => {
                         setSelectedCategory({ name: 'All Categories', slug: '' });

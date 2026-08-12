@@ -10,19 +10,26 @@ type RazorpayCreds = {
   yearly_amount_usd: number;  // USD amount in cents
 };
 
-export async function getRazorpayCreds(): Promise<RazorpayCreds> {
+export async function getRazorpayCreds(platform: 'celitemarket' | 'celite' = 'celitemarket'): Promise<RazorpayCreds> {
   const supabase = getSupabaseAdminClient();
   const settings: Record<string, string> = {};
   try {
     const { data } = await supabase.from('settings').select('key,value');
     (data ?? []).forEach((row: any) => { settings[row.key] = row.value; });
   } catch {}
-  const key_id = settings.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || '';
-  const key_secret = settings.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || '';
+  
+  // Read strictly from database settings table for celitemarket, fallback to default DB settings/env if celite
+  const key_id = platform === 'celitemarket'
+    ? (settings.CELITEMARKET_RAZORPAY_KEY_ID || settings.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || '')
+    : (settings.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || '');
+
+  const key_secret = platform === 'celitemarket'
+    ? (settings.CELITEMARKET_RAZORPAY_KEY_SECRET || settings.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || '')
+    : (settings.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || '');
+
   const currency = settings.RAZORPAY_CURRENCY || process.env.RAZORPAY_CURRENCY || 'INR';
 
   // All amounts are stored in the smallest currency unit (paise for INR, cents for USD)
-  // No ad-hoc conversion heuristics — values from DB are always in smallest unit
   const monthly_amount = Number(settings.RAZORPAY_MONTHLY_AMOUNT || process.env.RAZORPAY_MONTHLY_AMOUNT || 79900);
   const yearly_amount = Number(settings.RAZORPAY_YEARLY_AMOUNT || process.env.RAZORPAY_YEARLY_AMOUNT || 549900);
   const monthly_amount_usd = Number(settings.RAZORPAY_MONTHLY_AMOUNT_USD || process.env.RAZORPAY_MONTHLY_AMOUNT_USD || 900);  // $9 = 900 cents
