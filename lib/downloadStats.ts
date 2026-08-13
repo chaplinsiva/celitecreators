@@ -1,17 +1,12 @@
+/* agent-notes: { ctx: "Download stats helper fetching real DB records", deps: [], state: active, last: "antigravity@2026-08-13" } */
 import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Calculates a deterministic baseline count for a slug if real DB records are 0.
- * Ensures consistent, high-converting social proof across all template cards.
+ * Kept for signature compatibility but returns 0.
  */
 export function getBaselineDownloads(slug: string): number {
-  let hash = 0;
-  for (let i = 0; i < slug.length; i++) {
-    hash = (hash << 5) - hash + slug.charCodeAt(i);
-    hash |= 0;
-  }
-  const positiveHash = Math.abs(hash);
-  return 24 + (positiveHash % 142);
+  return 0;
 }
 
 /**
@@ -34,7 +29,7 @@ export async function getTemplateDownloadCount(
     const p = orderCount ?? 0;
     const realTotal = s + f + p;
 
-    const total = realTotal > 0 ? realTotal : getBaselineDownloads(slug);
+    const total = realTotal;
 
     return {
       total,
@@ -45,7 +40,7 @@ export async function getTemplateDownloadCount(
   } catch (e) {
     console.error('Error fetching template download count:', e);
     return {
-      total: getBaselineDownloads(slug),
+      total: 0,
       subscriptionCount: 0,
       freeCount: 0,
       payPerCount: 0,
@@ -89,11 +84,10 @@ export async function getBatchTemplateDownloads(
       }
     });
 
-    // Fill in baseline if 0 for consistency
+    // Return real count
     const result: Record<string, number> = {};
     slugs.forEach((slug) => {
-      const real = counts[slug] || 0;
-      result[slug] = real > 0 ? real : getBaselineDownloads(slug);
+      result[slug] = counts[slug] || 0;
     });
 
     return result;
@@ -101,7 +95,7 @@ export async function getBatchTemplateDownloads(
     console.error('Error in batch template downloads:', e);
     const fallback: Record<string, number> = {};
     slugs.forEach((s) => {
-      fallback[s] = getBaselineDownloads(s);
+      fallback[s] = 0;
     });
     return fallback;
   }

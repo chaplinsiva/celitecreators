@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../lib/downloadStats';
 import VideoTemplatesClient from './VideoTemplatesClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
@@ -120,12 +122,25 @@ export default async function TemplatesPage() {
     console.error('Error fetching templates:', error);
   }
 
+  // Fetch real download counts on the server side using bypass-RLS admin client
+  const admin = getSupabaseAdminClient();
+  const slugs = (templates || []).map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (err) {
+      console.error('Error fetching batch download counts on templates page:', err);
+    }
+  }
+
   // Map templates to match Template type (add price and is_featured with defaults)
   const mappedTemplates = (templates || []).map(t => ({
     ...t,
     price: 0,
     is_featured: Boolean((t as any).feature),
     feature: Boolean((t as any).feature),
+    downloadCount: counts[t.slug] || 0,
   }));
 
   return (

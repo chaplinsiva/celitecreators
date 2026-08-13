@@ -9,7 +9,7 @@ import { useLoginModal } from '../context/LoginModalContext';
 import { convertR2UrlToCdn } from '../lib/utils';
 import VideoThumbnailPlayer from './VideoThumbnailPlayer';
 import { cn } from '@/lib/utils';
-import { getBaselineDownloads } from '@/lib/downloadStats';
+import { getBatchTemplateDownloads } from '@/lib/downloadStats';
 import { ArrowRight, ChevronLeft, ChevronRight, Zap, PlayCircle, Check, Download } from 'lucide-react';
 
 type FeaturedTemplate = Template & {
@@ -35,6 +35,7 @@ export default function TemplateCarousel() {
   const featuredListRef = useRef<HTMLDivElement>(null);
   const [featured, setFeatured] = useState<FeaturedTemplate[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -117,6 +118,11 @@ export default function TemplateCarousel() {
         return template;
       });
       setFeatured(mapped);
+      if (mapped.length > 0) {
+        const slugs = mapped.map(m => m.slug);
+        const counts = await getBatchTemplateDownloads(supabase, slugs);
+        setDownloadCounts(counts);
+      }
     };
     load();
   }, [user]);
@@ -225,7 +231,7 @@ export default function TemplateCarousel() {
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Download className="w-3 h-3 text-sky-600" />
-                  <span>{getBaselineDownloads(tpl.slug)}</span>
+                  <span>{downloadCounts[tpl.slug] || 0}</span>
                 </span>
               </div>
             </div>

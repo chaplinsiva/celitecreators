@@ -31,6 +31,7 @@ interface ProductDetailsProps {
   related: Template[];
   reviews: Review[];
   monthlyPrice?: number | null;
+  initialDownloadCount?: number;
 }
 
 const getThumbnail = (item: Template | (Template & { source_path?: string | null; thumbnail_path?: string | null })) => {
@@ -59,7 +60,7 @@ const isMusicItem = (item: any) => {
     categoryName.toLowerCase().includes('audio');
 };
 
-export default function ProductDetails({ product, related, reviews, monthlyPrice }: ProductDetailsProps) {
+export default function ProductDetails({ product, related, reviews, monthlyPrice, initialDownloadCount = 0 }: ProductDetailsProps) {
   const { user } = useAppContext();
   const { openLoginModal } = useLoginModal();
   const router = useRouter();
@@ -75,20 +76,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [promptCopied, setPromptCopied] = useState<boolean>(false);
 
-  const [totalDownloads, setTotalDownloads] = useState<number>(getBaselineDownloads(product.slug));
-
-  useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const stats = await getTemplateDownloadCount(supabase, product.slug);
-        setTotalDownloads(stats.total);
-      } catch {
-        setTotalDownloads(getBaselineDownloads(product.slug));
-      }
-    };
-    loadStats();
-  }, [product.slug]);
+  const [totalDownloads, setTotalDownloads] = useState<number>(initialDownloadCount);
 
   const [youMayAlsoLikeTemplates, setYouMayAlsoLikeTemplates] = useState<Template[]>([]);
   const [loadingYouMayAlsoLike, setLoadingYouMayAlsoLike] = useState(true);

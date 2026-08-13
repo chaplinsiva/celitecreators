@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import ProductDetails from './ProductDetails';
 import type { Template } from '../../../data/templateData';
 import { getSupabaseServerClient } from '../../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../../lib/supabaseAdmin';
+import { getTemplateDownloadCount } from '../../../lib/downloadStats';
 import { convertR2UrlToCdn } from '../../../lib/utils';
 
 import { paiseToINR } from '../../../lib/priceUtils';
@@ -143,7 +145,8 @@ export async function generateStaticParams() {
 export default async function ProductPage(props: PageProps) {
   const params = await props.params;
   const supabase = getSupabaseServerClient();
-  const [{ data: row }, { data: settingsData }] = await Promise.all([
+  const admin = getSupabaseAdminClient();
+  const [{ data: row }, { data: settingsData }, statsResult] = await Promise.all([
     supabase
       .from('templates')
       .select('slug,name,subtitle,description,img,video_path,thumbnail_path,audio_preview_path,model_3d_path,features,software,plugins,tags,source_path,meta_title,meta_description,vendor_name,category_id,subcategory_id,is_free,price,ownership_type,categories(id,slug,name)')
@@ -152,9 +155,15 @@ export default async function ProductPage(props: PageProps) {
     supabase
       .from('settings')
       .select('key,value')
-      .eq('key', 'RAZORPAY_MONTHLY_AMOUNT')
+      .eq('key', 'RAZORPAY_MONTHLY_AMOUNT'),
+    getTemplateDownloadCount(admin, params.slug).catch(err => {
+      console.error('Error fetching download stats on product server page:', err);
+      return { total: 0 };
+    })
   ]);
   if (!row) return notFound();
+
+  const serverDownloadCount = statsResult?.total || 0;
 
   const rawMonthlyPaise = settingsData?.[0]?.value || '79900';
   const monthlyPrice = paiseToINR(Number(rawMonthlyPaise));
@@ -326,7 +335,7 @@ export default async function ProductPage(props: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
       />
-      <ProductDetails product={prod} related={related} reviews={reviews} monthlyPrice={monthlyPrice} />
+      <ProductDetails product={prod} related={related} reviews={reviews} monthlyPrice={monthlyPrice} initialDownloadCount={serverDownloadCount} />
     </>
   );
 }

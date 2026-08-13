@@ -24,6 +24,7 @@ type CreatorTemplateRow = {
   name: string;
   subtitle: string | null;
   video: string | null;
+  img?: string | null;
   created_at: string | null;
   downloadCount: number;
   status?: string | null;
@@ -31,6 +32,19 @@ type CreatorTemplateRow = {
   available_on_celite_market?: boolean;
   available_on_celite_subscription?: boolean;
   subscription_submission_status?: string | null;
+  description?: string | null;
+  video_path?: string | null;
+  thumbnail_path?: string | null;
+  audio_preview_path?: string | null;
+  model_3d_path?: string | null;
+  source_path?: string | null;
+  features?: string[] | null;
+  software?: string[] | null;
+  plugins?: string[] | null;
+  tags?: string[] | null;
+  category_id?: string | null;
+  subcategory_id?: string | null;
+  sub_subcategory_id?: string | null;
 };
 
 type Category = {
@@ -67,6 +81,8 @@ export default function CreatorDashboardPage() {
   const [pendingPayoutAmount, setPendingPayoutAmount] = useState<number>(0);
 
   const [formOpen, setFormOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -162,6 +178,8 @@ export default function CreatorDashboardPage() {
       tags: "",
     });
     setSlugManuallyEdited(false);
+    setIsEditing(false);
+    setEditingSlug(null);
   };
 
   const formatSpeed = (bytesPerSecond: number): string => {
@@ -698,7 +716,7 @@ export default function CreatorDashboardPage() {
         return;
       }
 
-      const slug = (form.slug || generateSlug(form.name)).trim().toLowerCase();
+      const slug = isEditing ? editingSlug : (form.slug || generateSlug(form.name)).trim().toLowerCase();
       if (!slug) {
         setError("Please enter a name to generate a slug.");
         setSaving(false);
@@ -706,53 +724,53 @@ export default function CreatorDashboardPage() {
       }
 
       const payload = {
-        template: {
-          name: form.name,
-          slug,
-          subtitle: form.subtitle,
-          description: form.description,
-          video_path: form.video_path,
-          thumbnail_path: form.thumbnail_path,
-          audio_preview_path: form.audio_preview_path,
-          model_3d_path: form.model_3d_path,
-          source_path: form.source_path,
-          features: form.features
-            ? form.features
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-            : [],
-          software: form.software
-            ? form.software
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-            : [],
-          plugins: form.plugins
-            ? form.plugins
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-            : [],
-          tags: form.tags
-            ? form.tags
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-            : [],
-          category_id: form.category_id || null,
-          subcategory_id: form.subcategory_id || null,
-          sub_subcategory_id: form.sub_subcategory_id || null,
-        },
+        slug,
+        name: form.name,
+        subtitle: form.subtitle,
+        description: form.description,
+        video_path: form.video_path,
+        thumbnail_path: form.thumbnail_path,
+        audio_preview_path: form.audio_preview_path,
+        model_3d_path: form.model_3d_path,
+        source_path: form.source_path,
+        features: form.features
+          ? form.features
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          : [],
+        software: form.software
+          ? form.software
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          : [],
+        plugins: form.plugins
+          ? form.plugins
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          : [],
+        tags: form.tags
+          ? form.tags
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+          : [],
+        category_id: form.category_id || null,
+        subcategory_id: form.subcategory_id || null,
+        sub_subcategory_id: form.sub_subcategory_id || null,
+        price: form.price ? Number(form.price) : 399,
       };
 
-      const res = await fetch("/api/creator/templates", {
+      const url = isEditing ? "/api/creator/templates/update" : "/api/creator/templates";
+      const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(isEditing ? payload : { template: payload }),
       });
 
       const json = await res.json();
@@ -762,16 +780,55 @@ export default function CreatorDashboardPage() {
         return;
       }
 
-      setMessage("Template saved!");
+      setMessage(isEditing ? "Template updated successfully!" : "Template saved!");
       resetForm();
+      setIsEditing(false);
+      setEditingSlug(null);
       setFormOpen(false);
       await loadData();
     } catch (e: any) {
-      console.error("Failed to create template:", e);
-      setError(e?.message || "Failed to create template.");
+      console.error("Failed to save template:", e);
+      setError(e?.message || "Failed to save template.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditClick = (tpl: CreatorTemplateRow) => {
+    setError(null);
+    setMessage(null);
+    setForm({
+      name: tpl.name || "",
+      slug: tpl.slug || "",
+      subtitle: tpl.subtitle || "",
+      price: (tpl.price || 399).toString(),
+      request_subscription: false,
+      video: "",
+      video_path: tpl.video_path || "",
+      thumbnail_path: tpl.thumbnail_path || "",
+      audio_preview_path: tpl.audio_preview_path || "",
+      model_3d_path: tpl.model_3d_path || "",
+      source_path: tpl.source_path || "",
+      description: tpl.description || "",
+      category_id: tpl.category_id || "",
+      subcategory_id: tpl.subcategory_id || "",
+      sub_subcategory_id: tpl.sub_subcategory_id || "",
+      features: tpl.features ? (Array.isArray(tpl.features) ? tpl.features.join(", ") : tpl.features) : "",
+      software: tpl.software ? (Array.isArray(tpl.software) ? tpl.software.join(", ") : tpl.software) : "",
+      plugins: tpl.plugins ? (Array.isArray(tpl.plugins) ? tpl.plugins.join(", ") : tpl.plugins) : "",
+      tags: tpl.tags ? (Array.isArray(tpl.tags) ? tpl.tags.join(", ") : tpl.tags) : "",
+    });
+    setIsEditing(true);
+    setEditingSlug(tpl.slug);
+    setFormOpen(true);
+
+    // Scroll to the template form container
+    setTimeout(() => {
+      const el = document.getElementById("template-form-container");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleDeleteTemplate = async (slug: string) => {
@@ -806,40 +863,6 @@ export default function CreatorDashboardPage() {
     } catch (e: any) {
       console.error("Failed to delete template:", e);
       setError(e?.message || "Failed to delete template.");
-    }
-  };
-
-  const handleRequestSubscription = async (slug: string) => {
-    setError(null);
-    setMessage(null);
-
-    try {
-      const supabase = getSupabaseBrowserClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace("/login?redirect=/creator/dashboard");
-        return;
-      }
-
-      const res = await fetch("/api/creator/request-subscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ slug }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
-        setError(json.error || "Failed to request subscription review.");
-        return;
-      }
-
-      setMessage("Subscription review request submitted successfully! Earn more upon approval.");
-      await loadData();
-    } catch (e: any) {
-      console.error("Failed to request subscription:", e);
-      setError(e?.message || "Failed to request subscription.");
     }
   };
 
@@ -881,76 +904,7 @@ export default function CreatorDashboardPage() {
     }
   };
 
-  const handleWithdrawSubscription = async (slug: string) => {
-    setError(null);
-    setMessage(null);
-    try {
-      const supabase = getSupabaseBrowserClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const res = await fetch("/api/creator/withdraw-subscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ slug }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
-        setError(json.error || "Failed to withdraw subscription request.");
-        return;
-      }
-
-      setMessage("Template successfully opted out from Celite Subscription. It remains exclusively on Celite Market.");
-      await loadData();
-    } catch (e: any) {
-      console.error("Failed to withdraw subscription:", e);
-      setError(e?.message || "Failed to withdraw subscription.");
-    }
-  };
-
-  const [editingTemplate, setEditingTemplate] = useState<{ slug: string; name: string; subtitle: string; price: number } | null>(null);
-  const [editLoading, setEditLoading] = useState(false);
-
-  const handleSaveEditTemplate = async () => {
-    if (!editingTemplate) return;
-    setError(null);
-    setMessage(null);
-    setEditLoading(true);
-
-    try {
-      const supabase = getSupabaseBrowserClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const res = await fetch("/api/creator/templates/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(editingTemplate),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
-        setError(json.error || "Failed to update template.");
-        return;
-      }
-
-      setMessage("Template details & price updated successfully!");
-      setEditingTemplate(null);
-      await loadData();
-    } catch (e: any) {
-      console.error("Failed to update template:", e);
-      setError(e?.message || "Failed to update template.");
-    } finally {
-      setEditLoading(false);
-    }
-  };
-
-  const [active, setActive] = useState<"overview" | "templates" | "settings">(
+  const [active, setActive] = useState<"overview" | "templates" | "settings" | "monetization">(
     "overview"
   );
 
@@ -1044,6 +998,16 @@ export default function CreatorDashboardPage() {
             >
               Settings
             </button>
+            <button
+              type="button"
+              onClick={() => setActive("monetization")}
+              className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors ${active === "monetization"
+                ? "bg-zinc-900 text-white"
+                : "text-zinc-600 hover:bg-zinc-100"
+                }`}
+            >
+              Monetization
+            </button>
           </nav>
         </aside>
 
@@ -1069,7 +1033,7 @@ export default function CreatorDashboardPage() {
                 {shop && (
                   <div className="text-right space-y-2">
                     <p className="text-xs text-zinc-500 font-medium">
-                      Public URLs
+                      Public URL
                     </p>
                     <div className="flex flex-col md:items-end gap-1.5">
                       <Link
@@ -1079,16 +1043,6 @@ export default function CreatorDashboardPage() {
                       >
                         celitemarket.in/{shop.slug}
                       </Link>
-                      {templates.some(t => t.subscription_submission_status === 'APPROVED' || t.subscription_submission_status === 'PENDING_REVIEW' || !!t.available_on_celite_subscription) && (
-                        <a
-                          href={`https://celitemarket.in/${shop.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center rounded-full bg-indigo-950 text-indigo-200 border border-indigo-800 px-3 py-1 text-[11px] font-semibold hover:bg-indigo-900 transition-colors"
-                        >
-                          celitemarket.in/{shop.slug}
-                        </a>
-                      )}
                     </div>
                     <div className="pt-1">
                       <button
@@ -1128,7 +1082,7 @@ export default function CreatorDashboardPage() {
                     <h2 className="text-sm font-bold text-zinc-900 mb-4">
                       Quick stats
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                       <div className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
                         <p className="text-xs text-zinc-500 mb-1 font-medium">
                           Total Templates
@@ -1150,21 +1104,9 @@ export default function CreatorDashboardPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
-                        <p className="text-xs text-indigo-800 mb-1 font-bold">
-                          Celite.in Subscription Pool
-                        </p>
-                        <p className="text-2xl font-black text-indigo-950">
-                          ₹{Math.round(subscriptionPoolRevenue).toLocaleString('en-IN')}
-                        </p>
-                        <p className="text-[10px] text-indigo-700 mt-1 font-semibold">
-                          {uniqueUserPeriods} subscriber periods ({totalDownloads} downloads)
-                        </p>
-                      </div>
-
                       <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
                         <p className="text-xs text-emerald-800 mb-1 font-bold">
-                          Total Earnings
+                          Withdrawable Balance
                         </p>
                         <p className="text-2xl font-black text-emerald-950">
                           ₹{Math.round(revenue).toLocaleString('en-IN')}
@@ -1192,14 +1134,6 @@ export default function CreatorDashboardPage() {
                               celitemarket.in/{shop.slug}
                             </a>
                           </div>
-                          {templates.some(t => t.subscription_submission_status === 'APPROVED' || t.subscription_submission_status === 'PENDING_REVIEW' || !!t.available_on_celite_subscription) && (
-                            <div className="pt-1 border-t border-zinc-200/60">
-                              <span className="text-[10px] uppercase font-bold text-indigo-600 block">Celite Subscription Profile:</span>
-                              <a href={`https://celitemarket.in/${shop.slug}`} target="_blank" rel="noopener noreferrer" className="text-indigo-700 hover:underline font-semibold break-all">
-                                celitemarket.in/{shop.slug}
-                              </a>
-                            </div>
-                          )}
                         </div>
                       ) : (
                         <p className="text-xs text-zinc-500">Create your shop to get a public URL</p>
@@ -1463,9 +1397,28 @@ export default function CreatorDashboardPage() {
 
                     {formOpen && (
                       <form
+                        id="template-form-container"
                         onSubmit={handleCreateTemplate}
-                        className="space-y-3 mb-6"
+                        className="space-y-3 mb-6 p-6 rounded-3xl border border-zinc-200 bg-zinc-50/30"
                       >
+                        <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-4">
+                          <h3 className="text-sm font-bold text-zinc-900">
+                            {isEditing ? `Edit Template: ${form.name}` : "Upload New Template"}
+                          </h3>
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                resetForm();
+                                setFormOpen(false);
+                              }}
+                              className="text-xs text-red-500 font-semibold hover:underline"
+                            >
+                              Cancel Edit
+                            </button>
+                          )}
+                        </div>
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-semibold text-zinc-700 mb-1">
@@ -1495,18 +1448,19 @@ export default function CreatorDashboardPage() {
                             <input
                               type="text"
                               value={form.slug}
+                              disabled={isEditing}
                               onChange={(e) => {
                                 setSlugManuallyEdited(true);
                                 setForm((f) => ({ ...f, slug: e.target.value }));
                               }}
-                              className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                              className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
                               placeholder="auto-generated-from-name"
                             />
                           </div>
                         </div>
 
-                        {/* Marketplace Price & Celite Subscription Request */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-sky-50/60 rounded-2xl border border-sky-100/80">
+                        {/* Marketplace Price */}
+                        <div className="p-4 bg-sky-50/60 rounded-2xl border border-sky-100/80">
                           <div>
                             <label className="block text-xs font-bold text-sky-950 mb-1">
                               Custom Marketplace Price (₹)
@@ -1524,20 +1478,6 @@ export default function CreatorDashboardPage() {
                               />
                             </div>
                             <p className="text-[10px] text-sky-700 mt-1 font-medium">Earn 80% payout on single product marketplace sales.</p>
-                          </div>
-                          <div className="flex flex-col justify-center">
-                            <label className="flex items-start gap-2.5 cursor-pointer mt-1">
-                              <input
-                                type="checkbox"
-                                checked={form.request_subscription}
-                                onChange={(e) => setForm((f) => ({ ...f, request_subscription: e.target.checked }))}
-                                className="mt-0.5 w-4 h-4 rounded text-sky-600 focus:ring-sky-500 border-sky-300"
-                              />
-                              <div>
-                                <span className="text-xs font-bold text-sky-950 block">Request Celite Subscription Inclusion</span>
-                                <span className="text-[10px] text-sky-700 block">Earn additional monthly pool revenue when subscribers download your template on Celite.in.</span>
-                              </div>
-                            </label>
                           </div>
                         </div>
 
@@ -1974,16 +1914,18 @@ export default function CreatorDashboardPage() {
                         </div>
 
                         <div className="flex justify-end gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setAutofillOpen(true)}
-                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 text-xs font-semibold text-violet-700 hover:from-violet-100 hover:to-purple-100 transition-all flex items-center gap-1.5"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            Autofill with AI
-                          </button>
+                          {!isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => setAutofillOpen(true)}
+                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 text-xs font-semibold text-violet-700 hover:from-violet-100 hover:to-purple-100 transition-all flex items-center gap-1.5"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                              </svg>
+                              Autofill with AI
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => {
@@ -1999,7 +1941,7 @@ export default function CreatorDashboardPage() {
                             disabled={saving}
                             className="px-5 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 disabled:opacity-60"
                           >
-                            {saving ? "Saving..." : "Save template"}
+                            {saving ? (isEditing ? "Saving Changes..." : "Saving...") : (isEditing ? "Save Changes" : "Save template")}
                           </button>
                         </div>
                       </form>
@@ -2059,53 +2001,10 @@ export default function CreatorDashboardPage() {
                                   ₹{tpl.price || 399}
                                 </span>
 
-                                {/* Celite Subscription Status & Request/Opt-out Buttons */}
-                                {tpl.subscription_submission_status === 'APPROVED' ? (
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-                                      ✓ Sub: Approved
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleWithdrawSubscription(tpl.slug)}
-                                      title="Remove template from Celite Subscription pool"
-                                      className="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 px-2 py-0.5 rounded-md transition-all"
-                                    >
-                                      Opt-Out Sub
-                                    </button>
-                                  </div>
-                                ) : tpl.subscription_submission_status === 'PENDING_REVIEW' ? (
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800">
-                                      ⏳ Sub: Pending
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleWithdrawSubscription(tpl.slug)}
-                                      title="Cancel subscription review request"
-                                      className="text-[10px] font-bold bg-zinc-200 text-zinc-700 hover:bg-zinc-300 px-2 py-0.5 rounded-md transition-all"
-                                    >
-                                      Cancel Request
-                                    </button>
-                                  </div>
-                                ) : tpl.subscription_submission_status === 'REJECTED' ? (
-                                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800">
-                                    ❌ Sub: Rejected
-                                  </span>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRequestSubscription(tpl.slug)}
-                                    className="text-[10px] font-bold bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded-lg transition-all shadow-xs whitespace-nowrap"
-                                  >
-                                    + Request Sub
-                                  </button>
-                                )}
-
                                 <div className="flex items-center gap-2 ml-1">
                                   <button
                                     type="button"
-                                    onClick={() => setEditingTemplate({ slug: tpl.slug, name: tpl.name, subtitle: tpl.subtitle || '', price: tpl.price || 399 })}
+                                    onClick={() => handleEditClick(tpl)}
                                     className="text-xs font-bold text-sky-600 hover:text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md"
                                   >
                                     Edit
@@ -2181,6 +2080,31 @@ export default function CreatorDashboardPage() {
                 </section>
               </div>
             )}
+
+            {/* Monetization tab */}
+            {active === "monetization" && (
+              <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm text-center max-w-2xl mx-auto space-y-6">
+                <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold text-zinc-900">Subscription Pool Monetization</h2>
+                  <p className="text-zinc-600 text-sm">
+                    Earn recurring monthly revenue split based on downloads from the subscription pool.
+                  </p>
+                </div>
+                
+                <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl p-6 text-sm font-semibold flex items-center justify-center gap-3">
+                  <span className="flex h-2.5 w-2.5 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                  </span>
+                  Subscription pool earning money is coming soon!
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Footer */}
@@ -2189,89 +2113,6 @@ export default function CreatorDashboardPage() {
           </footer>
         </div>
       </div>
-
-      {/* Edit Template Modal */}
-      {editingTemplate && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/60 backdrop-blur-sm p-4"
-          onClick={() => setEditingTemplate(null)}
-        >
-          <div
-            className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-zinc-200 space-y-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <div>
-                <h3 className="text-lg font-black text-zinc-900">Edit Marketplace Template</h3>
-                <p className="text-xs text-zinc-500 font-mono">{editingTemplate.slug}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEditingTemplate(null)}
-                className="text-zinc-400 hover:text-zinc-700 text-lg font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-zinc-700 mb-1">Template Name</label>
-                <input
-                  type="text"
-                  value={editingTemplate.name}
-                  onChange={(e) => setEditingTemplate({ ...editingTemplate, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-sm font-semibold text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-zinc-700 mb-1">Subtitle / Short Description</label>
-                <input
-                  type="text"
-                  value={editingTemplate.subtitle}
-                  onChange={(e) => setEditingTemplate({ ...editingTemplate, subtitle: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-sky-950 mb-1">Custom Marketplace Price (₹)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-xs font-black text-zinc-500">₹</span>
-                  <input
-                    type="number"
-                    min={0}
-                    step={1}
-                    value={editingTemplate.price}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, price: Number(e.target.value) })}
-                    className="w-full pl-7 pr-3 py-2 rounded-xl bg-sky-50/60 border border-sky-200 text-sm font-black text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
-                  />
-                </div>
-                <p className="text-[10px] text-sky-700 mt-1 font-medium">Earn 80% payout on every single product marketplace sale.</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-100">
-              <button
-                type="button"
-                onClick={() => setEditingTemplate(null)}
-                className="w-full py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-xs font-bold text-zinc-700 transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={editLoading}
-                onClick={handleSaveEditTemplate}
-                className="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black shadow-sm transition disabled:opacity-60"
-              >
-                {editLoading ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

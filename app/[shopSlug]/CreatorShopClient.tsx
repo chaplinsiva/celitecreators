@@ -26,7 +26,8 @@ import {
   Download,
 } from "lucide-react";
 import { convertR2UrlToCdn } from "@/lib/utils";
-import { getBaselineDownloads } from "@/lib/downloadStats";
+import { getBatchTemplateDownloads } from "@/lib/downloadStats";
+import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { useAppContext } from "@/context/AppContext";
 import CreatorFollowButton from "@/components/CreatorFollowButton";
 import ShareStoreModal from "@/components/ShareStoreModal";
@@ -46,6 +47,7 @@ type CreatorTemplate = {
   model_3d_path?: string | null;
   category_id: string | null;
   created_at: string | null;
+  downloadCount?: number;
 };
 
 type Category = {
@@ -94,7 +96,15 @@ function getThumbnail(t: CreatorTemplate) {
   return "/PNG1.png";
 }
 
-function TemplateCard({ template, category }: { template: CreatorTemplate; category: Category | null }) {
+function TemplateCard({
+  template,
+  category,
+  downloadCount = 0
+}: {
+  template: CreatorTemplate;
+  category: Category | null;
+  downloadCount?: number;
+}) {
   const categoryId = category?.id || template.category_id;
   const categorySlug = category?.slug || "";
 
@@ -219,7 +229,7 @@ function TemplateCard({ template, category }: { template: CreatorTemplate; categ
         <div className="mt-auto pt-3 border-t border-slate-800/80 flex items-center justify-between">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">
             <Download className="w-3 h-3 text-sky-400" />
-            <span>{getBaselineDownloads(template.slug)} Downloads</span>
+            <span>{downloadCount} Downloads</span>
           </span>
           <span className="text-xs font-bold text-sky-400 group-hover:translate-x-1 transition-transform">
             View Details &rarr;
@@ -603,7 +613,7 @@ export default function CreatorShopClient({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {group.items.map((t) => (
-                      <TemplateCard key={t.slug} template={t} category={group.category} />
+                      <TemplateCard key={t.slug} template={t} category={group.category} downloadCount={t.downloadCount || 0} />
                     ))}
                   </div>
                 </div>

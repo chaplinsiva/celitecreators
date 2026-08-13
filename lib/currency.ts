@@ -1,21 +1,23 @@
+/* agent-notes: { ctx: "Currency utility functions with PPP rate conversion", deps: [], state: active, last: "antigravity@2026-08-13" } */
 // Currency utility functions
 // Supports both INR (₹) and USD ($) formatting
 
 export type Currency = 'INR' | 'USD';
 
-// Standard Exchange Rate (1 USD = 85 INR)
-export const INR_TO_USD_RATE = 85;
+// PPP Exchange Rate multiplier (USD = INR * 0.033)
+export const USD_PPP_MULTIPLIER = 0.033;
+export const INR_TO_USD_RATE = 1 / USD_PPP_MULTIPLIER; // kept for backwards compatibility (approx 30.3)
 
 export function getCurrencySymbol(currency: Currency = 'INR'): string {
   return currency === 'USD' ? '$' : '₹';
 }
 
 export function convertInrToUsd(inrAmount: number): number {
-  return Number((inrAmount / INR_TO_USD_RATE).toFixed(2));
+  return Number((inrAmount * USD_PPP_MULTIPLIER).toFixed(2));
 }
 
 export function convertUsdToInr(usdAmount: number): number {
-  return Math.round(usdAmount * INR_TO_USD_RATE);
+  return Math.round(usdAmount / USD_PPP_MULTIPLIER);
 }
 
 export function convertCurrency(amount: number, from: Currency, to: Currency): number {

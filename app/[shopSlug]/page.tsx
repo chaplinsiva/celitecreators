@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
+import { getBatchTemplateDownloads } from "@/lib/downloadStats";
 import CreatorFollowButton from "@/components/CreatorFollowButton";
 import CreatorShopClient from "./CreatorShopClient";
 
@@ -105,7 +107,19 @@ export default async function CreatorShopPage(props: PageProps) {
     categoryMap.set(c.id, { id: c.id, name: c.name, slug: c.slug });
   });
 
-  const grouped = new Map<string, { category: Category | null; items: CreatorTemplate[] }>();
+  // Fetch real download counts on the server side using bypass-RLS admin client
+  const admin = getSupabaseAdminClient();
+  const slugs = creatorTemplates.map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (err) {
+      console.error('Error fetching batch download counts on shop page:', err);
+    }
+  }
+
+  const grouped = new Map<string, { category: Category | null; items: (CreatorTemplate & { downloadCount: number })[] }>();
 
   for (const t of creatorTemplates) {
     const cat =
@@ -119,7 +133,10 @@ export default async function CreatorShopPage(props: PageProps) {
         items: [],
       });
     }
-    grouped.get(key)!.items.push(t);
+    grouped.get(key)!.items.push({
+      ...t,
+      downloadCount: counts[t.slug] || 0
+    });
   }
 
   const groupedSections = Array.from(grouped.values());

@@ -41,7 +41,7 @@ export async function GET(req: Request) {
     const [templatesResult, downloadsResult] = await Promise.all([
       admin
         .from('templates')
-        .select('slug,name,subtitle,video,img,created_at,creator_shop_id,status,price,available_on_celite_market,available_on_celite_subscription,subscription_submission_status,downloads(count)')
+        .select('slug,name,subtitle,video,img,created_at,creator_shop_id,status,price,available_on_celite_market,available_on_celite_subscription,subscription_submission_status,description,video_path,thumbnail_path,audio_preview_path,model_3d_path,source_path,features,software,plugins,tags,category_id,subcategory_id,sub_subcategory_id,downloads(count)')
         .eq('creator_shop_id', shop.id)
         .order('created_at', { ascending: false }),
       admin
@@ -57,13 +57,38 @@ export async function GET(req: Request) {
 
     const templates = templatesResult.data || [];
     const downloads = downloadsResult.data || [];
+    const slugs = templates.map((t: any) => t.slug);
+
+    // Fetch real download statistics in parallel for all template slugs
+    const counts: Record<string, number> = {};
+    if (slugs.length > 0) {
+      try {
+        const [{ data: subData }, { data: freeData }, { data: orderData }] = await Promise.all([
+          admin.from('downloads').select('template_slug').in('template_slug', slugs),
+          admin.from('free_downloads').select('template_slug').in('template_slug', slugs),
+          admin.from('order_items').select('slug').in('slug', slugs),
+        ]);
+
+        (subData || []).forEach((row: any) => {
+          if (row.template_slug) counts[row.template_slug] = (counts[row.template_slug] || 0) + 1;
+        });
+        (freeData || []).forEach((row: any) => {
+          if (row.template_slug) counts[row.template_slug] = (counts[row.template_slug] || 0) + 1;
+        });
+        (orderData || []).forEach((row: any) => {
+          if (row.slug) counts[row.slug] = (counts[row.slug] || 0) + 1;
+        });
+      } catch (err) {
+        console.error('Failed to fetch batch template downloads in API route:', err);
+      }
+    }
 
     // Build results with download counts
     const results = templates.map((tpl: any) => {
       const { downloads: dls, ...rest } = tpl;
       return {
         ...rest,
-        downloadCount: dls?.[0]?.count || 0
+        downloadCount: counts[tpl.slug] || 0
       };
     });
 
@@ -166,9 +191,9 @@ export async function GET(req: Request) {
 
     const vendorSubDls = vendorSubscriberDownloads || 0;
 
-    // 4. Vendor Proportional Split
-    const subscriptionPoolRevenue = totalVendorPool * (vendorSubDls / totalPlatformSubDls);
-    const totalEarnings = subscriptionPoolRevenue + marketplaceSalesRevenue;
+    // 4. Vendor Proportional Split - Disabled/Removed subscription pool
+    const subscriptionPoolRevenue = 0;
+    const totalEarnings = marketplaceSalesRevenue;
 
     const paidOutAmount = payoutRequests
       .filter((p: any) => p.status === 'paid')

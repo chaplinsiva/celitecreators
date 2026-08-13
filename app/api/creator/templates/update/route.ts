@@ -1,4 +1,4 @@
-/* agent-notes: { ctx: "API route for updating creator templates", deps: ["lib/supabaseAdmin.ts"], state: active, last: "sato@2026-08-09" } */
+/* agent-notes: { ctx: "API route for updating creator templates", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" } */
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 
@@ -19,7 +19,12 @@ export async function POST(req: Request) {
 
     const userId = userRes.user.id;
     const body = await req.json().catch(() => ({}));
-    const { slug, name, subtitle, price } = body;
+    const {
+      slug, name, subtitle, price, description,
+      video_path, thumbnail_path, audio_preview_path, model_3d_path, source_path,
+      features, software, plugins, tags,
+      category_id, subcategory_id, sub_subcategory_id
+    } = body;
 
     if (!slug) {
       return NextResponse.json({ ok: false, error: 'Template slug is required' }, { status: 400 });
@@ -49,6 +54,22 @@ export async function POST(req: Request) {
     const updates: Record<string, any> = {};
     if (typeof name === 'string' && name.trim()) updates.name = name.trim();
     if (typeof subtitle === 'string') updates.subtitle = subtitle.trim();
+    if (typeof description === 'string') updates.description = description.trim() || null;
+    if (typeof video_path === 'string') updates.video_path = video_path.trim() || null;
+    if (typeof thumbnail_path === 'string') updates.thumbnail_path = thumbnail_path.trim() || null;
+    if (typeof audio_preview_path === 'string') updates.audio_preview_path = audio_preview_path.trim() || null;
+    if (typeof model_3d_path === 'string') updates.model_3d_path = model_3d_path.trim() || null;
+    if (typeof source_path === 'string') updates.source_path = source_path.trim() || null;
+
+    if (features !== undefined) updates.features = Array.isArray(features) ? features : [];
+    if (software !== undefined) updates.software = Array.isArray(software) ? software : [];
+    if (plugins !== undefined) updates.plugins = Array.isArray(plugins) ? plugins : [];
+    if (tags !== undefined) updates.tags = Array.isArray(tags) ? tags : [];
+
+    if (category_id !== undefined) updates.category_id = category_id || null;
+    if (subcategory_id !== undefined) updates.subcategory_id = subcategory_id || null;
+    if (sub_subcategory_id !== undefined) updates.sub_subcategory_id = sub_subcategory_id || null;
+
     if (price !== undefined && price !== null) {
       const parsedPrice = Number(price);
       if (!isNaN(parsedPrice) && parsedPrice >= 0) {
