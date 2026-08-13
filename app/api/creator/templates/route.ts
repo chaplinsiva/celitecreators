@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "API route for creators to manage templates and view sales stats", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
 
@@ -102,13 +103,22 @@ export async function GET(req: Request) {
       uniqueUserPeriods = 0;
     }
 
+    const templateSlugs = templates.map((t: any) => t.slug);
+
     // Query marketplace sales items and payout requests in parallel
+    const orderItemsQuery = admin
+      .from('order_items')
+      .select('price, creator_earnings, orders!inner(status)')
+      .eq('orders.status', 'paid');
+
+    if (templateSlugs.length > 0) {
+      orderItemsQuery.or(`creator_shop_id.eq.${shop.id},slug.in.(${templateSlugs.join(',')})`);
+    } else {
+      orderItemsQuery.eq('creator_shop_id', shop.id);
+    }
+
     const [orderItemsResult, payoutsResult] = await Promise.all([
-      admin
-        .from('order_items')
-        .select('price, creator_earnings, orders!inner(status)')
-        .eq('creator_shop_id', shop.id)
-        .eq('orders.status', 'paid'),
+      orderItemsQuery,
       admin
         .from('payout_requests')
         .select('amount, status')

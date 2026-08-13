@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Admin analytics panel showing sales and revenue charts", deps: ["lib/supabaseClient.ts"], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
@@ -213,8 +214,8 @@ export default function AnalyticsPanel() {
           date: datePrefix,
           revenue: dayRev,
           orders: dayOrders.length,
-          creatorShare: Math.round(dayRev * 0.7),
-          platformShare: Math.round(dayRev * 0.3),
+          creatorShare: Math.round(dayRev * 0.8),
+          platformShare: Math.round(dayRev * 0.2),
         });
       }
     } else if (revenueRange === 'last_7_days') {
@@ -237,8 +238,8 @@ export default function AnalyticsPanel() {
           date: dateStr,
           revenue: dayRev,
           orders: dayOrders.length,
-          creatorShare: Math.round(dayRev * 0.7),
-          platformShare: Math.round(dayRev * 0.3),
+          creatorShare: Math.round(dayRev * 0.8),
+          platformShare: Math.round(dayRev * 0.2),
         });
       }
     } else if (revenueRange === 'last_24_hours') {
@@ -261,8 +262,8 @@ export default function AnalyticsPanel() {
           date: hDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
           revenue: hourRev,
           orders: hourOrders.length,
-          creatorShare: Math.round(hourRev * 0.7),
-          platformShare: Math.round(hourRev * 0.3),
+          creatorShare: Math.round(hourRev * 0.8),
+          platformShare: Math.round(hourRev * 0.2),
         });
       }
     } else {
@@ -283,8 +284,8 @@ export default function AnalyticsPanel() {
           date: `${year}-${String(mIdx + 1).padStart(2, '0')}`,
           revenue: mRev,
           orders: monthOrders.length,
-          creatorShare: Math.round(mRev * 0.7),
-          platformShare: Math.round(mRev * 0.3),
+          creatorShare: Math.round(mRev * 0.8),
+          platformShare: Math.round(mRev * 0.2),
         });
       });
     }
@@ -292,8 +293,8 @@ export default function AnalyticsPanel() {
     const totalRevenue = chartData.reduce((acc, curr) => acc + curr.revenue, 0);
     const totalOrdersCount = chartData.reduce((acc, curr) => acc + curr.orders, 0);
     const aov = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
-    const creatorShareTotal = Math.round(totalRevenue * 0.7);
-    const platformShareTotal = Math.round(totalRevenue * 0.3);
+    const creatorShareTotal = Math.round(totalRevenue * 0.8);
+    const platformShareTotal = Math.round(totalRevenue * 0.2);
 
     return {
       chartData,
@@ -547,9 +548,9 @@ export default function AnalyticsPanel() {
         </div>
 
         <div className="rounded-xl border border-purple-200 bg-purple-50/60 p-6 shadow-sm">
-          <div className="text-2xl font-black text-purple-800">₹{((totals?.orderRevenue || 0) * 0.7).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-          <div className="text-xs font-bold text-purple-900 uppercase tracking-wider mt-1">Creator Earnings Pool (70%)</div>
-          <div className="text-xs text-purple-700 font-medium mt-3">Celite Fee (30%): ₹{((totals?.orderRevenue || 0) * 0.3).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          <div className="text-2xl font-black text-purple-800">₹{((totals?.orderRevenue || 0) * 0.8).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          <div className="text-xs font-bold text-purple-900 uppercase tracking-wider mt-1">Creator Earnings Pool (80%)</div>
+          <div className="text-xs text-purple-700 font-medium mt-3">Celite Fee (20%): ₹{((totals?.orderRevenue || 0) * 0.2).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
 
         <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-6 shadow-sm">

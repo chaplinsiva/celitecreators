@@ -139,14 +139,36 @@ export async function POST(req: Request) {
     let purchasedItemsList: Array<{ name: string; slug: string; price: number }> = [];
 
     if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
-      const orderItems = cartItems.map((item: any) => ({
-        order_id: dbOrder.id,
-        slug: item.slug,
-        name: item.name,
-        price: Number(item.price) || 0,
-        quantity: 1,
-        img: item.img || '',
-      }));
+      const slugs = cartItems.map((item: any) => item.slug);
+      const { data: templates } = await admin
+        .from('templates')
+        .select('slug, creator_shop_id')
+        .in('slug', slugs);
+
+      const templateShopMap: Record<string, string> = {};
+      (templates || []).forEach((t: any) => {
+        if (t.creator_shop_id) {
+          templateShopMap[t.slug] = t.creator_shop_id;
+        }
+      });
+
+      const orderItems = cartItems.map((item: any) => {
+        const price = Number(item.price) || 0;
+        const creatorShopId = templateShopMap[item.slug] || null;
+        const creatorEarnings = price * 0.8; // 80/20 rule
+
+        return {
+          order_id: dbOrder.id,
+          slug: item.slug,
+          name: item.name,
+          price,
+          quantity: 1,
+          img: item.img || '',
+          creator_shop_id: creatorShopId,
+          creator_earnings: creatorEarnings,
+        };
+      });
+
       await admin.from('order_items').insert(orderItems);
       purchasedItemsList = cartItems.map((item: any) => ({
         name: item.name,
@@ -157,13 +179,25 @@ export async function POST(req: Request) {
       // Fallback for single product
       const img = notes.img as string | undefined;
       if (slug && name) {
+        // Fetch creator_shop_id for the single template
+        const { data: tpl } = await admin
+          .from('templates')
+          .select('creator_shop_id')
+          .eq('slug', slug)
+          .maybeSingle();
+
+        const creatorShopId = tpl?.creator_shop_id || null;
+        const creatorEarnings = totalAmount * 0.8; // 80/20 rule
+
         await admin.from('order_items').insert({ 
           order_id: dbOrder.id, 
           slug, 
           name, 
           price: totalAmount, 
           quantity: 1, 
-          img: img || '' 
+          img: img || '',
+          creator_shop_id: creatorShopId,
+          creator_earnings: creatorEarnings
         });
         purchasedItemsList = [{ name, slug, price: totalAmount }];
       }

@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "API route for creators to request payout withdrawals", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../../lib/supabaseAdmin';
 
@@ -48,12 +49,27 @@ export async function POST(req: Request) {
     }
 
     // Calculate gross earnings and previous payouts to verify withdrawable balance
-    const [templatesRes, downloadsRes, orderItemsRes, payoutsRes] = await Promise.all([
-      admin.from('templates').select('id').eq('creator_shop_id', shop.id),
+    const [templatesRes, downloadsRes, payoutsRes] = await Promise.all([
+      admin.from('templates').select('slug').eq('creator_shop_id', shop.id),
       admin.from('downloads').select('user_id, downloaded_at').eq('creator_shop_id', shop.id),
-      admin.from('order_items').select('price, creator_earnings, orders!inner(status)').eq('creator_shop_id', shop.id).eq('orders.status', 'paid'),
       admin.from('payout_requests').select('amount, status').eq('creator_shop_id', shop.id)
     ]);
+
+    const templateSlugs = (templatesRes.data || []).map((t: any) => t.slug);
+    
+    // Fetch order items with OR condition to support older items without creator_shop_id
+    const orderItemsQuery = admin
+      .from('order_items')
+      .select('price, creator_earnings, orders!inner(status)')
+      .eq('orders.status', 'paid');
+
+    if (templateSlugs.length > 0) {
+      orderItemsQuery.or(`creator_shop_id.eq.${shop.id},slug.in.(${templateSlugs.join(',')})`);
+    } else {
+      orderItemsQuery.eq('creator_shop_id', shop.id);
+    }
+
+    const { data: orderItemsData } = await orderItemsQuery;
 
     const downloads = downloadsRes.data || [];
     let uniqueUserPeriods = 0;
@@ -82,7 +98,7 @@ export async function POST(req: Request) {
     }
 
     const subscriptionPoolRevenue = uniqueUserPeriods * 40;
-    const marketplaceSalesRevenue = (orderItemsRes.data || []).reduce((sum: number, item: any) => {
+    const marketplaceSalesRevenue = (orderItemsData || []).reduce((sum: number, item: any) => {
       const earnings = Number(item.creator_earnings) || (Number(item.price || 0) * 0.8);
       return sum + earnings;
     }, 0);

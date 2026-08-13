@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "API route for instant test template purchases", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../lib/supabaseAdmin';
 
@@ -19,23 +20,37 @@ export async function POST(req: Request) {
     // Load template details
     const { data: tpl, error: tErr } = await admin
       .from('templates')
-      .select('slug,name,price,img')
+      .select('slug,name,price,img,creator_shop_id')
       .eq('slug', slug)
       .maybeSingle();
     if (tErr || !tpl) return NextResponse.json({ ok: false, error: 'Template not found' }, { status: 404 });
 
+    const price = Number(tpl.price) || 0;
+
     // Create order (paid)
     const { data: order, error: oErr } = await admin
       .from('orders')
-      .insert({ user_id: userId, total: Number(tpl.price) || 0, status: 'paid', billing_name: null, billing_email: null, billing_company: null })
+      .insert({ user_id: userId, total: price, status: 'paid', billing_name: null, billing_email: null, billing_company: null })
       .select('id')
       .single();
     if (oErr) return NextResponse.json({ ok: false, error: oErr.message }, { status: 500 });
 
+    const creatorShopId = tpl.creator_shop_id || null;
+    const creatorEarnings = price * 0.8; // 80% split
+
     // Insert order item
     const { error: iErr } = await admin
       .from('order_items')
-      .insert({ order_id: order.id, slug: tpl.slug, name: tpl.name, price: Number(tpl.price) || 0, quantity: 1, img: tpl.img });
+      .insert({ 
+        order_id: order.id, 
+        slug: tpl.slug, 
+        name: tpl.name, 
+        price, 
+        quantity: 1, 
+        img: tpl.img,
+        creator_shop_id: creatorShopId,
+        creator_earnings: creatorEarnings
+      });
     if (iErr) return NextResponse.json({ ok: false, error: iErr.message }, { status: 500 });
 
     return NextResponse.json({ ok: true, order_id: order.id });
