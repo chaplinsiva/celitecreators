@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Client dashboard showing user lifetime purchased assets", deps: ["context/AppContext.tsx", "lib/supabaseClient.ts"], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 import Link from "next/link";
@@ -134,11 +135,11 @@ function DashboardContent() {
         const orderIds = paidOrders.map((o: any) => o.id);
         const { data: items } = await supabase
           .from('order_items')
-          .select('product_slug, product_name, created_at')
+          .select('slug, name, created_at')
           .in('order_id', orderIds);
 
         if (items && items.length > 0) {
-          const slugs = Array.from(new Set(items.map((i: any) => i.product_slug)));
+          const slugs = Array.from(new Set(items.map((i: any) => i.slug)));
           const { data: tpls } = await supabase
             .from('templates')
             .select('slug, name, img')
@@ -150,11 +151,11 @@ function DashboardContent() {
           });
 
           items.forEach((i: any) => {
-            if (i.product_slug && i.product_slug !== 'multiple') {
-              purchasedMap.set(i.product_slug, {
-                slug: i.product_slug,
-                name: tplMap[i.product_slug]?.name || i.product_name || i.product_slug,
-                img: tplMap[i.product_slug]?.img ?? null,
+            if (i.slug && i.slug !== 'multiple') {
+              purchasedMap.set(i.slug, {
+                slug: i.slug,
+                name: tplMap[i.slug]?.name || i.name || i.slug,
+                img: tplMap[i.slug]?.img ?? null,
                 downloaded_at: i.created_at,
               });
             }
