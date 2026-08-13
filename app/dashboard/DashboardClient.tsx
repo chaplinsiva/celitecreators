@@ -21,9 +21,14 @@ type DownloadItemRow = {
 };
 
 type CreatorShop = {
+  id: string;
   slug: string;
   name: string;
   description: string | null;
+  bank_account_name: string | null;
+  bank_account_number: string | null;
+  bank_ifsc: string | null;
+  bank_upi_id: string | null;
 };
 
 // Component that uses search params (needs to be in Suspense)
@@ -45,6 +50,13 @@ function DashboardContent() {
   const [userMetadata, setUserMetadata] = useState<{ first_name: string | null; last_name: string | null }>({ first_name: null, last_name: null });
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Seller stats & payouts states
+  const [stats, setStats] = useState<any>(null);
+  const [payoutLoading, setPayoutLoading] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [payoutMessage, setPayoutMessage] = useState<string | null>(null);
+  const [payoutError, setPayoutError] = useState<string | null>(null);
 
   // Show success message if redirected from payment
   useEffect(() => {
@@ -112,10 +124,10 @@ function DashboardContent() {
     try {
       const { data: shop } = await supabase
         .from("creator_shops")
-        .select("slug, name, description")
+        .select("id, slug, name, description, bank_account_name, bank_account_number, bank_ifsc, bank_upi_id")
         .eq("user_id", (user as any).id)
         .maybeSingle();
-      setCreatorShop(shop ?? null);
+      setCreatorShop((shop as CreatorShop) ?? null);
     } catch (e) {
       console.error("Failed to load creator shop", e);
       setCreatorShop(null);
@@ -170,6 +182,68 @@ function DashboardContent() {
       setRecentDownloads([]);
     }
   }, [user]);
+
+  const loadCreatorStats = useCallback(async () => {
+    if (!creatorShop) return;
+    setStatsLoading(true);
+    setPayoutError(null);
+    setPayoutMessage(null);
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch("/api/creator/templates", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      const json = await res.json();
+      if (res.ok && json.ok) {
+        setStats(json.stats);
+      }
+    } catch (e) {
+      console.error("Failed to load creator stats:", e);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, [creatorShop]);
+
+  useEffect(() => {
+    if (viewMode === "seller" && creatorShop) {
+      loadCreatorStats();
+    }
+  }, [viewMode, creatorShop, loadCreatorStats]);
+
+  const handleRequestPayout = async () => {
+    if (!stats || stats.revenue < 800) return;
+    setPayoutLoading(true);
+    setPayoutError(null);
+    setPayoutMessage(null);
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch("/api/creator/payout/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ amount: stats.revenue }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        setPayoutError(json.error || "Failed to submit payout request.");
+        return;
+      }
+      setPayoutMessage("Payout request submitted successfully! Admin will process transfer to your bank/UPI.");
+      await loadCreatorStats();
+    } catch (e: any) {
+      setPayoutError(e?.message || "Failed to submit payout request.");
+    } finally {
+      setPayoutLoading(false);
+    }
+  };
 
   useEffect(() => {
     reloadDashboardData();
@@ -507,21 +581,167 @@ function DashboardContent() {
 
         {viewMode === "seller" && creatorShop && (
           <section className="mt-6 bg-[#0F172A]/90 rounded-3xl border border-slate-800/80 p-8 shadow-xl text-white">
-            <h2 className="text-xl font-bold text-white mb-2">Seller mode</h2>
-            <p className="text-sm text-slate-400 mb-4 font-medium">
-              This is your creator hub view. Your public store page is live at:
-            </p>
-            <a
-              href={`/${creatorShop.slug}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center text-sm font-bold text-sky-400 hover:text-sky-300 hover:underline"
-            >
-              celitemarket.in/{creatorShop.slug}
-            </a>
-            <div className="mt-8 rounded-2xl border border-dashed border-slate-800 bg-[#090D16] px-6 py-10 text-center text-sm text-slate-400 font-medium">
-              Seller Dashboard & Analytics. Manage your uploaded assets and view payout statistics.
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+              <div>
+                <h2 className="text-xl font-black text-white tracking-tight">Seller Hub & Payouts</h2>
+                <p className="text-xs text-slate-400 mt-1 font-medium">
+                  Manage your store earnings, verify payouts, and request withdrawals.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href={`/${creatorShop.slug}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2 text-xs font-bold bg-[#090D16] border border-slate-800 rounded-xl text-slate-300 hover:text-white transition inline-flex items-center gap-1.5"
+                >
+                  🌐 View Public Store
+                </a>
+                <button
+                  type="button"
+                  onClick={() => router.push("/creator/dashboard")}
+                  className="px-4 py-2 text-xs font-black bg-sky-600 hover:bg-sky-500 text-white rounded-xl shadow-md shadow-sky-600/10 transition active:scale-95 cursor-pointer"
+                >
+                  🚀 Creator Studio Dashboard
+                </button>
+              </div>
             </div>
+
+            {/* Earnings stats grid */}
+            {statsLoading && !stats ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400">
+                <LoadingSpinner />
+                <p className="text-xs font-semibold">Loading earnings ledger...</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Withdrawable Balance */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-5">
+                    <p className="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Withdrawable Balance</p>
+                    <p className="text-2xl font-black text-white mt-1.5">
+                      ₹{stats ? Math.round(stats.revenue).toLocaleString('en-IN') : '0'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">Available for immediate transfer</p>
+                  </div>
+
+                  {/* Gross Earnings */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-5">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gross Earnings</p>
+                    <p className="text-2xl font-black text-white mt-1.5">
+                      ₹{stats ? Math.round(stats.totalEarnings).toLocaleString('en-IN') : '0'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">Total revenue share earned</p>
+                  </div>
+
+                  {/* Pending Payouts */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-5">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pending Payouts</p>
+                    <p className="text-2xl font-black text-slate-300 mt-1.5">
+                      ₹{stats ? Math.round(stats.pendingPayoutAmount).toLocaleString('en-IN') : '0'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">Under review by platform admins</p>
+                  </div>
+
+                  {/* Paid Out */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-5">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Paid Out</p>
+                    <p className="text-2xl font-black text-slate-300 mt-1.5">
+                      ₹{stats ? Math.round(stats.paidOutAmount).toLocaleString('en-IN') : '0'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">Successfully transferred to bank/UPI</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  {/* Bank Details section */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-6 md:col-span-7 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-4">Bank Account & UPI Details</h3>
+                      <div className="space-y-2.5 text-xs font-medium text-slate-300">
+                        <div className="flex justify-between border-b border-slate-900 pb-2">
+                          <span className="text-slate-500">Account Name:</span>
+                          <span className="text-white">{creatorShop.bank_account_name || "Not Set"}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-slate-900 pb-2">
+                          <span className="text-slate-500">Account Number:</span>
+                          <span className="text-white">{creatorShop.bank_account_number || "Not Set"}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-slate-900 pb-2">
+                          <span className="text-slate-500">IFSC Code:</span>
+                          <span className="text-white">{creatorShop.bank_ifsc || "Not Set"}</span>
+                        </div>
+                        <div className="flex justify-between pb-1">
+                          <span className="text-slate-500">UPI ID:</span>
+                          <span className="text-white">{creatorShop.bank_upi_id || "Not Set"}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-slate-900">
+                      <button
+                        type="button"
+                        onClick={() => router.push("/start-selling")}
+                        className="text-xs font-bold text-sky-400 hover:text-sky-300 transition cursor-pointer"
+                      >
+                        ✏️ Edit Bank Details
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payout Request options */}
+                  <div className="bg-[#090D16] border border-slate-800/80 rounded-2xl p-6 md:col-span-5 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-3">Withdraw Payout</h3>
+                      <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                        Request a withdrawal of your current withdrawable earnings directly to your bank account or UPI ID.
+                      </p>
+
+                      {payoutError && (
+                        <div className="mt-3 p-3 rounded-xl bg-red-950/50 border border-red-800 text-red-400 text-xs font-semibold">
+                          ⚠️ {payoutError}
+                        </div>
+                      )}
+                      {payoutMessage && (
+                        <div className="mt-3 p-3 rounded-xl bg-emerald-950/50 border border-emerald-800 text-emerald-400 text-xs font-semibold">
+                          ✓ {payoutMessage}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-6 space-y-3">
+                      {stats && stats.revenue >= 800 ? (
+                        <>
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+                            <span>✓</span> Eligible for immediate withdrawal
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleRequestPayout}
+                            disabled={payoutLoading}
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-md shadow-emerald-700/10 transition active:scale-95 cursor-pointer disabled:opacity-60"
+                          >
+                            {payoutLoading ? "Submitting Request..." : `Request Payout (₹${Math.round(stats.revenue)})`}
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-xs font-medium text-amber-500/90 leading-tight">
+                            ⚠️ Payout minimum threshold is ₹800.
+                          </div>
+                          <button
+                            type="button"
+                            disabled
+                            className="w-full py-3 bg-slate-800 text-slate-500 rounded-xl text-xs font-black border border-slate-700/60 opacity-60 cursor-not-allowed"
+                          >
+                            Request Payout (₹{stats ? Math.round(stats.revenue) : 0})
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         )}
       </div>

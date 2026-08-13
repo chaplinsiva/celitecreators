@@ -49,9 +49,8 @@ export async function POST(req: Request) {
     }
 
     // Calculate gross earnings and previous payouts to verify withdrawable balance
-    const [templatesRes, downloadsRes, payoutsRes] = await Promise.all([
+    const [templatesRes, payoutsRes] = await Promise.all([
       admin.from('templates').select('slug').eq('creator_shop_id', shop.id),
-      admin.from('downloads').select('user_id, downloaded_at').eq('creator_shop_id', shop.id),
       admin.from('payout_requests').select('amount, status').eq('creator_shop_id', shop.id)
     ]);
 
@@ -71,37 +70,45 @@ export async function POST(req: Request) {
 
     const { data: orderItemsData } = await orderItemsQuery;
 
-    const downloads = downloadsRes.data || [];
-    let uniqueUserPeriods = 0;
-    if (downloads.length > 0) {
-      const byUser = new Map<string, Date[]>();
-      for (const d of downloads as any[]) {
-        if (!d.user_id || !d.downloaded_at) continue;
-        const arr = byUser.get(d.user_id) || [];
-        arr.push(new Date(d.downloaded_at));
-        byUser.set(d.user_id, arr);
-      }
-      const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-      byUser.forEach((dates) => {
-        dates.sort((a, b) => a.getTime() - b.getTime());
-        let lastCounted: Date | null = null;
-        for (const dt of dates) {
-          if (!lastCounted) {
-            uniqueUserPeriods += 1;
-            lastCounted = dt;
-          } else if (dt.getTime() - lastCounted.getTime() > THIRTY_DAYS_MS) {
-            uniqueUserPeriods += 1;
-            lastCounted = dt;
-          }
-        }
-      });
-    }
-
-    const subscriptionPoolRevenue = uniqueUserPeriods * 40;
     const marketplaceSalesRevenue = (orderItemsData || []).reduce((sum: number, item: any) => {
       const earnings = Number(item.creator_earnings) || (Number(item.price || 0) * 0.8);
       return sum + earnings;
     }, 0);
+
+    // Calculate proportional subscription pool revenue:
+    // 1. Total subscription revenue pool from checkout_details
+    const { data: subRevenueRes } = await admin
+      .from('checkout_details')
+      .select('total_amount')
+      .eq('status', 'completed')
+      .eq('checkout_type', 'subscription');
+
+    const totalSubscriptionRevenue = (subRevenueRes || []).reduce(
+      (sum: number, item: any) => sum + Number(item.total_amount || 0),
+      0
+    );
+    const totalVendorPool = totalSubscriptionRevenue * 0.40;
+
+    // 2. Total platform subscriber downloads (subscription_id IS NOT NULL, non-official shops)
+    const { count: totalPlatformSubscriberDownloads } = await admin
+      .from('downloads')
+      .select('id, templates!inner(creator_shops!inner(is_celite_official))', { count: 'exact', head: true })
+      .not('subscription_id', 'is', null)
+      .eq('templates.creator_shops.is_celite_official', false);
+
+    const totalPlatformSubDls = totalPlatformSubscriberDownloads || 1;
+
+    // 3. Vendor subscriber downloads (subscription_id IS NOT NULL, joined templates creator_shop_id)
+    const { count: vendorSubscriberDownloads } = await admin
+      .from('downloads')
+      .select('id, templates!inner(creator_shop_id)', { count: 'exact', head: true })
+      .not('subscription_id', 'is', null)
+      .eq('templates.creator_shop_id', shop.id);
+
+    const vendorSubDls = vendorSubscriberDownloads || 0;
+
+    // 4. Vendor Proportional Split
+    const subscriptionPoolRevenue = totalVendorPool * (vendorSubDls / totalPlatformSubDls);
 
     const totalEarnings = subscriptionPoolRevenue + marketplaceSalesRevenue;
     const existingPayouts = payoutsRes.data || [];

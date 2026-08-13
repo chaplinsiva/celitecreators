@@ -1304,7 +1304,7 @@ export default function CreatorDashboardPage() {
                     </h3>
                     {shop ? (
                       <div className="space-y-3 text-xs text-zinc-600">
-                        {revenue > 0 && (
+                        {revenue >= 0 && (
                           <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 mb-3">
                             <p className="text-xs text-zinc-500 mb-1">
                               Current revenue
@@ -1312,23 +1312,34 @@ export default function CreatorDashboardPage() {
                             <p className="text-lg font-bold text-zinc-900">
                               ₹{Math.round(revenue).toLocaleString('en-IN')}
                             </p>
-                             {revenue >= 800 ? (
-                              <div className="mt-2.5">
-                                <p className="text-[10px] text-emerald-700 font-bold mb-1.5">✓ Eligible for immediate payout</p>
-                                <button
-                                  type="button"
-                                  onClick={handleRequestPayout}
-                                  disabled={payoutLoading}
-                                  className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-sm transition active:scale-95 disabled:opacity-60"
-                                >
-                                  {payoutLoading ? "Submitting Request..." : `Request Payout (₹${Math.round(revenue)})`}
-                                </button>
-                              </div>
-                            ) : (
-                              <p className="text-[10px] text-amber-700 mt-1 font-medium">
-                                Minimum payout threshold: ₹800
-                              </p>
-                            )}
+                            <div className="mt-2.5">
+                              {revenue >= 800 ? (
+                                <>
+                                  <p className="text-[10px] text-emerald-700 font-bold mb-1.5">✓ Eligible for immediate payout</p>
+                                  <button
+                                    type="button"
+                                    onClick={handleRequestPayout}
+                                    disabled={payoutLoading}
+                                    className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-sm transition active:scale-95 disabled:opacity-60 cursor-pointer"
+                                  >
+                                    {payoutLoading ? "Submitting Request..." : `Request Payout (₹${Math.round(revenue)})`}
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-[10px] text-amber-700 font-medium mb-1.5">
+                                    Minimum payout threshold: ₹800
+                                  </p>
+                                  <button
+                                    type="button"
+                                    disabled
+                                    className="w-full py-2 rounded-xl bg-zinc-100 text-zinc-400 text-xs font-bold border border-zinc-200 opacity-60 cursor-not-allowed"
+                                  >
+                                    Request Payout (₹{Math.round(revenue)})
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </div>
                         )}
                         <div className="space-y-1">

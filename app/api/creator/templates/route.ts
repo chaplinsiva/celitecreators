@@ -46,8 +46,8 @@ export async function GET(req: Request) {
         .order('created_at', { ascending: false }),
       admin
         .from('downloads')
-        .select('user_id, downloaded_at')
-        .eq('creator_shop_id', shop.id)
+        .select('user_id, downloaded_at, subscription_id, templates!inner(creator_shop_id)')
+        .eq('templates.creator_shop_id', shop.id)
         .order('downloaded_at', { ascending: true })
     ]);
 
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
     // Calculate total downloads
     const totalDownloads = results.reduce((sum, t) => sum + t.downloadCount, 0);
 
-    // Calculate unique user periods
+    // Calculate unique user periods (historical metric, kept for compatibility)
     let uniqueUserPeriods = 0;
     try {
       if (downloads.length > 0) {
@@ -134,7 +134,40 @@ export async function GET(req: Request) {
       return sum + earnings;
     }, 0);
 
-    const subscriptionPoolRevenue = uniqueUserPeriods * 40;
+    // Calculate proportional subscription pool revenue:
+    // 1. Total subscription revenue pool from checkout_details
+    const { data: subRevenueRes } = await admin
+      .from('checkout_details')
+      .select('total_amount')
+      .eq('status', 'completed')
+      .eq('checkout_type', 'subscription');
+
+    const totalSubscriptionRevenue = (subRevenueRes || []).reduce(
+      (sum: number, item: any) => sum + Number(item.total_amount || 0),
+      0
+    );
+    const totalVendorPool = totalSubscriptionRevenue * 0.40;
+
+    // 2. Total platform subscriber downloads (subscription_id IS NOT NULL, non-official shops)
+    const { count: totalPlatformSubscriberDownloads } = await admin
+      .from('downloads')
+      .select('id, templates!inner(creator_shops!inner(is_celite_official))', { count: 'exact', head: true })
+      .not('subscription_id', 'is', null)
+      .eq('templates.creator_shops.is_celite_official', false);
+
+    const totalPlatformSubDls = totalPlatformSubscriberDownloads || 1;
+
+    // 3. Vendor subscriber downloads (subscription_id IS NOT NULL, joined templates creator_shop_id)
+    const { count: vendorSubscriberDownloads } = await admin
+      .from('downloads')
+      .select('id, templates!inner(creator_shop_id)', { count: 'exact', head: true })
+      .not('subscription_id', 'is', null)
+      .eq('templates.creator_shop_id', shop.id);
+
+    const vendorSubDls = vendorSubscriberDownloads || 0;
+
+    // 4. Vendor Proportional Split
+    const subscriptionPoolRevenue = totalVendorPool * (vendorSubDls / totalPlatformSubDls);
     const totalEarnings = subscriptionPoolRevenue + marketplaceSalesRevenue;
 
     const paidOutAmount = payoutRequests
