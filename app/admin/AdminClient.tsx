@@ -39,7 +39,7 @@ export default function AdminClient() {
     celiteAmount?: number;
   } | null>(null);
   const [active, setActive] = useState<
-    'overview' | 'payouts' | 'products' | 'vendorApproval' | 'categories' | 'users' | 'settings'
+    'overview' | 'analytics' | 'payouts' | 'products' | 'vendorApproval' | 'categories' | 'users' | 'settings'
   >('overview');
 
 
@@ -129,6 +129,7 @@ export default function AdminClient() {
         <div className="flex flex-col h-full overflow-hidden">
           <section className="flex-1 p-8 space-y-8 overflow-y-auto">
             {active === 'overview' && (<OverviewPanel stats={stats} onSeed={runSeed} onUpload={runUpload} />)}
+            {active === 'analytics' && (<AnalyticsPanel />)}
             {active === 'payouts' && (<PayoutRequestsPanel />)}
 
             {active === 'products' && (

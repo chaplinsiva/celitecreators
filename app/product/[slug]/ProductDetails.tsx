@@ -16,6 +16,7 @@ import MusicSfxPlayer from '../../../components/MusicSfxPlayer';
 import SimpleMusicPlayer from '../../../components/SimpleMusicPlayer';
 import { cn, convertR2UrlToCdn } from '../../../lib/utils';
 import { formatPrice } from '../../../lib/currency';
+import { getTemplateDownloadCount, getBaselineDownloads } from '../../../lib/downloadStats';
 import type { Template } from '../../../data/templateData';
 
 interface Review {
@@ -43,24 +44,54 @@ const getThumbnail = (item: Template | (Template & { source_path?: string | null
 const MUSIC_SFX_CATEGORY_ID = '143d45f1-a55b-42be-9f51-aab507a20fac';
 
 const isMusicItem = (item: any) => {
-  const categoryId = item.category_id;
-  return categoryId === MUSIC_SFX_CATEGORY_ID;
+  const categoryId = item?.category_id;
+  const categorySlug = item?.category_slug || '';
+  const categoryName = item?.category_name || '';
+
+  return categoryId === MUSIC_SFX_CATEGORY_ID ||
+    categorySlug === 'musics-and-sfx' ||
+    categorySlug === 'stock-musics' ||
+    categorySlug === 'music' ||
+    categorySlug === 'audio' ||
+    categorySlug.includes('music') ||
+    categorySlug.includes('audio') ||
+    categoryName.toLowerCase().includes('music') ||
+    categoryName.toLowerCase().includes('audio');
 };
 
 export default function ProductDetails({ product, related, reviews, monthlyPrice }: ProductDetailsProps) {
   const { user } = useAppContext();
   const { openLoginModal } = useLoginModal();
   const router = useRouter();
+  
+  // Product state declarations
+  const [downloading, setDownloading] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSubActive, setIsSubActive] = useState<boolean>(false);
-  const [downloading, setDownloading] = useState<boolean>(false);
-  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
-  const [moreInStyleIndex, setMoreInStyleIndex] = useState(0);
+  const [loadingSub, setLoadingSub] = useState<boolean>(true);
   const [moreInStyleTemplates, setMoreInStyleTemplates] = useState<Template[]>([]);
+  const [moreInStyleIndex, setMoreInStyleIndex] = useState<number>(0);
+  const [loadingMoreInStyle, setLoadingMoreInStyle] = useState<boolean>(false);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+  const [promptCopied, setPromptCopied] = useState<boolean>(false);
+
+  const [totalDownloads, setTotalDownloads] = useState<number>(getBaselineDownloads(product.slug));
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const stats = await getTemplateDownloadCount(supabase, product.slug);
+        setTotalDownloads(stats.total);
+      } catch {
+        setTotalDownloads(getBaselineDownloads(product.slug));
+      }
+    };
+    loadStats();
+  }, [product.slug]);
+
   const [youMayAlsoLikeTemplates, setYouMayAlsoLikeTemplates] = useState<Template[]>([]);
-  const [loadingMoreInStyle, setLoadingMoreInStyle] = useState(true);
   const [loadingYouMayAlsoLike, setLoadingYouMayAlsoLike] = useState(true);
-  const [promptCopied, setPromptCopied] = useState(false);
 
   // Check if this is a prompt product (only requires login, not subscription)
   const isPromptProduct = (product as any).category_slug === 'prompts' ||
@@ -703,8 +734,8 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
           </div>
           {/* Mobile: Smaller title */}
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight line-clamp-2 sm:line-clamp-none">{product.name}</h1>
-          {/* Desktop: Vendor / brand info */}
-          <div className="hidden sm:flex items-center gap-3 mt-3">
+          {/* Desktop: Vendor / brand info & Total Downloads Badge */}
+          <div className="hidden sm:flex items-center gap-4 mt-3 flex-wrap">
             {(() => {
               const vendor = (product as any).vendor_name;
               if (!vendor) return null; // Don't show vendor section if no vendor name
@@ -721,6 +752,15 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                 </div>
               );
             })()}
+
+            {/* Total Downloads Pill Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-black shadow-sm">
+              <Zap className="w-3.5 h-3.5 text-sky-400 fill-sky-400" />
+              <span>{totalDownloads.toLocaleString()} Total Downloads &amp; Purchases</span>
+              <span className="text-[10px] text-slate-400 font-semibold border-l border-slate-700/80 pl-2">
+                (Pay-Per-Product Assets)
+              </span>
+            </div>
           </div>
         </div>
 
@@ -835,6 +875,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
               isFree={!!product.is_free}
               monthlyPrice={monthlyPrice}
               product={product}
+              totalDownloads={totalDownloads}
             />
 
             {/* Description / Prompt */}
@@ -935,6 +976,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
                 isFree={!!product.is_free}
                 monthlyPrice={monthlyPrice}
                 product={product}
+                totalDownloads={totalDownloads}
               />
 
               {/* Features Table / Tech Specs - Hidden for Prompts */}
@@ -1284,7 +1326,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
   );
 }
 
-function SubscriptionCard({ isSubActive, isPurchased, downloading, handleDownload, router, className, isPrompt, handleCopyPrompt, promptCopied, user, isFree, monthlyPrice, product }: {
+function SubscriptionCard({ isSubActive, isPurchased, downloading, handleDownload, router, className, isPrompt, handleCopyPrompt, promptCopied, user, isFree, monthlyPrice, product, totalDownloads }: {
   isSubActive: boolean;
   isPurchased?: boolean;
   downloading: boolean;
@@ -1298,6 +1340,7 @@ function SubscriptionCard({ isSubActive, isPurchased, downloading, handleDownloa
   isFree?: boolean;
   monthlyPrice?: number | null;
   product?: any;
+  totalDownloads?: number;
 }) {
   // For prompts: show Copy Prompt button (no login required)
   if (isPrompt) {
@@ -1465,6 +1508,15 @@ function SubscriptionCard({ isSubActive, isPurchased, downloading, handleDownloa
           <Check className="w-4 h-4 text-sky-400 shrink-0" /> Lifetime Access to Purchased File
         </li>
       </ul>
+
+      {totalDownloads && totalDownloads > 0 && (
+        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-300">
+          <span className="flex items-center gap-1.5 text-sky-400 font-extrabold">
+            <Zap className="w-3.5 h-3.5 fill-sky-400" /> Total Downloads &amp; Orders
+          </span>
+          <span className="text-white font-mono font-bold">{totalDownloads.toLocaleString()}</span>
+        </div>
+      )}
 
       <button
         onClick={() => router.push(`/checkout?slug=${productSlug}`)}

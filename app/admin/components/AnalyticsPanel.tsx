@@ -44,7 +44,8 @@ export default function AnalyticsPanel() {
   const [totals, setTotals] = useState<any>(null);
   const [pagination, setPagination] = useState<any>(null);
   const subscriptionChannelRef = useRef<any>(null);
-  const [detailTab, setDetailTab] = useState<'subscriptions' | 'products' | 'renewal'>('subscriptions');
+  const [detailTab, setDetailTab] = useState<'revenue' | 'subscriptions' | 'products' | 'renewal'>('revenue');
+  const [revenueRange, setRevenueRange] = useState<'this_month' | 'last_7_days' | 'last_24_hours' | 'monthly'>('this_month');
   const [productRange, setProductRange] = useState<'7d' | '30d' | '90d' | '365d' | 'all'>('30d');
   const [performanceRange, setPerformanceRange] = useState<'7d' | '30d' | '90d' | '365d' | 'all'>('30d');
   const [subscriptionRange, setSubscriptionRange] = useState<'30d' | '90d' | '365d' | 'all'>('30d');
@@ -180,6 +181,130 @@ export default function AnalyticsPanel() {
   const trendData = Object.values(subscriptionTrends).sort((a: any, b: any) =>
     new Date(a.date).getTime() - new Date(b.date).getTime()
   );
+
+  // Revenue & Sales Analytics Calculator (Supports 1..31 Month, 7-Day, 24-Hour, & Annual)
+  const revenueAnalytics = useMemo(() => {
+    const paidOrders = orders.filter(o => o.status === 'paid' || o.status === 'completed' || !o.status);
+    const now = new Date();
+
+    let chartData: { label: string; date: string; revenue: number; orders: number; creatorShare: number; platformShare: number }[] = [];
+    let periodTitle = '';
+
+    if (revenueRange === 'this_month') {
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      periodTitle = `${now.toLocaleString('en-US', { month: 'long' })} 1 – ${daysInMonth}, ${year}`;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = String(day).padStart(2, '0');
+        const monthStr = String(month + 1).padStart(2, '0');
+        const datePrefix = `${year}-${monthStr}-${dayStr}`;
+
+        const dayOrders = paidOrders.filter(o => {
+          if (!o.created_at) return false;
+          const oDate = new Date(o.created_at);
+          return oDate.getFullYear() === year && oDate.getMonth() === month && oDate.getDate() === day;
+        });
+
+        const dayRev = dayOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+        chartData.push({
+          label: `Day ${day}`,
+          date: datePrefix,
+          revenue: dayRev,
+          orders: dayOrders.length,
+          creatorShare: Math.round(dayRev * 0.7),
+          platformShare: Math.round(dayRev * 0.3),
+        });
+      }
+    } else if (revenueRange === 'last_7_days') {
+      periodTitle = 'Past 7 Days Daily Revenue Trend';
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const labelStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+        const dayOrders = paidOrders.filter(o => {
+          if (!o.created_at) return false;
+          const oDate = new Date(o.created_at).toISOString().split('T')[0];
+          return oDate === dateStr;
+        });
+
+        const dayRev = dayOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+        chartData.push({
+          label: labelStr,
+          date: dateStr,
+          revenue: dayRev,
+          orders: dayOrders.length,
+          creatorShare: Math.round(dayRev * 0.7),
+          platformShare: Math.round(dayRev * 0.3),
+        });
+      }
+    } else if (revenueRange === 'last_24_hours') {
+      periodTitle = 'Past 24 Hours Hourly Revenue Breakdown';
+      const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+      for (let hour = 0; hour < 24; hour++) {
+        const hDate = new Date(now.getTime() - (23 - hour) * 60 * 60 * 1000);
+        const hourLabel = `${String(hDate.getHours()).padStart(2, '0')}:00`;
+
+        const hourOrders = paidOrders.filter(o => {
+          if (!o.created_at) return false;
+          const oDate = new Date(o.created_at);
+          return oDate >= cutoff && oDate.getHours() === hDate.getHours() && oDate.getDate() === hDate.getDate();
+        });
+
+        const hourRev = hourOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+        chartData.push({
+          label: hourLabel,
+          date: hDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          revenue: hourRev,
+          orders: hourOrders.length,
+          creatorShare: Math.round(hourRev * 0.7),
+          platformShare: Math.round(hourRev * 0.3),
+        });
+      }
+    } else {
+      periodTitle = `Annual Monthly Breakdown (${now.getFullYear()})`;
+      const year = now.getFullYear();
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      months.forEach((mName, mIdx) => {
+        const monthOrders = paidOrders.filter(o => {
+          if (!o.created_at) return false;
+          const oDate = new Date(o.created_at);
+          return oDate.getFullYear() === year && oDate.getMonth() === mIdx;
+        });
+
+        const mRev = monthOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+        chartData.push({
+          label: mName,
+          date: `${year}-${String(mIdx + 1).padStart(2, '0')}`,
+          revenue: mRev,
+          orders: monthOrders.length,
+          creatorShare: Math.round(mRev * 0.7),
+          platformShare: Math.round(mRev * 0.3),
+        });
+      });
+    }
+
+    const totalRevenue = chartData.reduce((acc, curr) => acc + curr.revenue, 0);
+    const totalOrdersCount = chartData.reduce((acc, curr) => acc + curr.orders, 0);
+    const aov = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
+    const creatorShareTotal = Math.round(totalRevenue * 0.7);
+    const platformShareTotal = Math.round(totalRevenue * 0.3);
+
+    return {
+      chartData,
+      periodTitle,
+      totalRevenue,
+      totalOrdersCount,
+      aov,
+      creatorShareTotal,
+      platformShareTotal,
+    };
+  }, [orders, revenueRange]);
 
   const nowTs = Date.now();
 
@@ -403,76 +528,34 @@ export default function AnalyticsPanel() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-zinc-900">Analytics Dashboard</h2>
-        <p className="text-sm text-zinc-500 mt-1">Comprehensive subscription and revenue analytics</p>
+        <h2 className="text-xl font-bold text-zinc-900">Pay-Per-Product Analytics &amp; Revenue</h2>
+        <p className="text-sm text-zinc-500 mt-1">Comprehensive pay-per-product sales, order revenue breakdown, and asset downloads</p>
       </div>
-
-      {/* Revenue Distribution Section */}
-      {(totals?.totalSubscriptionRevenue !== undefined || totals?.vendorPoolAmount !== undefined || totals?.celiteAmount !== undefined) && (
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm mb-6">
-          <h3 className="text-lg font-bold text-zinc-900 mb-4">Revenue Distribution</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded-lg border border-zinc-100 bg-zinc-50 p-5">
-              <div className="text-2xl font-bold text-zinc-900 mb-1">
-                ₹{(totals?.totalSubscriptionRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Revenue Pool</div>
-              <div className="text-[10px] text-zinc-400 mt-2">From active subscriptions</div>
-            </div>
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-5">
-              <div className="text-2xl font-bold text-blue-600 mb-1">
-                ₹{(totals?.vendorPoolAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div className="text-xs font-medium text-blue-600 uppercase tracking-wider">Vendor Pool</div>
-              <div className="text-[10px] text-blue-500 mt-2">40% distributed to creators</div>
-            </div>
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-              <div className="text-2xl font-bold text-emerald-600 mb-1">
-                ₹{(totals?.celiteAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Celite Amount</div>
-              <div className="text-[10px] text-emerald-500 mt-2">60% retained by Celite</div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="text-2xl font-bold text-zinc-900">₹{totals?.subscriptionRevenue?.toFixed(2) ?? '0.00'}</div>
-          <div className="text-xs font-medium text-zinc-500 mt-1">Monthly Recurring Revenue (MRR)</div>
-          <div className="text-xs text-zinc-400 mt-3">
-            Monthly: {totals?.activeMonthly || 0} • Yearly: {totals?.activeYearly || 0}
-          </div>
+        <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-6 shadow-sm">
+          <div className="text-2xl font-black text-sky-800">₹{(totals?.orderRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          <div className="text-xs font-bold text-sky-900 uppercase tracking-wider mt-1">Total Pay-Per Revenue</div>
+          <div className="text-xs text-sky-700 font-medium mt-3">From direct single-item checkouts</div>
         </div>
 
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="text-2xl font-bold text-green-600">{totals?.activeSubscribers ?? 0}</div>
-          <div className="text-xs font-medium text-zinc-500 mt-1">Active Subscribers</div>
-          <div className="text-xs text-zinc-400 mt-3">
-            Expired: {totals?.expiredSubscribers || 0} • Cancelled: {totals?.cancelledSubscribers || 0}
-          </div>
+          <div className="text-2xl font-black text-zinc-900">{totals?.orders || 0}</div>
+          <div className="text-xs font-bold text-zinc-600 uppercase tracking-wider mt-1">Paid Checkout Orders</div>
+          <div className="text-xs text-zinc-500 font-medium mt-3">Verified transactions</div>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="text-2xl font-bold text-zinc-900">{totals?.totalSubscriptions ?? 0}</div>
-          <div className="text-xs font-medium text-zinc-500 mt-1">Total Subscriptions</div>
-          <div className="text-xs text-zinc-400 mt-3">
-            Autopay: {totals?.autopayEnabled || 0} • Manual: {totals?.autopayDisabled || 0}
-          </div>
+        <div className="rounded-xl border border-purple-200 bg-purple-50/60 p-6 shadow-sm">
+          <div className="text-2xl font-black text-purple-800">₹{((totals?.orderRevenue || 0) * 0.7).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          <div className="text-xs font-bold text-purple-900 uppercase tracking-wider mt-1">Creator Earnings Pool (70%)</div>
+          <div className="text-xs text-purple-700 font-medium mt-3">Celite Fee (30%): ₹{((totals?.orderRevenue || 0) * 0.3).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="text-2xl font-bold text-zinc-900">₹{totals?.orderRevenue?.toFixed(2) ?? '0.00'}</div>
-          <div className="text-xs font-medium text-zinc-500 mt-1">One-time Orders</div>
-          <div className="text-xs text-zinc-400 mt-3">{totals?.orders || 0} orders</div>
-        </div>
-
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="text-2xl font-bold text-zinc-900">{totals?.totalDownloads ?? 0}</div>
-          <div className="text-xs font-medium text-zinc-500 mt-1">Tracked Downloads</div>
-          <div className="text-xs text-zinc-400 mt-3">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-6 shadow-sm">
+          <div className="text-2xl font-black text-emerald-800">{totals?.totalDownloads ?? 0}</div>
+          <div className="text-xs font-bold text-emerald-900 uppercase tracking-wider mt-1">Tracked Downloads</div>
+          <div className="text-xs text-emerald-700 font-medium mt-3">
             Users: {totals?.uniqueDownloadUsers ?? 0} • Templates: {totals?.uniqueDownloadedTemplates ?? 0}
           </div>
         </div>
@@ -483,49 +566,40 @@ export default function AnalyticsPanel() {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div className="inline-flex rounded-lg border border-zinc-200 bg-zinc-100 p-1">
             <button
-              onClick={() => setDetailTab('subscriptions')}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all shadow-sm ${detailTab === 'subscriptions'
-                ? 'bg-white text-zinc-900'
-                : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 shadow-none'
+              onClick={() => setDetailTab('revenue')}
+              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all shadow-sm ${detailTab === 'revenue'
+                ? 'bg-sky-600 text-white'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50 shadow-none'
                 }`}
             >
-              Subscription Analytics
+              💰 Pay-Per Revenue Analytics
             </button>
             <button
               onClick={() => setDetailTab('products')}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all shadow-sm ${detailTab === 'products'
-                ? 'bg-white text-zinc-900'
-                : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 shadow-none'
+              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all shadow-sm ${detailTab === 'products'
+                ? 'bg-sky-600 text-white'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50 shadow-none'
                 }`}
             >
-              Product Downloads
-            </button>
-            <button
-              onClick={() => setDetailTab('renewal')}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all shadow-sm ${detailTab === 'renewal'
-                ? 'bg-white text-zinc-900'
-                : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 shadow-none'
-                }`}
-            >
-              Renewal Rate
+              📦 Asset Downloads
             </button>
           </div>
 
-          {detailTab === 'subscriptions' ? (
+          {detailTab === 'revenue' ? (
             <div className="flex items-center gap-2 text-xs text-zinc-500">
-              <span className="font-medium">Range:</span>
+              <span className="font-bold text-zinc-700">Time Breakdown:</span>
               <select
-                value={subscriptionRange}
-                onChange={(e) => setSubscriptionRange(e.target.value as any)}
-                className="px-3 py-1.5 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                value={revenueRange}
+                onChange={(e) => setRevenueRange(e.target.value as any)}
+                className="px-3 py-1.5 rounded-lg bg-white border border-zinc-300 font-bold text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 shadow-sm cursor-pointer"
               >
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="365d">Last 365 days</option>
-                <option value="all">All time</option>
+                <option value="this_month">📅 This Month (1 to 31 / 30)</option>
+                <option value="last_7_days">⚡ Last 7 Days</option>
+                <option value="last_24_hours">🕒 Last 24 Hours</option>
+                <option value="monthly">🗓️ Monthly Annual Overview</option>
               </select>
             </div>
-          ) : detailTab === 'products' ? (
+          ) : (
             <div className="flex items-center gap-2 text-xs text-zinc-500">
               <span className="font-medium">Range:</span>
               <select
@@ -540,24 +614,116 @@ export default function AnalyticsPanel() {
                 <option value="all">All time</option>
               </select>
             </div>
-          ) : (
-            <div className="flex items-center gap-2 text-xs text-zinc-500">
-              <span className="font-medium">Range:</span>
-              <select
-                value={renewalRange}
-                onChange={(e) => setRenewalRange(e.target.value as any)}
-                className="px-3 py-1.5 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              >
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="365d">Last 365 days</option>
-                <option value="all">All time</option>
-              </select>
-            </div>
           )}
         </div>
 
-        {detailTab === 'subscriptions' ? (
+        {detailTab === 'revenue' ? (
+          <div className="space-y-6">
+            {/* Revenue Overview Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-5 shadow-sm">
+                <div className="text-2xl font-black text-sky-800">
+                  ₹{revenueAnalytics.totalRevenue.toLocaleString('en-IN')}
+                </div>
+                <div className="text-xs font-bold text-sky-900 uppercase tracking-wider mt-1">Total Period Revenue</div>
+                <div className="text-[11px] text-sky-700 mt-2 font-medium">{revenueAnalytics.periodTitle}</div>
+              </div>
+
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50/80 p-5 shadow-sm">
+                <div className="text-2xl font-black text-zinc-900">
+                  {revenueAnalytics.totalOrdersCount}
+                </div>
+                <div className="text-xs font-bold text-zinc-700 uppercase tracking-wider mt-1">Paid Checkout Orders</div>
+                <div className="text-[11px] text-zinc-500 mt-2 font-medium">Verified Pay-Per-Product Purchases</div>
+              </div>
+
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-5 shadow-sm">
+                <div className="text-2xl font-black text-emerald-800">
+                  ₹{revenueAnalytics.aov.toLocaleString('en-IN')}
+                </div>
+                <div className="text-xs font-bold text-emerald-900 uppercase tracking-wider mt-1">Average Order Value (AOV)</div>
+                <div className="text-[11px] text-emerald-700 mt-2 font-medium">Revenue per paid transaction</div>
+              </div>
+
+              <div className="rounded-xl border border-purple-200 bg-purple-50/60 p-5 shadow-sm">
+                <div className="text-2xl font-black text-purple-800">
+                  ₹{revenueAnalytics.platformShareTotal.toLocaleString('en-IN')}
+                </div>
+                <div className="text-xs font-bold text-purple-900 uppercase tracking-wider mt-1">Net Celite Fee (30%)</div>
+                <div className="text-[11px] text-purple-700 mt-2 font-medium">
+                  Creator Pool (70%): ₹{revenueAnalytics.creatorShareTotal.toLocaleString('en-IN')}
+                </div>
+              </div>
+            </div>
+
+            {/* Trajectory Graph (Recharts BarChart & LineChart) */}
+            <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="text-base font-extrabold text-zinc-900">Revenue &amp; Sales Trajectory</h4>
+                  <p className="text-xs text-zinc-500 font-medium">{revenueAnalytics.periodTitle}</p>
+                </div>
+                <div className="flex items-center gap-4 text-xs font-semibold">
+                  <span className="flex items-center gap-1.5 text-sky-600">
+                    <span className="w-3 h-3 rounded bg-sky-600 inline-block"></span> Revenue (₹)
+                  </span>
+                  <span className="flex items-center gap-1.5 text-purple-600">
+                    <span className="w-3 h-3 rounded bg-purple-600 inline-block"></span> Creator Pool (₹)
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={revenueAnalytics.chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
+                    <XAxis dataKey="label" stroke="#71717a" fontSize={11} tickLine={false} />
+                    <YAxis stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      formatter={(value: any, name: any) => [
+                        name === 'revenue' ? `₹${Number(value).toLocaleString('en-IN')}` : `₹${Number(value).toLocaleString('en-IN')}`,
+                        name === 'revenue' ? 'Total Revenue (₹)' : 'Creator Share (70%)'
+                      ]}
+                      labelStyle={{ fontWeight: 'bold', color: '#18181b' }}
+                      contentStyle={{ borderRadius: '12px', border: '1px solid #e4e4e7', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                    />
+                    <Bar dataKey="revenue" fill="#0284c7" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="creatorShare" fill="#9333ea" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Trajectory Breakdown Table */}
+            <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+              <h4 className="text-base font-bold text-zinc-900 mb-4">Detailed Period Breakdown Table</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-zinc-200 bg-zinc-50 text-zinc-600 font-bold uppercase tracking-wider">
+                      <th className="py-3 px-4">Period Slot</th>
+                      <th className="py-3 px-4">Orders Count</th>
+                      <th className="py-3 px-4">Total Revenue (₹)</th>
+                      <th className="py-3 px-4">Creator Earnings (70%)</th>
+                      <th className="py-3 px-4">Net Platform Fee (30%)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100">
+                    {revenueAnalytics.chartData.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-zinc-50/80 transition-colors">
+                        <td className="py-3 px-4 font-bold text-zinc-900">{row.label} ({row.date})</td>
+                        <td className="py-3 px-4 font-semibold text-zinc-700">{row.orders}</td>
+                        <td className="py-3 px-4 font-bold text-sky-700">₹{row.revenue.toLocaleString('en-IN')}</td>
+                        <td className="py-3 px-4 font-medium text-purple-700">₹{row.creatorShare.toLocaleString('en-IN')}</td>
+                        <td className="py-3 px-4 font-medium text-emerald-700">₹{row.platformShare.toLocaleString('en-IN')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ) : detailTab === 'subscriptions' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
               <div className="text-xl font-bold text-zinc-900">{subscriptionStats.count}</div>

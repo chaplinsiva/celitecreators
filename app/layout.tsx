@@ -85,10 +85,15 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon/fav.png', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon/fav.png', sizes: '192x192', type: 'image/png' },
     ],
-    shortcut: '/favicon/fav.png',
-    apple: '/favicon/fav.png',
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || "mu0b1r8cVV-lONA0H4XZMax5pzpvzy1plDlTONFX4w4",
@@ -105,9 +110,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon/fav.png" type="image/png" />
-        <link rel="shortcut icon" href="/favicon/fav.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon/fav.png" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48" />
+        <link rel="icon" href="/favicon/fav.png" type="image/png" sizes="192x192" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
         {/* Structured Data for Sitelinks */}
         <Script

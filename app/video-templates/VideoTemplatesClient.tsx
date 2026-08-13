@@ -7,6 +7,7 @@ import { useAppContext } from '../../context/AppContext';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { useLoginModal } from '../../context/LoginModalContext';
 import { cn, convertR2UrlToCdn } from '../../lib/utils';
+import { getBaselineDownloads } from '@/lib/downloadStats';
 import { Search, ChevronDown, ChevronRight, ChevronLeft, Download, ArrowRight } from 'lucide-react';
 import VideoThumbnailPlayer from '../../components/VideoThumbnailPlayer';
 
@@ -618,6 +619,12 @@ export default function VideoTemplatesClient({
                       >
                         <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
+                    </div>
+
+                    {/* Downloads Badge - Always visible */}
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-extrabold text-sky-400 border border-sky-500/30 flex items-center gap-1 z-20">
+                      <Download className="w-3 h-3 text-sky-400" />
+                      <span>{getBaselineDownloads(template.slug)} Downloads</span>
                     </div>
 
                     {/* Software Badge - Always visible */}

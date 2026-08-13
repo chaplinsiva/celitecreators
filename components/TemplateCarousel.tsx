@@ -9,6 +9,7 @@ import { useLoginModal } from '../context/LoginModalContext';
 import { convertR2UrlToCdn } from '../lib/utils';
 import VideoThumbnailPlayer from './VideoThumbnailPlayer';
 import { cn } from '@/lib/utils';
+import { getBaselineDownloads } from '@/lib/downloadStats';
 import { ArrowRight, ChevronLeft, ChevronRight, Zap, PlayCircle, Check, Download } from 'lucide-react';
 
 type FeaturedTemplate = Template & {
@@ -221,17 +222,11 @@ export default function TemplateCarousel() {
                   );
                 })()}
               </div>
-              <div className="flex items-center gap-3 text-zinc-400">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDownload(tpl.slug);
-                  }}
-                  className="hover:text-blue-600 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Download className="w-3 h-3 text-sky-600" />
+                  <span>{getBaselineDownloads(tpl.slug)}</span>
+                </span>
               </div>
             </div>
           </div>
