@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Admin API route to fetch product checkout logs", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
 
@@ -13,16 +14,23 @@ export async function GET(req: Request) {
     const { data: isAdmin } = await admin.from('admins').select('user_id').eq('user_id', me.user.id).maybeSingle();
     if (!isAdmin) return NextResponse.json({ ok: false, error: 'Forbidden' }, { status: 403 });
 
-    // Fetch all checkout_details sorted by latest first
+    // Fetch all productcheckouts sorted by latest first
     const { data, error } = await admin
-      .from('checkout_details')
-      .select('id,user_id,checkout_type,billing_name,billing_email,billing_mobile,subscription_plan,total_amount,status,razorpay_subscription_id,razorpay_payment_id,created_at,updated_at')
+      .from('productcheckout')
+      .select('id,user_id,billing_name,billing_email,billing_mobile,total_amount,status,razorpay_payment_id,created_at,updated_at')
       .order('created_at', { ascending: false })
       .limit(500);
 
     if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
 
-    return NextResponse.json({ ok: true, data: data || [] });
+    const formattedData = (data || []).map((item: any) => ({
+      ...item,
+      checkout_type: 'product',
+      subscription_plan: null,
+      razorpay_subscription_id: null,
+    }));
+
+    return NextResponse.json({ ok: true, data: formattedData });
   } catch (e: any) {
     console.error('Checkout logs error:', e);
     return NextResponse.json({ ok: false, error: e?.message || 'Unknown error' }, { status: 500 });

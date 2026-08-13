@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Storefront global footer with navigation and policy links", deps: ["next/link"], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 import Link from 'next/link';
@@ -68,8 +69,18 @@ export default function Footer() {
             <h3 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Support & Legal</h3>
             <ul className="space-y-2.5 text-sm">
               <li>
+                <Link href="/about" className="text-zinc-400 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="text-zinc-400 hover:text-white transition-colors">
-                  Contact Support
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-zinc-400 hover:text-white transition-colors">
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
@@ -83,8 +94,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-zinc-400 hover:text-white transition-colors">
-                  Marketplace Terms
+                <Link href="/shipping-policy" className="text-zinc-400 hover:text-white transition-colors">
+                  Shipping Policy
                 </Link>
               </li>
             </ul>

@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Admin log panel to view and track real-time checkouts", deps: ["lib/supabaseClient.ts"], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
@@ -133,14 +134,14 @@ export default function SubscriptionLogPanel() {
       .reduce((sum, c) => sum + Number(c.total_amount || 0), 0);
   }, [checkouts]);
 
-  if (loading) return <div className="text-center py-8 text-zinc-500">Loading subscription log…</div>;
+  if (loading) return <div className="text-center py-8 text-zinc-500">Loading checkout logs…</div>;
   if (error) return <div className="text-sm text-red-500 py-8 text-center">{error}</div>;
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-zinc-900">Subscription Log</h2>
-        <p className="text-sm text-zinc-500 mt-1">Real-time checkout activity from checkout_details</p>
+        <h2 className="text-xl font-bold text-zinc-900">Checkout Logs</h2>
+        <p className="text-sm text-zinc-500 mt-1">Real-time checkout activity from productcheckout</p>
       </div>
 
       {/* Summary cards */}
@@ -210,18 +211,18 @@ export default function SubscriptionLogPanel() {
             const phone = (c.billing_mobile || '').replace(/[^0-9]/g, '');
 
             const waMsg = status === 'completed'
-              ? encodeURIComponent(`Hi ${name}, thank you for subscribing to Celite! If you have any questions or need assistance with your ${c.subscription_plan || ''} plan, feel free to reach out — we're happy to help!`)
+              ? encodeURIComponent(`Hi ${name}, thank you for your purchase from Celite Market! If you have any questions or need assistance with your template download, feel free to reach out — we're happy to help!`)
               : status === 'initiated'
-              ? encodeURIComponent(`Hi ${name}, we noticed you started a subscription checkout on Celite but didn't complete it. If you faced any issues or have questions, we're here to help — feel free to reach out!`)
-              : encodeURIComponent(`Hi ${name}, we noticed there was an issue with your recent subscription attempt on Celite. We'd love to help resolve it — please feel free to reach out!`);
+              ? encodeURIComponent(`Hi ${name}, we noticed you started a product checkout on Celite Market but didn't complete it. If you faced any issues or have questions, we're here to help — feel free to reach out!`)
+              : encodeURIComponent(`Hi ${name}, we noticed there was an issue with your recent purchase attempt on Celite Market. We'd love to help resolve it — please feel free to reach out!`);
 
             const emSubject = status === 'completed'
-              ? encodeURIComponent('Welcome to Celite!')
-              : encodeURIComponent('Need Help with Your Celite Subscription?');
+              ? encodeURIComponent('Thank you for your purchase!')
+              : encodeURIComponent('Need Help with Your Celite Market Checkout?');
 
             const emBody = status === 'completed'
-              ? encodeURIComponent(`Hi ${name},\n\nThank you for subscribing to Celite! If you have any questions or need assistance with your ${c.subscription_plan || ''} plan, feel free to reach out — we're happy to help!\n\nBest regards,\nCelite Team`)
-              : encodeURIComponent(`Hi ${name},\n\nWe noticed you recently tried to subscribe on Celite. If you faced any issues or have questions, we're here to help!\n\nFeel free to reach out and we'll get you sorted.\n\nBest regards,\nCelite Team`);
+              ? encodeURIComponent(`Hi ${name},\n\nThank you for purchasing from Celite Market! If you have any questions or need assistance, feel free to reach out — we're happy to help!\n\nBest regards,\nCelite Team`)
+              : encodeURIComponent(`Hi ${name},\n\nWe noticed you recently tried to purchase templates on Celite Market. If you faced any issues or have questions, we're here to help!\n\nFeel free to reach out and we'll get you sorted.\n\nBest regards,\nCelite Team`);
 
             const waUrl = phone ? `https://wa.me/${phone}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
             const emUrl = c.billing_email ? `mailto:${c.billing_email}?subject=${emSubject}&body=${emBody}` : '';

@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "API route for verifying Razorpay payment signature and creating orders", deps: ["lib/supabaseAdmin.ts", "lib/razorpay.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getSupabaseAdminClient } from '../../../../../lib/supabaseAdmin';
@@ -94,11 +95,12 @@ export async function POST(req: Request) {
       .single();
     if (oErr) return NextResponse.json({ ok: false, error: oErr.message }, { status: 500 });
 
-    // Update checkout_details if razorpay_order_id exists
+    // Update checkout details if razorpay_order_id exists
     if (razorpay_order_id && dbOrder?.id) {
       try {
-        await admin
-          .from('checkout_details')
+        // Try productcheckout first
+        const { data: updatedProduct, error: productErr } = await admin
+          .from('productcheckout')
           .update({
             status: 'completed',
             razorpay_payment_id: razorpay_payment_id || null,
@@ -106,10 +108,26 @@ export async function POST(req: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq('razorpay_order_id', razorpay_order_id)
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .select('id')
+          .maybeSingle();
+
+        if (productErr || !updatedProduct) {
+          // Fallback to checkout_details
+          await admin
+            .from('checkout_details')
+            .update({
+              status: 'completed',
+              razorpay_payment_id: razorpay_payment_id || null,
+              order_id: dbOrder.id,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('razorpay_order_id', razorpay_order_id)
+            .eq('user_id', userId);
+        }
       } catch (e) {
-        // Don't fail the payment verification if checkout_details update fails
-        console.error('Failed to update checkout_details:', e);
+        // Don't fail the payment verification if checkout update fails
+        console.error('Failed to update checkout details:', e);
       }
     }
 

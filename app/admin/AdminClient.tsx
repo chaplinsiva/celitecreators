@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Main Client component for the Admin Dashboard panel switching", deps: ["app/admin/components/AdminSidebar.tsx"], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
@@ -39,7 +40,7 @@ export default function AdminClient() {
     celiteAmount?: number;
   } | null>(null);
   const [active, setActive] = useState<
-    'overview' | 'analytics' | 'payouts' | 'products' | 'vendorApproval' | 'categories' | 'users' | 'settings'
+    'overview' | 'analytics' | 'payouts' | 'products' | 'vendorApproval' | 'checkoutLogs' | 'categories' | 'users' | 'settings'
   >('overview');
 
 
@@ -148,6 +149,7 @@ export default function AdminClient() {
               )
             )}
 
+            {active === 'checkoutLogs' && (<SubscriptionLogPanel />)}
             {active === 'categories' && (<CategoriesPanel />)}
             {active === 'users' && (<UsersPanel />)}
             {active === 'settings' && (<SettingsPanel />)}

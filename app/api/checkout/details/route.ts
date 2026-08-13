@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "API route for storing and updating checkout details", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
 
@@ -37,21 +38,29 @@ export async function POST(req: Request) {
     }
 
     // Insert checkout details
+    const isProduct = (checkout_type || 'product') === 'product';
+    const targetTable = isProduct ? 'productcheckout' : 'checkout_details';
+
+    const insertPayload: any = {
+      user_id: userId,
+      billing_name,
+      billing_email,
+      billing_mobile,
+      billing_company: billing_company || null,
+      cart_items: cart_items || [],
+      total_amount: Number(total_amount) || 0,
+      status: 'initiated',
+      razorpay_order_id: razorpay_order_id || null,
+    };
+
+    if (!isProduct) {
+      insertPayload.checkout_type = checkout_type || 'subscription';
+      insertPayload.subscription_plan = subscription_plan || null;
+    }
+
     const { data: checkoutDetail, error: insertErr } = await admin
-      .from('checkout_details')
-      .insert({
-        user_id: userId,
-        checkout_type: checkout_type || 'product',
-        billing_name,
-        billing_email,
-        billing_mobile,
-        billing_company: billing_company || null,
-        subscription_plan: subscription_plan || null,
-        cart_items: cart_items || [],
-        total_amount: Number(total_amount) || 0,
-        status: 'initiated',
-        razorpay_order_id: razorpay_order_id || null,
-      })
+      .from(targetTable)
+      .insert(insertPayload)
       .select('id')
       .single();
 
@@ -101,12 +110,27 @@ export async function PATCH(req: Request) {
     if (razorpay_subscription_id) updateData.razorpay_subscription_id = razorpay_subscription_id;
     if (order_id) updateData.order_id = order_id;
 
-    // Update checkout details
-    const { error: updateErr } = await admin
-      .from('checkout_details')
+    // Update checkout details: try productcheckout first, fallback to checkout_details
+    let updateErr = null;
+    const { data: updatedProduct, error: productErr } = await admin
+      .from('productcheckout')
       .update(updateData)
       .eq('id', checkout_detail_id)
-      .eq('user_id', userId); // Ensure user can only update their own checkout details
+      .eq('user_id', userId)
+      .select('id')
+      .maybeSingle();
+
+    if (productErr) {
+      updateErr = productErr;
+    } else if (!updatedProduct) {
+      // Fallback to checkout_details if not found in productcheckout
+      const { error: detailsErr } = await admin
+        .from('checkout_details')
+        .update(updateData)
+        .eq('id', checkout_detail_id)
+        .eq('user_id', userId);
+      updateErr = detailsErr;
+    }
 
     if (updateErr) {
       return NextResponse.json({ ok: false, error: updateErr.message }, { status: 500 });

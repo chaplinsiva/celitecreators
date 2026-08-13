@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Sidebar component for Admin Dashboard navigation", deps: [], state: active, last: "antigravity@2026-08-13" }
 "use client";
 
 type TabKey =
@@ -6,6 +7,7 @@ type TabKey =
   | 'payouts'
   | 'products'
   | 'vendorApproval'
+  | 'checkoutLogs'
   | 'categories'
   | 'users'
   | 'settings';
@@ -16,6 +18,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'payouts', label: '💰 Payout Requests' },
   { key: 'products', label: '🛒 Marketplace Products' },
   { key: 'vendorApproval', label: '✅ Product & Sub Approvals' },
+  { key: 'checkoutLogs', label: '📋 Checkout Logs' },
   { key: 'categories', label: '📂 Categories' },
   { key: 'users', label: '👥 Creator Shops & Users' },
   { key: 'settings', label: '⚙️ Settings' },

@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Admin API route to fetch user and sales analytics", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
 
@@ -276,8 +277,30 @@ export async function GET(req: Request) {
         console.log('Could not fetch user emails from users_view:', e);
       }
 
-      // Also fetch phone numbers from checkout_details (billing_mobile)
+      // Also fetch phone numbers from productcheckout and checkout_details (billing_mobile)
       // This is more reliable than auth phone since users enter it during checkout
+      try {
+        const { data: pCheckoutData } = await admin
+          .from('productcheckout')
+          .select('user_id,billing_mobile,billing_name')
+          .in('user_id', Array.from(userIds))
+          .not('billing_mobile', 'is', null)
+          .order('created_at', { ascending: false });
+
+        if (pCheckoutData) {
+          pCheckoutData.forEach((c: any) => {
+            if (!userPhones[c.user_id] && c.billing_mobile) {
+              userPhones[c.user_id] = c.billing_mobile;
+            }
+            if (!userNames[c.user_id] && c.billing_name) {
+              userNames[c.user_id] = c.billing_name;
+            }
+          });
+        }
+      } catch (e) {
+        console.log('Could not fetch phone numbers from productcheckout:', e);
+      }
+
       try {
         const { data: checkoutData } = await admin
           .from('checkout_details')
