@@ -69,6 +69,7 @@ export type ShopData = {
   description: string | null;
   banner_url?: string | null;
   logo_url?: string | null;
+  profile_image_url?: string | null;
   tagline?: string | null;
   location?: string | null;
   website_url?: string | null;
@@ -305,7 +306,7 @@ export default function CreatorShopClient({
   }, [filteredSections]);
 
   const bannerImg = currentShop.banner_url || DEFAULT_BANNER;
-  const logoImg = currentShop.logo_url;
+  const logoImg = currentShop.logo_url || currentShop.profile_image_url;
 
   return (
     <main className="bg-[#0B0F17] text-white min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6 lg:px-8">

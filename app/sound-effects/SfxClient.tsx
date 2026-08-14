@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { useLoginModal } from '../../context/LoginModalContext';
@@ -23,17 +23,12 @@ type Template = {
   software: string[];
   plugins: string[];
   tags: string[];
-  created_at?: string | null;
-  category_id?: string | null;
-  subcategory_id?: string | null;
-  sub_subcategory_id?: string | null;
-  creator_shop_id?: string | null;
-  feature?: boolean | null;
-  is_featured?: boolean | null;
-  isFeatured?: boolean | null;
-  meta_title?: string | null;
-  meta_description?: string | null;
-  vendor_name?: string | null;
+  created_at: string;
+  category_id?: string;
+  subcategory_id?: string;
+  feature?: boolean;
+  vendor_name?: string;
+  price?: number;
 };
 
 type Subcategory = {
@@ -47,9 +42,10 @@ const ITEMS_PER_PAGE = 20;
 
 export default function SfxClient({ initialTemplates }: { initialTemplates: Template[] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAppContext();
   const { openLoginModal } = useLoginModal();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>(initialTemplates);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');

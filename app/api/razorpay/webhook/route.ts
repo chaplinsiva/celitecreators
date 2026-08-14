@@ -270,6 +270,47 @@ export async function POST(req: Request) {
 
           console.log(`Subscription ${isRenewal ? 'renewed' : 'activated'} for user: ${targetUserId}, plan: ${finalPlan}, valid_until: ${validUntil.toISOString()}`);
 
+          // Stamp immutable subscription attribution snapshot
+          if (targetUserId) {
+            try {
+              const { data: userAttr } = await admin
+                .from('visitor_attributions')
+                .select('*')
+                .eq('user_id', targetUserId)
+                .maybeSingle();
+
+              if (userAttr) {
+                await admin.from('subscription_attributions').insert({
+                  user_id: targetUserId,
+                  razorpay_subscription_id: razorpaySubscriptionId,
+                  subscription_plan: finalPlan,
+                  amount: finalPlan === 'yearly' ? 5499 : finalPlan === 'pongal_weekly' ? 499 : 599,
+                  currency: 'INR',
+                  first_source: userAttr.first_source || 'Direct',
+                  first_medium: userAttr.first_medium,
+                  first_campaign: userAttr.first_campaign,
+                  first_content: userAttr.first_content,
+                  first_term: userAttr.first_term,
+                  first_landing_page: userAttr.first_landing_page,
+                  first_referrer: userAttr.first_referrer,
+                  first_product_viewed: userAttr.first_product_viewed,
+                  first_visit_at: userAttr.first_visit_at,
+                  last_source: userAttr.last_source || 'Direct',
+                  last_medium: userAttr.last_medium,
+                  last_campaign: userAttr.last_campaign,
+                  last_content: userAttr.last_content,
+                  last_term: userAttr.last_term,
+                  last_landing_page: userAttr.last_landing_page,
+                  last_referrer: userAttr.last_referrer,
+                  last_product_viewed: userAttr.last_product_viewed,
+                  last_visit_at: userAttr.last_visit_at,
+                });
+              }
+            } catch (attrErr) {
+              console.error('Failed to stamp subscription attribution in webhook:', attrErr);
+            }
+          }
+
           // Handle Pongal weekly subscription payment - update week payment status
           if (finalPlan === 'pongal_weekly' && targetUserId && isRenewal) {
             try {

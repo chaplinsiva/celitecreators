@@ -118,42 +118,57 @@ function SignupContent() {
   }
 
   return (
-    <main className="bg-white min-h-screen flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md">
+    <main className="bg-[#0B0F17] min-h-screen flex flex-col items-center justify-center py-12 px-4 relative overflow-hidden">
+      {/* Background Ambient Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-sky-500/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-blue-600">
+          <Link href="/" className="inline-flex items-center gap-3 mb-6 group focus:outline-none">
+            <div className="w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-700/80 overflow-hidden flex items-center justify-center shadow-lg shadow-sky-500/10 group-hover:border-sky-500/50 group-hover:scale-105 transition-all">
+              <img 
+                src="/logo/logo.png" 
+                alt="Celite Market Logo" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-white">
+              Celite<span className="text-sky-400">Market</span>
+            </span>
+          </Link>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">
             Create Account
           </h1>
-          <p className="text-zinc-600 text-sm sm:text-base">
-            Join thousands of creators using Celite
+          <p className="text-slate-400 text-sm sm:text-base">
+            Join thousands of creators using Celite Market
           </p>
         </div>
 
         {/* Signup Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-zinc-200 p-6 sm:p-8">
+        <div className="bg-[#090D16]/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="bg-red-950/40 border border-red-800/60 rounded-xl p-3.5 flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-zinc-900 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-slate-200 mb-2">
                 Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   id="name"
                   name="name"
                   type="text"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-[#0F172A]/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all text-sm sm:text-base"
                   placeholder="John Doe"
                 />
               </div>
@@ -161,17 +176,17 @@ function SignupContent() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-zinc-900 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-[#0F172A]/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all text-sm sm:text-base"
                   placeholder="you@example.com"
                 />
               </div>
@@ -179,17 +194,17 @@ function SignupContent() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-zinc-900 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-200 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   id="password"
                   name="password"
                   type="password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-[#0F172A]/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all text-sm sm:text-base"
                   placeholder="••••••••"
                 />
               </div>
@@ -197,17 +212,17 @@ function SignupContent() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-zinc-900 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-200 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-zinc-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-[#0F172A]/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all text-sm sm:text-base"
                   placeholder="••••••••"
                 />
               </div>
@@ -217,7 +232,7 @@ function SignupContent() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="w-full bg-sky-600 hover:bg-sky-500 text-white py-3.5 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-sky-950/50 hover:shadow-sky-900/50 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               {isSubmitting ? (
                 <>
@@ -235,9 +250,9 @@ function SignupContent() {
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-zinc-200"></div>
-            <span className="text-xs text-zinc-500">OR</span>
-            <div className="flex-1 h-px bg-zinc-200"></div>
+            <div className="flex-1 h-px bg-slate-800"></div>
+            <span className="text-xs font-medium text-slate-500">OR</span>
+            <div className="flex-1 h-px bg-slate-800"></div>
           </div>
 
           {/* Google Sign In Button */}
@@ -245,26 +260,26 @@ function SignupContent() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isSubmitting}
-            className="w-full flex items-center justify-center gap-3 border-2 border-zinc-200 bg-white text-zinc-700 py-3 rounded-lg font-semibold hover:bg-zinc-50 hover:border-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm sm:text-base"
+            className="w-full flex items-center justify-center gap-3 border border-slate-800 bg-[#0F172A]/60 hover:bg-[#0F172A] text-slate-200 py-3.5 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm sm:text-base"
           >
             <GoogleIcon />
             <span>Continue with Google</span>
           </button>
 
           {/* Sign In Link */}
-          <p className="text-center text-sm text-zinc-600 mt-6">
+          <p className="text-center text-sm text-slate-400 mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+            <Link href="/login" className="font-semibold text-sky-400 hover:text-sky-300 transition-colors">
               Sign in instead
             </Link>
           </p>
         </div>
 
         {/* Additional Info */}
-        <p className="text-center text-xs text-zinc-500 mt-6">
+        <p className="text-center text-xs text-slate-500 mt-6">
           By creating an account, you agree to our{' '}
-          <Link href="/terms" className="underline hover:text-zinc-700">Terms</Link> and{' '}
-          <Link href="/privacy-policy" className="underline hover:text-zinc-700">Privacy Policy</Link>
+          <Link href="/terms" className="underline text-slate-400 hover:text-slate-300">Terms</Link> and{' '}
+          <Link href="/privacy-policy" className="underline text-slate-400 hover:text-slate-300">Privacy Policy</Link>
         </p>
       </div>
     </main>

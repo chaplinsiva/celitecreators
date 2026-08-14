@@ -68,6 +68,66 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: insertErr.message }, { status: 500 });
     }
 
+    // If attribution object is passed, sync with visitor_attributions
+    const attribution = body.attribution;
+    if (attribution && attribution.firstTouch) {
+      try {
+        const first = attribution.firstTouch;
+        const last = attribution.lastTouch || first;
+        const { data: existingAttr } = await admin
+          .from('visitor_attributions')
+          .select('id, touchpoint_count')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (existingAttr) {
+          await admin
+            .from('visitor_attributions')
+            .update({
+              anonymous_id: attribution.anonymousId || null,
+              last_source: last.source || null,
+              last_medium: last.medium || null,
+              last_campaign: last.campaign || null,
+              last_content: last.content || null,
+              last_term: last.term || null,
+              last_landing_page: last.landingPage || null,
+              last_referrer: last.referrer || null,
+              last_product_viewed: attribution.lastProductViewed || last.productViewed || null,
+              last_visit_at: last.timestamp ? new Date(last.timestamp).toISOString() : new Date().toISOString(),
+              touchpoint_count: (existingAttr.touchpoint_count || 1) + 1,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingAttr.id);
+        } else {
+          await admin.from('visitor_attributions').insert({
+            user_id: userId,
+            anonymous_id: attribution.anonymousId || null,
+            first_source: first.source || 'Direct',
+            first_medium: first.medium || null,
+            first_campaign: first.campaign || null,
+            first_content: first.content || null,
+            first_term: first.term || null,
+            first_landing_page: first.landingPage || null,
+            first_referrer: first.referrer || null,
+            first_product_viewed: attribution.firstProductViewed || first.productViewed || null,
+            first_visit_at: first.timestamp ? new Date(first.timestamp).toISOString() : new Date().toISOString(),
+            last_source: last.source || 'Direct',
+            last_medium: last.medium || null,
+            last_campaign: last.campaign || null,
+            last_content: last.content || null,
+            last_term: last.term || null,
+            last_landing_page: last.landingPage || null,
+            last_referrer: last.referrer || null,
+            last_product_viewed: attribution.lastProductViewed || last.productViewed || null,
+            last_visit_at: last.timestamp ? new Date(last.timestamp).toISOString() : new Date().toISOString(),
+            touchpoint_count: attribution.touchpointCount || 1,
+          });
+        }
+      } catch (attrErr) {
+        console.error('Failed to sync visitor attribution during checkout:', attrErr);
+      }
+    }
+
     return NextResponse.json({ ok: true, checkout_detail_id: checkoutDetail.id });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || 'Unknown error' }, { status: 500 });

@@ -96,6 +96,7 @@ export async function POST(req: Request) {
     if (oErr) return NextResponse.json({ ok: false, error: oErr.message }, { status: 500 });
 
     // Update checkout details if razorpay_order_id exists
+    let checkoutId: string | null = null;
     if (razorpay_order_id && dbOrder?.id) {
       try {
         // Try productcheckout first
@@ -112,9 +113,13 @@ export async function POST(req: Request) {
           .select('id')
           .maybeSingle();
 
+        if (updatedProduct?.id) {
+          checkoutId = updatedProduct.id;
+        }
+
         if (productErr || !updatedProduct) {
           // Fallback to checkout_details
-          await admin
+          const { data: updatedDetails } = await admin
             .from('checkout_details')
             .update({
               status: 'completed',
@@ -123,11 +128,70 @@ export async function POST(req: Request) {
               updated_at: new Date().toISOString(),
             })
             .eq('razorpay_order_id', razorpay_order_id)
-            .eq('user_id', userId);
+            .eq('user_id', userId)
+            .select('id')
+            .maybeSingle();
+
+          if (updatedDetails?.id) {
+            checkoutId = updatedDetails.id;
+          }
         }
       } catch (e) {
         // Don't fail the payment verification if checkout update fails
         console.error('Failed to update checkout details:', e);
+      }
+    }
+
+    // Stamp immutable attribution snapshot into order_attributions
+    if (dbOrder?.id && userId) {
+      try {
+        const { data: userAttr } = await admin
+          .from('visitor_attributions')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (userAttr) {
+          await admin.from('order_attributions').insert({
+            order_id: dbOrder.id,
+            checkout_id: checkoutId,
+            user_id: userId,
+            total_amount: totalAmount,
+            currency: 'INR',
+            first_source: userAttr.first_source || 'Direct',
+            first_medium: userAttr.first_medium,
+            first_campaign: userAttr.first_campaign,
+            first_content: userAttr.first_content,
+            first_term: userAttr.first_term,
+            first_landing_page: userAttr.first_landing_page,
+            first_referrer: userAttr.first_referrer,
+            first_product_viewed: userAttr.first_product_viewed,
+            first_visit_at: userAttr.first_visit_at,
+            last_source: userAttr.last_source || 'Direct',
+            last_medium: userAttr.last_medium,
+            last_campaign: userAttr.last_campaign,
+            last_content: userAttr.last_content,
+            last_term: userAttr.last_term,
+            last_landing_page: userAttr.last_landing_page,
+            last_referrer: userAttr.last_referrer,
+            last_product_viewed: userAttr.last_product_viewed,
+            last_visit_at: userAttr.last_visit_at,
+          });
+        } else {
+          await admin.from('order_attributions').insert({
+            order_id: dbOrder.id,
+            checkout_id: checkoutId,
+            user_id: userId,
+            total_amount: totalAmount,
+            currency: 'INR',
+            first_source: 'Direct',
+            last_source: 'Direct',
+            first_landing_page: '/checkout',
+            last_landing_page: '/checkout',
+          });
+        }
+      } catch (attrErr) {
+        console.error('Failed to stamp order attribution:', attrErr);
       }
     }
 

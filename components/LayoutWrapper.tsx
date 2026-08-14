@@ -115,7 +115,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="isolate flex flex-col min-h-screen">
+    <div className="isolate flex flex-col min-h-screen bg-black text-white">
       <Header />
       <CategoryNav />
       <div className="lg:mt-[124px] mt-[80px]">

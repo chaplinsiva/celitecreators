@@ -67,7 +67,7 @@ export default async function CreatorShopPage(props: PageProps) {
   // Try fetching with branding fields using case-insensitive ilike match
   let { data: shop, error: shopErr } = await supabase
     .from("creator_shops")
-    .select("id, user_id, name, description, slug, banner_url, logo_url, tagline, location, website_url, instagram_url, youtube_url, twitter_url, created_at")
+    .select("id, user_id, name, description, slug, banner_url, logo_url, profile_image_url, tagline, location, website_url, instagram_url, youtube_url, twitter_url, created_at")
     .ilike("slug", params.shopSlug)
     .maybeSingle();
 

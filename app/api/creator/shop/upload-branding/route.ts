@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Upload creator branding image (logo/banner) to Cloudflare R2 and update creator_shops table", deps: ["lib/supabaseAdmin.ts", "lib/r2Client.ts", "lib/utils.ts"], state: active, last: "sato@2026-08-14" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { uploadPreviewToR2 } from '@/lib/r2Client';
@@ -29,7 +30,7 @@ async function getCreatorContext(req: Request) {
 
   const { data: shop, error: shopErr } = await admin
     .from('creator_shops')
-    .select('id, slug')
+    .select('id, slug, name')
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
   try {
     const ctx = await getCreatorContext(req);
     if ('error' in ctx) return ctx.error;
-    const { shop } = ctx;
+    const { admin, shop } = ctx;
 
     const form = await req.formData();
     const file = form.get('file') as File | null;
@@ -64,12 +65,28 @@ export async function POST(req: Request) {
     const result = await uploadPreviewToR2(file, r2Key, contentType);
     const cdnUrl = convertR2UrlToCdn(result.url) || result.url;
 
+    // Immediately persist to database
+    const dbUpdates: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+    if (type === 'logo') {
+      dbUpdates.logo_url = cdnUrl;
+      dbUpdates.profile_image_url = cdnUrl;
+    } else {
+      dbUpdates.banner_url = cdnUrl;
+    }
+
+    await admin
+      .from('creator_shops')
+      .update(dbUpdates)
+      .eq('id', shop.id);
+
     return NextResponse.json({
       ok: true,
       url: cdnUrl,
       key: result.key,
       type,
-      message: `${type === 'banner' ? 'Store banner' : 'Studio logo'} uploaded successfully`,
+      message: `${type === 'banner' ? 'Store banner' : 'Studio logo'} uploaded and saved successfully`,
     });
   } catch (err: any) {
     console.error('Branding R2 upload error:', err);

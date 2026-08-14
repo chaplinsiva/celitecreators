@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { useLoginModal } from '../../context/LoginModalContext';
@@ -65,9 +65,10 @@ const ITEMS_PER_PAGE = 20;
 
 export default function StockMusicsClient({ initialTemplates }: { initialTemplates: Template[] }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { user } = useAppContext();
     const { openLoginModal } = useLoginModal();
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     // Expanded filter sections

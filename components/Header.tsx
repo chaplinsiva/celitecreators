@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../context/AppContext';
 import { getSupabaseBrowserClient } from '../lib/supabaseClient';
-import { Menu, X, Search, ChevronDown } from 'lucide-react';
+import { Menu, X, Search, ChevronDown, Loader2 } from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,7 +14,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { cn } from '../lib/utils';
+import { cn, convertR2UrlToCdn } from '../lib/utils';
 
 type Category = {
   id: string;
@@ -34,6 +34,16 @@ type SubSubcategory = {
   subcategory_id: string;
   name: string;
   slug: string;
+};
+
+type LiveSearchResult = {
+  slug: string;
+  name: string;
+  price?: number;
+  thumbnail_path?: string | null;
+  img?: string | null;
+  categoryName?: string;
+  categorySlug?: string;
 };
 
 // Helper function to get the correct route for a category
@@ -56,7 +66,6 @@ const getCategoryRoute = (categorySlug: string): string => {
     'ui-templates': '/web-templates',
     '3d-models': '/3d-models',
     'prompts': '/prompts',
-
   };
 
   if (routeMap[normalizedSlug]) {
@@ -89,6 +98,17 @@ const getCategoryRoute = (categorySlug: string): string => {
   return `/video-templates?category=${categorySlug}`;
 };
 
+const MARKETPLACE_CATEGORIES = [
+  { name: 'All Categories', slug: '' },
+  { name: 'Video Templates', slug: 'video-templates' },
+  { name: 'Sound Effects', slug: 'sound-effects' },
+  { name: 'Stock Music', slug: 'stock-musics' },
+  { name: '3D Models', slug: '3d-models' },
+  { name: 'Web Templates', slug: 'web-templates' },
+  { name: 'Graphics & PSD', slug: 'graphics' },
+  { name: 'Stock Photos', slug: 'stock-photos' },
+];
+
 export default function Header() {
   const router = useRouter();
   const { user, isAuthLoading, logout } = useAppContext();
@@ -101,13 +121,95 @@ export default function Header() {
   const [subSubcategories, setSubSubcategories] = useState<SubSubcategory[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  
+  // Search Bar State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState({ name: 'All Categories', slug: '' });
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [liveResults, setLiveResults] = useState<LiveSearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLiveOpen, setIsLiveOpen] = useState(false);
+
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const categoryMenuRef = useRef<HTMLDivElement>(null);
 
   // Christmas theme: Show festive logo in December
   const isDecember = new Date().getMonth() === 11;
 
+  // Handle outside clicks to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (categoryMenuRef.current && !categoryMenuRef.current.contains(e.target as Node)) {
+        setIsCategoryMenuOpen(false);
+      }
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsLiveOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Live Instant Search debounced query
+  useEffect(() => {
+    if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+      setLiveResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const cleanQuery = searchQuery.trim();
+        
+        let req = supabase
+          .from('templates')
+          .select('slug, name, price, thumbnail_path, img, category_id, categories(name, slug)')
+          .eq('status', 'approved')
+          .ilike('name', `%${cleanQuery}%`)
+          .limit(6);
+
+        const { data, error } = await req;
+        if (!error && data) {
+          const formatted: LiveSearchResult[] = data.map((item: any) => ({
+            slug: item.slug,
+            name: item.name,
+            price: Number(item.price || 399),
+            thumbnail_path: item.thumbnail_path,
+            img: item.img,
+            categoryName: item.categories?.name || 'Template',
+            categorySlug: item.categories?.slug || 'video-templates',
+          }));
+          setLiveResults(formatted);
+          setIsLiveOpen(true);
+        }
+      } catch (err) {
+        console.error('Search query failed:', err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 220);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Execute Full Search Navigation
+  const executeSearch = (targetQuery?: string) => {
+    const query = (targetQuery !== undefined ? targetQuery : searchQuery).trim();
+    if (!query) return;
+
+    setIsLiveOpen(false);
+    setIsCategoryMenuOpen(false);
+    setIsMobileMenuOpen(false);
+
+    const targetRoute = selectedCategory.slug 
+      ? getCategoryRoute(selectedCategory.slug)
+      : '/video-templates';
+
+    router.push(`${targetRoute}?search=${encodeURIComponent(query)}`);
+  };
 
   // Fetch categories, subcategories, and sub-subcategories
   useEffect(() => {
@@ -121,7 +223,6 @@ export default function Header() {
         ]);
 
         if (catsRes.data) {
-          // Include all categories in the navbar menu
           setCategories(catsRes.data);
         }
         if (subcatsRes.data) {
@@ -180,109 +281,182 @@ export default function Header() {
     checkSubscriptionAndCreator();
   }, [user]);
 
-
   return (
     <>
-      <header className="w-full fixed top-0 left-0 z-[100] bg-[#0B0F17] border-b border-slate-800/90 shadow-xl transition-all duration-300">
-        <nav className="max-w-[1440px] mx-auto h-20 px-6 sm:px-8 flex items-center justify-between">
-          {/* Left: Logo & Nav */}
-          <div className="flex items-center gap-10">
-            <Link href="/" className="flex items-center gap-2.5 focus:outline-none hover:opacity-90 transition-opacity shrink-0">
-              <img src={isDecember ? "/chirtsmaslogo.png" : "/logo/logo.png"} alt="Celite Market Logo" className="h-9 w-auto object-contain" />
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-white tracking-tight leading-none">CELITE MARKET</span>
-                <span className="text-[10px] font-semibold text-sky-400 tracking-wider uppercase">Digital Asset Marketplace</span>
-              </div>
-            </Link>
+      <header className="w-full fixed top-0 left-0 z-[100] bg-black/98 backdrop-blur-2xl border-b border-zinc-900 shadow-2xl shadow-black transition-all duration-300">
+        {/* Subtle Ambient Light Blue Top Flare */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-sky-500/30 to-transparent pointer-events-none" />
+        
+        <nav className="max-w-[1440px] mx-auto h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 sm:gap-6">
+          {/* Left: Curved Logo & Brand */}
+          <Link href="/" className="inline-flex items-center gap-3 focus:outline-none hover:opacity-95 transition-opacity shrink-0 group">
+            <div className="w-10 h-10 rounded-xl bg-black border border-zinc-800 overflow-hidden flex items-center justify-center shadow-lg shadow-sky-500/10 group-hover:border-sky-500/50 group-hover:scale-105 transition-all">
+              <img 
+                src={isDecember ? "/chirtsmaslogo.png" : "/logo/logo.png"} 
+                alt="Celite Market Logo" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-1">
+              Celite<span className="text-sky-400">Market</span>
+            </span>
+          </Link>
 
-            {/* Global Search Bar */}
-            <div className="hidden lg:flex items-center ml-4 bg-slate-900 rounded-xl border border-slate-700/80 focus-within:border-sky-500/60 focus-within:ring-1 focus-within:ring-sky-500/40 transition-all group">
+          {/* Center: Global Search Bar (Medium & Large screens) */}
+          <div ref={searchContainerRef} className="relative hidden md:flex items-center flex-1 max-w-md xl:max-w-xl">
+            <div className="flex items-center w-full bg-[#04060A] rounded-xl border border-zinc-800/90 focus-within:border-sky-500/80 focus-within:ring-2 focus-within:ring-sky-500/20 transition-all group overflow-hidden shadow-inner">
               {/* Category Dropdown */}
-              <div className="relative">
+              <div ref={categoryMenuRef} className="relative shrink-0">
                 <button
+                  type="button"
                   onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
-                  className="flex items-center gap-1.5 px-4 h-10 text-[13px] font-medium text-slate-300 hover:text-white border-r border-slate-700/80 transition-colors"
+                  className="flex items-center gap-1.5 px-3.5 h-10 text-[13px] font-medium text-zinc-300 hover:text-white border-r border-zinc-800 transition-colors cursor-pointer"
                 >
-                  <span className="max-w-[100px] truncate">{selectedCategory.name}</span>
-                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200 text-slate-400 group-hover:text-sky-400", isCategoryMenuOpen && "rotate-180")} />
+                  <span className="max-w-[110px] truncate">{selectedCategory.name}</span>
+                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200 text-zinc-400 group-hover:text-sky-400", isCategoryMenuOpen && "rotate-180")} />
                 </button>
 
                 {isCategoryMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#0F172A] rounded-xl shadow-2xl border border-slate-700/80 py-2 z-[110] animate-in fade-in zoom-in-95 duration-200">
-                    <button
-                      onClick={() => {
-                        setSelectedCategory({ name: 'All Categories', slug: '' });
-                        setIsCategoryMenuOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-800/80 transition-colors font-medium text-zinc-300 hover:text-white"
-                    >
-                      All Categories
-                    </button>
-                    {[
-                      { name: 'Video Templates', slug: 'video-templates' },
-                      { name: 'Stock Photos', slug: 'stock-images' },
-                      { name: 'Music & SFX', slug: 'stock-musics' },
-                      { name: 'Web Templates', slug: 'website-templates' },
-                      { name: 'Graphics', slug: 'psd-templates' },
-                      { name: '3D Models', slug: '3d-models' },
-                    ].map((cat) => (
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#04060A] rounded-xl shadow-2xl border border-zinc-800 py-1.5 z-[120] animate-in fade-in zoom-in-95 duration-150">
+                    {MARKETPLACE_CATEGORIES.map((cat) => (
                       <button
-                        key={cat.slug}
+                        type="button"
+                        key={cat.slug || 'all'}
                         onClick={() => {
                           setSelectedCategory(cat);
                           setIsCategoryMenuOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-800/80 transition-colors font-medium text-zinc-300 hover:text-white"
+                        className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors flex items-center justify-between cursor-pointer ${
+                          selectedCategory.slug === cat.slug
+                            ? "bg-sky-500/10 text-sky-400 font-bold"
+                            : "text-zinc-300 hover:bg-zinc-900 hover:text-white"
+                        }`}
                       >
-                        {cat.name}
+                        <span>{cat.name}</span>
+                        {selectedCategory.slug === cat.slug && (
+                          <span className="text-sky-400 text-xs">✓</span>
+                        )}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Search Input */}
+              {/* Search Input Form */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (searchQuery.trim()) {
-                    const route = selectedCategory.slug ? getCategoryRoute(selectedCategory.slug) : '/video-templates';
-                    router.push(`${route}?search=${encodeURIComponent(searchQuery)}`);
-                  }
+                  executeSearch();
                 }}
-                className="flex items-center flex-1 min-w-[200px] xl:min-w-[350px]"
+                className="flex items-center flex-1 min-w-0"
               >
                 <input
                   type="text"
-                  placeholder={`Search After Effects, SFX, Music, 3D Assets...`}
+                  placeholder="Search templates, music, SFX, 3D assets..."
                   value={searchQuery}
+                  onFocus={() => {
+                    if (liveResults.length > 0) setIsLiveOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') setIsLiveOpen(false);
+                  }}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-white placeholder:text-zinc-500 px-4"
+                  className="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-white placeholder:text-zinc-500 px-3.5 py-2 outline-none"
                 />
-                <button type="submit" className="p-2 mr-1 text-zinc-400 group-hover:text-zinc-200 transition-colors">
-                  <Search className="w-4 h-4" />
+                <button
+                  type="submit"
+                  className="p-2.5 mr-1 text-zinc-400 hover:text-sky-400 transition-colors cursor-pointer"
+                  title="Search Celite Market"
+                >
+                  {isSearching ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
                 </button>
               </form>
             </div>
+
+            {/* Live Instant Search Suggestions Dropdown */}
+            {isLiveOpen && liveResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[#04060A]/95 backdrop-blur-2xl rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden z-[130] animate-in fade-in zoom-in-95 duration-150">
+                <div className="p-2 divide-y divide-zinc-900">
+                  <div className="px-3 py-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>Instant Results</span>
+                    <span className="text-[10px] text-sky-400 font-mono font-normal">
+                      {liveResults.length} matches
+                    </span>
+                  </div>
+
+                  <div className="space-y-1 pt-1">
+                    {liveResults.map((item) => {
+                      const thumb = item.thumbnail_path || item.img;
+                      const thumbUrl = thumb ? convertR2UrlToCdn(thumb) : null;
+                      return (
+                        <Link
+                          key={item.slug}
+                          href={`/product/${item.slug}`}
+                          onClick={() => {
+                            setIsLiveOpen(false);
+                            setSearchQuery('');
+                          }}
+                          className="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-zinc-900/90 transition-all group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden shrink-0 flex items-center justify-center">
+                              {thumbUrl ? (
+                                <img
+                                  src={thumbUrl}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <span className="text-zinc-600 text-xs">🎬</span>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-white group-hover:text-sky-400 transition-colors truncate">
+                                {item.name}
+                              </p>
+                              <p className="text-[10px] text-zinc-500 font-mono mt-0.5">
+                                {item.categoryName || 'Marketplace Asset'}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-xs font-extrabold text-sky-400">
+                              ₹{item.price || 399}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer Action */}
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => executeSearch()}
+                      className="w-full py-2 px-3 rounded-xl bg-zinc-900/80 hover:bg-sky-600 hover:text-white text-zinc-300 text-xs font-bold transition-all flex items-center justify-between group cursor-pointer"
+                    >
+                      <span>View all results for &ldquo;{searchQuery}&rdquo;</span>
+                      <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-4">
-            {/* Celite Subscription External Redirect Link */}
-            <a
-              href="https://celitemarket.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 bg-sky-950/40 border border-sky-800/40 px-3.5 py-1.5 rounded-lg transition shadow-sm hover:bg-sky-900/40"
-            >
-              Celite Subscription ₹499/mo →
-            </a>
-
-            {/* Creator link (Desktop) */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            {/* Creator link */}
             {!isAuthLoading && user && !hasCreatorShop && (
               <Link
                 href="/start-selling"
-                className="hidden md:block text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
+                className="hidden lg:block text-xs sm:text-[13px] font-semibold text-zinc-300 hover:text-sky-400 transition-colors"
               >
                 Sell on Celite Market
               </Link>
@@ -290,81 +464,87 @@ export default function Header() {
             {!isAuthLoading && user && hasCreatorShop && (
               <Link
                 href="/creator/dashboard"
-                className="hidden md:block text-[13px] font-medium text-zinc-300 hover:text-white transition-colors"
+                className="hidden lg:block text-xs sm:text-[13px] font-semibold text-zinc-300 hover:text-sky-400 transition-colors"
               >
                 Creator Dashboard
               </Link>
             )}
 
             {/* Auth Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {isAuthLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="hidden sm:block w-20 h-9 bg-zinc-900 rounded-lg animate-pulse" />
-                  <div className="w-8 h-8 sm:w-28 sm:h-10 bg-zinc-900 rounded-lg animate-pulse" />
+                <div className="flex items-center gap-2">
+                  <div className="hidden sm:block w-16 h-9 bg-zinc-900 rounded-xl animate-pulse" />
+                  <div className="w-9 h-9 bg-zinc-900 rounded-xl animate-pulse" />
                 </div>
               ) : !user ? (
                 <>
-                  <Link href="/login" className="hidden sm:block text-[13px] font-medium text-zinc-300 px-4 py-2 hover:bg-zinc-800/60 hover:text-white rounded-lg transition-colors">
+                  <Link 
+                    href="/login" 
+                    className="hidden sm:inline-flex text-xs sm:text-sm font-medium text-zinc-300 hover:text-white px-3.5 py-2 hover:bg-zinc-900 rounded-xl transition-colors"
+                  >
                     Log in
                   </Link>
                   <Link
                     href="/signup"
-                    className="bg-sky-600 hover:bg-sky-500 text-white px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all shadow-sm active:scale-95"
+                    className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs sm:text-sm font-bold px-4 py-2 sm:py-2.5 rounded-xl transition-all shadow-md shadow-sky-950/80 hover:shadow-sky-900/60 active:scale-95 whitespace-nowrap"
                   >
                     Join Celite Market
                   </Link>
                 </>
               ) : (
-                <>
-                  {!isSubscribed && (
-                    <Link
-                      href="/pricing"
-                      className="hidden sm:block bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 text-xs font-semibold rounded-lg border border-sky-500 transition-all shadow-sm"
-                    >
-                      Subscribe Now
-                    </Link>
-                  )}
-
-                  {/* User Profile */}
-                  <Link href="/dashboard" className="relative group">
-                    <div className="flex items-center gap-3 pl-3 pr-1.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all bg-zinc-900 text-zinc-200">
-                      <span className="text-xs font-medium text-zinc-200 hidden sm:block">
-                        My Account
-                      </span>
-                      {isSubscribed ? (
-                        <div className="h-7 w-7 rounded-full bg-gradient-to-r from-sky-400 to-blue-500 p-[1.5px]">
-                          <div className="h-full w-full rounded-full bg-[#0D111A] flex items-center justify-center">
-                            <span className="font-bold text-xs text-sky-400">
-                              {(user.email || 'U').charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="h-7 w-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-300 text-xs font-bold">
-                          {(user.email || 'U').charAt(0).toUpperCase()}
-                        </div>
-                      )}
+                <Link href="/dashboard" className="relative group">
+                  <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-all bg-[#04060A] text-zinc-200 hover:bg-zinc-900">
+                    <span className="text-xs font-semibold text-zinc-200 hidden sm:block">
+                      My Account
+                    </span>
+                    <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-sky-600 to-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                      {(user.email || 'U').charAt(0).toUpperCase()}
                     </div>
-                  </Link>
-                </>
+                  </div>
+                </Link>
               )}
             </div>
 
             {/* Mobile Menu Toggle */}
             <button
-              className="lg:hidden p-2 text-zinc-300 hover:bg-zinc-900 rounded-lg"
+              type="button"
+              className="md:hidden p-2 text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-xl transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </nav>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 w-full bg-[#0D111A] border-b border-zinc-800/60 shadow-xl py-6 px-6 flex flex-col gap-4 animate-in slide-in-from-top-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
-            {/* Mobile nav */}
+          <div className="md:hidden bg-black/95 backdrop-blur-2xl border-b border-zinc-900 px-4 pt-3 pb-6 flex flex-col gap-3">
+            {/* Mobile search bar */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  router.push(`/video-templates?search=${encodeURIComponent(searchQuery)}`);
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+              className="flex items-center bg-[#04060A] rounded-xl border border-zinc-800 px-3.5 py-2 mb-2"
+            >
+              <input
+                type="text"
+                placeholder="Search templates, music, 3D..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent border-none text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+              />
+              <button type="submit" className="text-zinc-400 hover:text-sky-400">
+                <Search className="w-4 h-4" />
+              </button>
+            </form>
+
+            {/* Mobile nav links */}
             {[
               { name: 'Video Templates', route: '/video-templates', slug: 'video-templates' },
               { name: 'Photos', route: '/stock-photos', slug: 'stock-images' },
@@ -372,79 +552,55 @@ export default function Header() {
               { name: 'SFX', route: '/sound-effects', slug: 'sound-effects' },
               { name: 'Web', route: '/web-templates', slug: 'website-templates' },
               { name: 'Graphics', route: '/graphics', slug: 'psd-templates' },
-              { name: '3D', route: '/3d-models', slug: '3d-models' },
+              { name: '3D Models', route: '/3d-models', slug: '3d-models' },
               { name: 'Prompts', route: '/prompts', slug: 'prompts' },
-            ].map((navItem) => {
-              const category = categories.find(cat =>
-                cat.slug === navItem.slug ||
-                cat.name.toLowerCase() === navItem.name.toLowerCase()
-              );
+            ].map((navItem) => (
+              <Link
+                key={navItem.slug}
+                href={navItem.route}
+                className="text-base font-medium text-zinc-200 hover:text-sky-400 py-2 border-b border-zinc-900 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {navItem.name}
+              </Link>
+            ))}
 
-              if (!category) return null;
-
-              const categorySubcategories = subcategories.filter(
-                sub => sub.category_id === category.id
-              );
-
-              return (
-                <div key={navItem.slug} className="border-b border-zinc-900 pb-2">
-                  <Link
-                    href={navItem.route}
-                    className="text-lg font-medium text-white py-2 block"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {navItem.name}
-                  </Link>
-                  {categorySubcategories.length > 0 && (
-                    <div className="ml-4 mt-2 space-y-1">
-                      {categorySubcategories.map((subcategory) => (
-                        <Link
-                          key={subcategory.id}
-                          href={`${navItem.route}?subcategory=${subcategory.slug}`}
-                          className="text-xs text-zinc-400 py-0.5 block hover:text-white"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {subcategory.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
             {!isAuthLoading && user && !hasCreatorShop && (
               <Link
                 href="/start-selling"
-                className="text-lg font-medium text-zinc-300 py-2"
+                className="text-base font-medium text-sky-400 py-2 border-b border-zinc-900"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Start Selling
+                Sell on Celite Market
               </Link>
             )}
             {!isAuthLoading && user && hasCreatorShop && (
               <Link
                 href="/creator/dashboard"
-                className="text-lg font-medium text-zinc-300 py-2"
+                className="text-base font-medium text-sky-400 py-2 border-b border-zinc-900"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Creator Dashboard
               </Link>
             )}
-            <Link
-              href="/video-templates"
-              className="text-lg font-medium text-zinc-300 py-2 border-b border-zinc-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Search Templates
-            </Link>
+
             {!isAuthLoading && !user && (
-              <Link
-                href="/login"
-                className="text-lg font-medium text-white py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Log in
-              </Link>
+              <div className="flex flex-col gap-3 pt-2">
+                <Link
+                  href="/login"
+                  className="w-full text-center text-sm font-semibold text-zinc-200 bg-zinc-900 border border-zinc-800 py-3 rounded-xl hover:bg-zinc-800 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="w-full text-center text-sm font-bold text-white bg-gradient-to-r from-sky-500 to-blue-600 py-3 rounded-xl transition-all shadow-md shadow-sky-950/80"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Join Celite Market
+                </Link>
+              </div>
             )}
           </div>
         )}

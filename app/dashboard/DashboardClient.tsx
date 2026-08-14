@@ -680,10 +680,10 @@ function DashboardContent() {
                     <div className="mt-4 pt-4 border-t border-slate-900">
                       <button
                         type="button"
-                        onClick={() => router.push("/start-selling")}
+                        onClick={() => router.push("/creator/dashboard")}
                         className="text-xs font-bold text-sky-400 hover:text-sky-300 transition cursor-pointer"
                       >
-                        ✏️ Edit Bank Details
+                        ✏️ Edit Studio &amp; Payout Settings
                       </button>
                     </div>
                   </div>

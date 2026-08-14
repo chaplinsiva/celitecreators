@@ -1,3 +1,4 @@
+// agent-notes: { ctx: "Deep black Category Navigation with smooth blue-to-rose ethereal gradient active pills", deps: ["next/link", "next/navigation", "lib/supabaseClient.ts"], state: active, last: "sato@2026-08-14" }
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -15,7 +16,6 @@ type Category = {
 const categoryDisplayMap: Record<string, { label: string; route: string }> = {
     'video-templates': { label: 'Video Templates', route: '/video-templates' },
     'after-effects': { label: 'Video Templates', route: '/video-templates' },
-
     'stock-images': { label: 'Photos', route: '/stock-photos' },
     'stock-photos': { label: 'Photos', route: '/stock-photos' },
     'stock-musics': { label: 'Music', route: '/stock-musics' },
@@ -33,7 +33,7 @@ const displayOrder = [
     'Video Templates', 'Save Date', 'Photos', 'Music', 'SFX', 'Web', 'Graphics', '3D', 'Prompts'
 ];
 
-// Static nav items that aren't top-level categories (sub-subcategories with direct access)
+// Static nav items that aren't top-level categories
 const staticNavItems: { label: string; route: string }[] = [
     { label: 'Save Date', route: '/video-templates?sub_subcategory=save-date' },
 ];
@@ -52,7 +52,6 @@ export default function CategoryNav() {
                     .order('name');
 
                 if (data) {
-                    // Deduplicate by label and sort by display order
                     const seen = new Set<string>();
                     const items: { label: string; route: string }[] = [];
 
@@ -64,7 +63,6 @@ export default function CategoryNav() {
                         }
                     }
 
-                    // Add static nav items (sub-subcategory shortcuts)
                     for (const staticItem of staticNavItems) {
                         if (!seen.has(staticItem.label)) {
                             seen.add(staticItem.label);
@@ -72,19 +70,19 @@ export default function CategoryNav() {
                         }
                     }
 
-                    // Sort by display order
                     items.sort((a, b) => {
-                        const aIdx = displayOrder.indexOf(a.label);
-                        const bIdx = displayOrder.indexOf(b.label);
-                        return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+                        const indexA = displayOrder.indexOf(a.label);
+                        const indexB = displayOrder.indexOf(b.label);
+                        return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
                     });
 
                     setNavItems(items);
                 }
-            } catch (error) {
-                console.error('Error fetching categories:', error);
+            } catch (err) {
+                console.error('Error fetching categories for nav:', err);
             }
         };
+
         fetchCategories();
     }, []);
 
@@ -105,24 +103,27 @@ export default function CategoryNav() {
     };
 
     return (
-        <div className="w-full bg-[#131B2E] border-b border-slate-700/60 hidden lg:block fixed top-[80px] left-0 z-[90]">
+        <div className="w-full bg-black/98 backdrop-blur-2xl border-b border-zinc-900 hidden lg:block fixed top-[80px] left-0 z-[90] shadow-2xl shadow-black">
             <div className="max-w-[1440px] mx-auto px-6 sm:px-8 h-11 flex items-center justify-center">
-                <nav className="flex items-center gap-1">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.label}
-                            href={item.route}
-                            className={`
-                                px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200
-                                ${isActive(item.route)
-                                    ? 'bg-sky-600 text-white font-bold shadow-md shadow-sky-500/20'
-                                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
-                                }
-                            `}
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
+                <nav className="flex items-center gap-2">
+                    {navItems.map((item) => {
+                        const active = isActive(item.route);
+                        return (
+                            <Link
+                                key={item.label}
+                                href={item.route}
+                                className={`
+                                    relative px-4 py-1.5 text-[13px] rounded-full transition-all duration-300
+                                    ${active
+                                        ? 'bg-gradient-to-r from-sky-400 via-indigo-500 to-rose-400 text-white font-black shadow-lg shadow-sky-500/25 scale-105 border border-white/25'
+                                        : 'text-zinc-400 hover:text-white hover:bg-zinc-900/90 font-medium border border-transparent hover:border-zinc-800'
+                                    }
+                                `}
+                            >
+                                {item.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
             </div>
         </div>

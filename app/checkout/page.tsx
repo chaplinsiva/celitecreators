@@ -11,6 +11,7 @@ import LoadingSpinner from "../../components/ui/loading-spinner";
 import { GlowingEffect } from "../../components/ui/glowing-effect";
 import { CountryCodeSelect } from "../../components/ui/CountryCodeSelect";
 import { cn, convertR2UrlToCdn } from "../../lib/utils";
+import { getStoredAttribution } from "../../lib/attribution";
 import { Check, ShieldCheck, Lock, Download, Sparkles, ShoppingBag } from "lucide-react";
 
 type BillingDetails = {
@@ -256,6 +257,7 @@ function CheckoutContent() {
               img: item.img,
             })),
             total_amount: subtotal,
+            attribution: getStoredAttribution(),
           }),
         });
 

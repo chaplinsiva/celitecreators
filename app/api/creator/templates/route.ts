@@ -20,7 +20,7 @@ async function getCreatorContext(req: Request) {
 
   const { data: shop, error: shopErr } = await admin
     .from('creator_shops')
-    .select('id, slug, name, description, bank_account_name, bank_account_number, bank_ifsc, bank_upi_id, direct_upload_enabled')
+    .select('id, user_id, slug, name, description, bio, tagline, location, website_url, instagram_url, youtube_url, twitter_url, logo_url, profile_image_url, banner_url, bank_account_name, bank_account_number, bank_ifsc, bank_upi_id, direct_upload_enabled, total_sales_count')
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -131,67 +131,72 @@ export async function GET(req: Request) {
     const templateSlugs = templates.map((t: any) => t.slug);
 
     // Query marketplace sales items and payout requests in parallel
-    const orderItemsQuery = admin
+    const detailedOrderItemsQuery = admin
       .from('order_items')
-      .select('price, creator_earnings, orders!inner(status)')
-      .eq('orders.status', 'paid');
+      .select(`
+        id,
+        order_id,
+        slug,
+        name,
+        price,
+        creator_earnings,
+        platform_fee,
+        created_at,
+        orders (
+          id,
+          status,
+          billing_name,
+          billing_email,
+          order_source,
+          created_at
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (templateSlugs.length > 0) {
-      orderItemsQuery.or(`creator_shop_id.eq.${shop.id},slug.in.(${templateSlugs.join(',')})`);
+      detailedOrderItemsQuery.or(`creator_shop_id.eq.${shop.id},slug.in.(${templateSlugs.join(',')})`);
     } else {
-      orderItemsQuery.eq('creator_shop_id', shop.id);
+      detailedOrderItemsQuery.eq('creator_shop_id', shop.id);
     }
 
-    const [orderItemsResult, payoutsResult] = await Promise.all([
-      orderItemsQuery,
+    let downloadLogsQuery = admin
+      .from('downloads')
+      .select('id, user_id, template_slug, downloaded_at, subscription_id')
+      .order('downloaded_at', { ascending: false })
+      .limit(100);
+
+    if (templateSlugs.length > 0) {
+      downloadLogsQuery = downloadLogsQuery.in('template_slug', templateSlugs);
+    }
+
+    const [orderItemsResult, payoutsResult, downloadLogsResult] = await Promise.all([
+      detailedOrderItemsQuery,
       admin
         .from('payout_requests')
-        .select('amount, status')
+        .select('id, amount, status, created_at, processed_at, admin_note')
         .eq('creator_shop_id', shop.id)
+        .order('created_at', { ascending: false })
+        .limit(50),
+      templateSlugs.length > 0 ? downloadLogsQuery : Promise.resolve({ data: [] } as any)
     ]);
 
     const orderItems = orderItemsResult.data || [];
     const payoutRequests = payoutsResult.data || [];
+    const downloadLogs = (downloadLogsResult as any)?.data || [];
 
-    const marketplaceSalesCount = orderItems.length;
-    const marketplaceSalesRevenue = orderItems.reduce((sum: number, item: any) => {
+    // Filter for paid orders when calculating revenue
+    const paidOrderItems = orderItems.filter((item: any) => {
+      const order = Array.isArray(item.orders) ? item.orders[0] : item.orders;
+      return !order || order.status === 'paid' || order.status === 'completed';
+    });
+
+    const marketplaceSalesCount = paidOrderItems.length;
+    const marketplaceSalesRevenue = paidOrderItems.reduce((sum: number, item: any) => {
       const earnings = Number(item.creator_earnings) || (Number(item.price || 0) * 0.8);
       return sum + earnings;
     }, 0);
 
-    // Calculate proportional subscription pool revenue:
-    // 1. Total subscription revenue pool from checkout_details
-    const { data: subRevenueRes } = await admin
-      .from('checkout_details')
-      .select('total_amount')
-      .eq('status', 'completed')
-      .eq('checkout_type', 'subscription');
-
-    const totalSubscriptionRevenue = (subRevenueRes || []).reduce(
-      (sum: number, item: any) => sum + Number(item.total_amount || 0),
-      0
-    );
-    const totalVendorPool = totalSubscriptionRevenue * 0.40;
-
-    // 2. Total platform subscriber downloads (subscription_id IS NOT NULL, non-official shops)
-    const { count: totalPlatformSubscriberDownloads } = await admin
-      .from('downloads')
-      .select('id, templates!inner(creator_shops!inner(is_celite_official))', { count: 'exact', head: true })
-      .not('subscription_id', 'is', null)
-      .eq('templates.creator_shops.is_celite_official', false);
-
-    const totalPlatformSubDls = totalPlatformSubscriberDownloads || 1;
-
-    // 3. Vendor subscriber downloads (subscription_id IS NOT NULL, joined templates creator_shop_id)
-    const { count: vendorSubscriberDownloads } = await admin
-      .from('downloads')
-      .select('id, templates!inner(creator_shop_id)', { count: 'exact', head: true })
-      .not('subscription_id', 'is', null)
-      .eq('templates.creator_shop_id', shop.id);
-
-    const vendorSubDls = vendorSubscriberDownloads || 0;
-
-    // 4. Vendor Proportional Split - Disabled/Removed subscription pool
     const subscriptionPoolRevenue = 0;
     const totalEarnings = marketplaceSalesRevenue;
 
@@ -205,13 +210,36 @@ export async function GET(req: Request) {
 
     const availableBalance = Math.max(0, totalEarnings - paidOutAmount - pendingPayoutAmount);
 
+    // Format transaction ledger items
+    const transactions = orderItems.map((item: any) => {
+      const order = Array.isArray(item.orders) ? item.orders[0] : item.orders;
+      const grossPrice = Number(item.price || 0);
+      const netEarnings = Number(item.creator_earnings) || (grossPrice * 0.8);
+      const fee = Number(item.platform_fee) || (grossPrice * 0.2);
+
+      return {
+        id: item.id,
+        orderId: item.order_id || order?.id || 'ORD-DIRECT',
+        slug: item.slug,
+        templateName: item.name || item.slug,
+        grossAmount: grossPrice,
+        creatorEarnings: netEarnings,
+        platformFee: fee,
+        status: order?.status || 'paid',
+        buyerName: order?.billing_name || 'Customer',
+        buyerEmail: order?.billing_email ? `${order.billing_email.slice(0, 3)}***@${order.billing_email.split('@')[1] || 'mail.com'}` : 'Verified Buyer',
+        orderSource: order?.order_source || 'Celite Market',
+        createdAt: item.created_at || order?.created_at || new Date().toISOString(),
+      };
+    });
+
     return NextResponse.json({
       ok: true,
       shop,
       templates: results,
       stats: {
         totalDownloads,
-        uniqueUserPeriods,
+        uniqueUserPeriods: 0,
         subscriptionPoolRevenue,
         marketplaceSalesCount,
         marketplaceSalesRevenue,
@@ -220,6 +248,9 @@ export async function GET(req: Request) {
         pendingPayoutAmount,
         revenue: availableBalance, // Available withdrawable balance after deducting paid & pending payouts
       },
+      transactions,
+      downloadLogs,
+      payoutRequests,
     });
   } catch (e: any) {
     console.error('Creator GET error:', e);
@@ -316,6 +347,7 @@ export async function POST(req: Request) {
       vendor_name: shop.name,
       price: input.price ? Math.max(Number(input.price), 0) : 399,
       available_on_celite_market: true,
+      available_on_celite_subscription: false, // Default is NOT present in Celite subscription pool
       subscription_submission_status: input.request_subscription ? 'PENDING_REVIEW' : 'NOT_SUBMITTED',
       status: 'pending', // every creator change requires admin review
     };

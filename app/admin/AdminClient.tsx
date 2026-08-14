@@ -10,6 +10,7 @@ import OverviewPanel from './components/OverviewPanel';
 import ProductsPanel from './components/ProductsPanel';
 import CategoriesPanel from './components/CategoriesPanel';
 import AnalyticsPanel from './components/AnalyticsPanel';
+import AttributionAnalyticsPanel from './components/AttributionAnalyticsPanel';
 import SubscriptionLogPanel from './components/SubscriptionLogPanel';
 import UsersPanel from './components/UsersPanel';
 import SettingsPanel from './components/SettingsPanel';
@@ -23,7 +24,23 @@ import MediaCompressorPanel from './components/MediaCompressorPanel';
 
 import PayoutRequestsPanel from './components/PayoutRequestsPanel';
 
-type TemplateRow = { slug: string; name: string; img: string | null; video?: string | null; video_path?: string | null; thumbnail_path?: string | null; vendor_name?: string | null; creator_shop_id?: string | null; status?: string | null; category_id?: string | null; subcategory_id?: string | null; sub_subcategory_id?: string | null };
+type TemplateRow = {
+  slug: string;
+  name: string;
+  img: string | null;
+  video?: string | null;
+  video_path?: string | null;
+  thumbnail_path?: string | null;
+  vendor_name?: string | null;
+  creator_shop_id?: string | null;
+  status?: string | null;
+  subscription_submission_status?: string | null;
+  available_on_celite_market?: boolean;
+  available_on_celite_subscription?: boolean;
+  category_id?: string | null;
+  subcategory_id?: string | null;
+  sub_subcategory_id?: string | null;
+};
 
 export default function AdminClient() {
   const router = useRouter();
@@ -40,7 +57,7 @@ export default function AdminClient() {
     celiteAmount?: number;
   } | null>(null);
   const [active, setActive] = useState<
-    'overview' | 'analytics' | 'payouts' | 'products' | 'vendorApproval' | 'checkoutLogs' | 'categories' | 'users' | 'settings'
+    'overview' | 'analytics' | 'attribution' | 'payouts' | 'products' | 'vendorApproval' | 'checkoutLogs' | 'categories' | 'users' | 'settings'
   >('overview');
 
 
@@ -87,7 +104,7 @@ export default function AdminClient() {
     try {
       setTemplatesLoading(true);
       const supabase = getSupabaseBrowserClient();
-      const { data } = await supabase.from('templates').select('slug,name,img,video,video_path,thumbnail_path,vendor_name,creator_shop_id,status,category_id,subcategory_id,sub_subcategory_id,price,ownership_type,available_on_celite_market,available_on_celite_subscription').order('created_at', { ascending: false });
+      const { data } = await supabase.from('templates').select('slug,name,img,video,video_path,thumbnail_path,vendor_name,creator_shop_id,status,subscription_submission_status,category_id,subcategory_id,sub_subcategory_id,price,ownership_type,available_on_celite_market,available_on_celite_subscription').order('created_at', { ascending: false });
       setTemplates((data as any) ?? []);
     } catch (e) {
       console.error('Failed to refresh templates:', e);
@@ -131,6 +148,7 @@ export default function AdminClient() {
           <section className="flex-1 p-8 space-y-8 overflow-y-auto">
             {active === 'overview' && (<OverviewPanel stats={stats} onSeed={runSeed} onUpload={runUpload} />)}
             {active === 'analytics' && (<AnalyticsPanel />)}
+            {active === 'attribution' && (<AttributionAnalyticsPanel />)}
             {active === 'payouts' && (<PayoutRequestsPanel />)}
 
             {active === 'products' && (

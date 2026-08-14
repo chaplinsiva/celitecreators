@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
 import LayoutWrapper from "../components/LayoutWrapper";
 import GoogleAnalytics from "../components/GoogleAnalytics";
+import AttributionTracker from "../components/AttributionTracker";
 import { AppProvider } from "../context/AppContext";
 import { LoginModalProvider } from "../context/LoginModalContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -108,7 +110,7 @@ export default function RootLayout({
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WQE6FX8VET';
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark bg-black text-white" style={{ backgroundColor: '#000000', color: '#ffffff' }} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -264,7 +266,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} antialiased bg-background text-zinc-900 group/body`} style={{ fontStyle: 'normal', fontSynthesis: 'none' }}>
+      <body className={`${inter.variable} antialiased bg-black text-white min-h-screen group/body`} style={{ fontStyle: 'normal', fontSynthesis: 'none', backgroundColor: '#000000', color: '#ffffff' }}>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5327132249014590"
@@ -291,6 +293,9 @@ export default function RootLayout({
         />
         <AppProvider>
           <LoginModalProvider>
+            <Suspense fallback={null}>
+              <AttributionTracker />
+            </Suspense>
             <GoogleAnalytics />
             <SpeedInsights />
             <Analytics />
