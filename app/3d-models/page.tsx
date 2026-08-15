@@ -5,29 +5,30 @@ import Model3DClient from './Model3DClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: '3D Models — Free GLB, GLTF & OBJ Assets for Games & Animation | Celite',
-  description: 'Download high-quality 3D models for game development, architectural visualization, animation, and CGI. Free GLB, GLTF, and OBJ 3D assets on Celite.',
+  title: '3D Models & Game Assets (GLB, GLTF, OBJ) | Celite Market',
+  description: 'Download high-quality 3D models for game development, architectural visualization, animation, and CGI on Celite Market with lifetime access.',
   keywords: [
     '3d models',
-    'free 3d models',
     'glb 3d models',
     'gltf models',
     'obj 3d assets',
     'game dev 3d models',
     'blender 3d models',
     'unreal engine 3d models',
+    'celite market',
   ],
   openGraph: {
-    title: '3D Models — Free GLB, GLTF & OBJ Assets | Celite',
-    description: 'Download high-quality 3D models for games, animation, and CGI. Free GLB, GLTF, and OBJ files.',
+    title: '3D Models & Game Assets (GLB, GLTF, OBJ) | Celite Market',
+    description: 'Download high-quality 3D models for games, animation, and CGI on Celite Market.',
     url: 'https://celitemarket.in/3d-models',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: '3D Models - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: '3D Models - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '3D Models | Celite',
-    description: 'Download high-quality 3D models for games, animation, and CGI.',
+    title: '3D Models | Celite Market',
+    description: 'Download high-quality 3D models for games, animation, and CGI on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

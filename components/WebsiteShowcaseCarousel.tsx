@@ -163,10 +163,10 @@ export default function WebsiteShowcaseCarousel({ initialTemplates }: { initialT
                     View Template
                   </Link>
                   <Link
-                    href="/pricing"
+                    href="/web-templates"
                     className="px-4 py-2 sm:px-6 sm:py-3 rounded-full border border-zinc-200 bg-white text-xs sm:text-sm text-zinc-900 font-semibold hover:bg-zinc-50 transition"
                   >
-                    Get Access
+                    Browse All
                   </Link>
                 </div>
               </div>

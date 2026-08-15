@@ -9,9 +9,9 @@ import type { Metadata } from 'next';
 // ---
 
 export const metadata: Metadata = {
-  title: 'Save the Date Templates for After Effects | Wedding Video Templates 2026',
+  title: 'Save the Date Video Templates for After Effects | Celite Market',
   description:
-    'Download premium Save the Date video templates for Adobe After Effects. Beautiful wedding invitation templates, romantic motion graphics, and customizable wedding video intros. Free & premium AE templates.',
+    'Download premium Save the Date video templates for Adobe After Effects. Beautiful wedding invitation templates, romantic motion graphics, and customizable wedding video intros on Celite Market.',
   alternates: {
     canonical: 'https://celitemarket.in/video-templates/after-effects/save-date',
   },

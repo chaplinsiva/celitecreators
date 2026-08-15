@@ -392,13 +392,8 @@ function DashboardContent() {
 
   const confirmRenewSubscription = async () => {
     setShowRenewConfirm(false);
-    // Redirect to checkout with the subscription plan
-    if (sub?.plan) {
-      router.push(`/checkout?subscription=${sub.plan}`);
-    } else {
-      // If no plan found, redirect to pricing page
-      router.push('/pricing');
-    }
+    // Redirect to marketplace catalog
+    router.push('/video-templates');
   };
 
   // Check if subscription is actually active (is_active AND valid_until in future)

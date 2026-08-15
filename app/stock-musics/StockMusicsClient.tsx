@@ -314,7 +314,7 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
             const validUntil = sub?.valid_until ? new Date(sub.valid_until as any).getTime() : null;
             const isSubscribed = !!sub?.is_active && (!validUntil || validUntil > now);
 
-            if (!isSubscribed) { router.push('/pricing'); return; }
+            if (!isSubscribed) { router.push(`/product/${slug}`); return; }
 
             const res = await fetch(`/api/download/${slug}`, {
                 headers: { Authorization: `Bearer ${session.access_token}` },
@@ -323,11 +323,11 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
             if (!res.ok) {
                 try {
                     const errorJson = await res.json();
-                    if (errorJson.error?.includes('Access denied') || errorJson.error?.includes('subscription')) {
-                        router.push('/pricing');
+                    if (errorJson.error?.includes('Access denied') || errorJson.error?.includes('subscription') || errorJson.error?.includes('purchase')) {
+                        router.push(`/product/${slug}`);
                     } else { alert(errorJson.error || 'Download failed'); }
                 } catch {
-                    if (res.status === 403) router.push('/pricing');
+                    if (res.status === 403) router.push(`/product/${slug}`);
                     else if (res.status === 401) openLoginModal();
                     else alert('Download failed');
                 }
@@ -339,8 +339,8 @@ export default function StockMusicsClient({ initialTemplates }: { initialTemplat
                 const json = await res.json();
                 if (json.redirect && json.url) { window.location.href = json.url; return; }
                 if (json.error) {
-                    if (json.error.includes('Access denied') || json.error.includes('subscription')) {
-                        router.push('/pricing');
+                    if (json.error.includes('Access denied') || json.error.includes('subscription') || json.error.includes('purchase')) {
+                        router.push(`/product/${slug}`);
                     } else { alert(json.error || 'Download failed'); }
                     return;
                 }

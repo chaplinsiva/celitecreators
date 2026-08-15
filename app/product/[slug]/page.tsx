@@ -54,7 +54,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   } as Template) : null;
   if (!prod) {
     return {
-      title: 'Template Not Found • Celite',
+      title: 'Template Not Found | Celite Market',
       description: 'This template does not exist or was removed.',
     };
   }
@@ -100,9 +100,9 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     categorySuffix = 'Video Template';
   }
 
-  const defaultTitle = `${prod.name} • Celite ${categorySuffix}`;
+  const defaultTitle = `${prod.name} – ${categorySuffix} | Celite Market`;
   const finalTitle = dbTitle && dbTitle.length > 0 ? dbTitle : defaultTitle;
-  const fallbackDescription = prod.desc ? prod.desc.slice(0, 155) : `Download high-quality ${categorySuffix.toLowerCase()}s from Celite.`;
+  const fallbackDescription = prod.desc ? prod.desc.slice(0, 155) : `Download high-quality ${categorySuffix.toLowerCase()}s on Celite Market.`;
   const finalDescription = dbDescription && dbDescription.length > 0 ? dbDescription : fallbackDescription;
 
   return {

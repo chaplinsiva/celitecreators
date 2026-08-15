@@ -119,8 +119,8 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const subSubName = data.subSubcategory.name;
   const subcatName = data.subcategory.name;
 
-  const title = `${subSubName} After Effects Templates | ${subcatName} — Celite`;
-  const description = `Download professional ${subSubName} templates for Adobe After Effects. Easy-to-customize AE project files for wedding videos, openers, titles, and creative motion graphics on Celite.`;
+  const title = `${subSubName} After Effects Templates | Celite Market`;
+  const description = `Download professional ${subSubName} templates for Adobe After Effects on Celite Market. Easy-to-customize AE project files with lifetime access.`;
   const canonicalUrl = `https://celitemarket.in/video-templates/${data.subcategory.slug}/${data.subSubcategory.slug}`;
 
   return {
@@ -132,18 +132,19 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
       `${subSubName.toLowerCase()} video template`,
       `${subcatName.toLowerCase()} templates`,
       'after effects templates',
-      'ae templates free',
+      'celite market',
     ],
     openGraph: {
       title,
       description,
       url: canonicalUrl,
+      siteName: 'Celite Market',
       type: 'website',
-      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${subSubName} After Effects Templates - Celite` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${subSubName} After Effects Templates - Celite Market` }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${subSubName} Templates | Celite`,
+      title,
       description,
       images: ['/og-image.png'],
     },

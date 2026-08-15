@@ -5,8 +5,8 @@ import SfxClient from './SfxClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'Sound Effects Library — Royalty-Free SFX for Video & Games | Celite',
-  description: 'Download royalty-free sound effects for video editing, game development, film production, and podcasts. High-quality Foley, impacts, transitions, and ambient SFX on Celite.',
+  title: 'Royalty-Free Sound Effects (SFX) | Celite Market',
+  description: 'Download royalty-free sound effects for video editing, game development, film production, and podcasts on Celite Market with lifetime access.',
   keywords: [
     'sound effects',
     'royalty free sfx',
@@ -14,18 +14,20 @@ export const metadata: Metadata = {
     'foley sound effects',
     'game sound effects',
     'cinematic sfx',
+    'celite market',
   ],
   openGraph: {
-    title: 'Sound Effects Library — Royalty-Free SFX | Celite',
-    description: 'Download royalty-free sound effects for video editing, game development, and film production.',
+    title: 'Royalty-Free Sound Effects (SFX) | Celite Market',
+    description: 'Download royalty-free sound effects for video editing, game development, and film production on Celite Market.',
     url: 'https://celitemarket.in/sound-effects',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Sound Effects Library - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Sound Effects Library - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sound Effects Library | Celite',
-    description: 'Download royalty-free sound effects for video editing and games.',
+    title: 'Sound Effects Library | Celite Market',
+    description: 'Download royalty-free sound effects for video editing and games on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

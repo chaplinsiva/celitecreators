@@ -5,8 +5,8 @@ import VideoTemplatesClient from '../video-templates/VideoTemplatesClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'Graphics Templates — PSD Templates & Design Assets | Celite',
-  description: 'Download professional graphics templates, Photoshop PSD templates, social media post designs, banners, and vector assets for creative projects on Celite.',
+  title: 'Graphic Design Templates & PSD Assets | Celite Market',
+  description: 'Download professional graphics templates, Photoshop PSD templates, social media post designs, banners, and vector assets on Celite Market.',
   keywords: [
     'graphics templates',
     'psd templates',
@@ -14,19 +14,20 @@ export const metadata: Metadata = {
     'design assets',
     'social media graphics',
     'banner templates',
-    'vector templates',
+    'celite market',
   ],
   openGraph: {
-    title: 'Graphics Templates — PSD Templates & Design Assets | Celite',
-    description: 'Download professional graphics templates, Photoshop PSD files, and vector design assets.',
+    title: 'Graphic Design Templates & PSD Assets | Celite Market',
+    description: 'Download professional graphics templates, Photoshop PSD files, and vector design assets on Celite Market.',
     url: 'https://celitemarket.in/graphics',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Graphics Templates - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Graphics Templates - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Graphics Templates | Celite',
-    description: 'Download professional Photoshop PSD templates and design assets.',
+    title: 'Graphics Templates | Celite Market',
+    description: 'Download professional Photoshop PSD templates and design assets on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

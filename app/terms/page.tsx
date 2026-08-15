@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Terms and Conditions | Celite',
-  description: 'Terms and Conditions for Celite - Professional After Effects Templates',
+  title: 'Terms and Conditions | Celite Market',
+  description: 'Terms and Conditions for Celite Market - India\'s Creative Digital Asset Marketplace',
 };
 
 export default function TermsPage() {

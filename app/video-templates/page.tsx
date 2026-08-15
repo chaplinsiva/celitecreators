@@ -7,8 +7,8 @@ import VideoTemplatesClient from './VideoTemplatesClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'After Effects Video Templates | Wedding, Cinematic & Motion Graphics — Celite',
-  description: 'Download professional After Effects templates for wedding save the date videos, cinematic intros, logo reveals, slideshows, and motion graphics. Free & premium AE project files.',
+  title: 'After Effects Video Templates | Celite Market',
+  description: 'Download professional After Effects templates for wedding save the date videos, cinematic intros, logo reveals, slideshows, and motion graphics with lifetime access.',
   keywords: [
     'after effects templates',
     'video templates after effects',
@@ -18,21 +18,21 @@ export const metadata: Metadata = {
     'motion graphics templates',
     'after effects intro template',
     'logo reveal after effects',
-    'ae templates free',
     'film template after effects',
-    'movie trailer template',
+    'celite market',
   ],
   openGraph: {
-    title: 'After Effects Video Templates | Wedding & Cinematic Templates — Celite',
+    title: 'After Effects Video Templates | Celite Market',
     description: 'Download professional After Effects video templates for wedding save the date videos, cinematic intros, logo reveals, and motion graphics.',
     url: 'https://celitemarket.in/video-templates',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'After Effects Video Templates - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'After Effects Video Templates - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'After Effects Video Templates | Celite',
-    description: 'Download professional cinematic, wedding & motion graphics templates for After Effects.',
+    title: 'After Effects Video Templates | Celite Market',
+    description: 'Download professional cinematic, wedding & motion graphics templates for After Effects on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

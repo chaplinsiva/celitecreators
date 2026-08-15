@@ -5,27 +5,28 @@ import StockPhotosClient from './StockPhotosClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'Stock Photos — High-Resolution Royalty-Free Images | Celite',
-  description: 'Download high-resolution stock photos and royalty-free images for marketing, web design, advertising, and creative projects on Celite.',
+  title: 'Stock Photos & High-Res Images | Celite Market',
+  description: 'Download high-resolution stock photos and royalty-free images for marketing, web design, and creative projects on Celite Market.',
   keywords: [
     'stock photos',
     'royalty free images',
     'high resolution stock photos',
-    'free stock images',
     'commercial use photos',
     'photography assets',
+    'celite market',
   ],
   openGraph: {
-    title: 'Stock Photos — Royalty-Free High-Res Images | Celite',
-    description: 'Download high-resolution stock photos and royalty-free images for marketing and web design.',
+    title: 'Stock Photos & High-Res Images | Celite Market',
+    description: 'Download high-resolution stock photos and royalty-free images on Celite Market.',
     url: 'https://celitemarket.in/stock-photos',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Photos - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Photos - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Stock Photos | Celite',
-    description: 'Download high-resolution stock photos and royalty-free images.',
+    title: 'Stock Photos | Celite Market',
+    description: 'Download high-resolution stock photos and royalty-free images on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

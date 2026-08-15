@@ -1,157 +1,11 @@
-// agent-notes: { ctx: "Cinematic Dark Studio Hero with direct pay-per-product & sell your templates messaging", deps: ["framer-motion", "lib/supabaseClient.ts", "lib/utils.ts"], state: active, last: "sato@2026-08-14" }
+// agent-notes: { ctx: "Cinematic Dark Studio Hero with clean looping animation video from Cloudflare CDN", deps: ["framer-motion", "lucide-react"], state: active, last: "sato@2026-08-15" }
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { getSupabaseBrowserClient } from '@/lib/supabaseClient';
-import { convertR2UrlToCdn } from '@/lib/utils';
 import { Zap, ShoppingBag, ShieldCheck, Sparkles, Download, ArrowRight, TrendingUp } from 'lucide-react';
 
-type RealVideoTemplate = {
-  slug: string;
-  name: string;
-  subtitle?: string | null;
-  video_path: string | null;
-  img?: string | null;
-  thumbnail_path?: string | null;
-};
-
-// Real Marketplace templates fallback with real CDN MP4 previews
-const REAL_MARKETPLACE_TEMPLATES: RealVideoTemplate[] = [
-  {
-    slug: 'bum-baa-diga-lyrical-after-effects-template',
-    name: 'Bum Baa Diga Lyrical',
-    subtitle: 'Lyrical Video Template',
-    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/movie-templates/bum-baa-diga-lyrical-after-effects-template/bum-baa-diga-lyrical-after-effects-template.mp4',
-    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/movie-templates/bum-baa-diga-lyrical-after-effects-template/bum-baa-diga-lyrical-after-effects-template.jpg'
-  },
-  {
-    slug: 'classic-ivory-save-date-template',
-    name: 'Classic Ivory Save Date',
-    subtitle: 'Wedding Save Date',
-    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/save-date/classic-ivory-save-date-template/classic-ivory-save-date-template.mp4',
-    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/save-date/classic-ivory-save-date-template/classic-ivory-save-date-template.jpg'
-  },
-  {
-    slug: '3d-parallax-intro',
-    name: '3D Parallax Intro',
-    subtitle: '3D Motion Graphics',
-    video_path: 'https://preview.celite.in/preview/video/video-templates/after-effects/motion-graphics/3d-parallax-intro/3d-parallax-intro.mp4',
-    thumbnail_path: 'https://preview.celite.in/preview/thumbnail/video-templates/after-effects/motion-graphics/3d-parallax-intro/3d-parallax-intro.jpg'
-  }
-];
-
-function PreviewCard({ template }: { template: RealVideoTemplate }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  
-  const rawVideo = template.video_path;
-  const videoUrl = rawVideo ? convertR2UrlToCdn(rawVideo) : null;
-  const rawThumb = template.thumbnail_path || template.img;
-  const posterUrl = rawThumb ? (convertR2UrlToCdn(rawThumb) || undefined) : undefined;
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    if (videoRef.current && videoUrl) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
-
-  return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group relative rounded-2xl bg-[#04060A] border border-zinc-800/90 overflow-hidden shadow-2xl hover:border-sky-500/50 hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between"
-    >
-      <Link href={`/product/${template.slug}`} className="block relative aspect-video w-full overflow-hidden bg-black">
-        {videoUrl ? (
-          <video
-            ref={videoRef}
-            src={videoUrl}
-            poster={posterUrl}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <img
-            src={posterUrl || '/placeholder.png'}
-            alt={template.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        )}
-
-        {/* Shading overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 pointer-events-none" />
-
-        {/* Live Hover Badge */}
-        <div className="absolute top-2.5 right-2.5 z-10">
-          <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase transition-all duration-200 shadow-md ${
-            isHovered ? 'bg-sky-500 text-white' : 'bg-black/80 text-zinc-300 border border-zinc-800'
-          }`}>
-            {isHovered ? 'Previewing' : 'After Effects'}
-          </span>
-        </div>
-      </Link>
-
-      {/* Card Info Footer */}
-      <div className="p-3.5 bg-[#04060A] border-t border-zinc-900 flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <Link href={`/product/${template.slug}`} className="text-xs font-bold text-white hover:text-sky-400 transition-colors truncate block">
-            {template.name}
-          </Link>
-          <p className="text-[10px] text-zinc-400 truncate">
-            {template.subtitle || "Pay-Per-Product Asset"}
-          </p>
-        </div>
-        <Link
-          href={`/product/${template.slug}`}
-          className="p-1.5 rounded-lg bg-zinc-900 hover:bg-sky-500 text-zinc-400 hover:text-white transition-all shrink-0 border border-zinc-800 hover:border-transparent"
-        >
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 export default function Hero() {
-  const [templates, setTemplates] = useState<RealVideoTemplate[]>(REAL_MARKETPLACE_TEMPLATES);
-
-  useEffect(() => {
-    const fetchThreeTemplates = async () => {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const { data, error } = await supabase
-          .from('templates')
-          .select('slug, name, subtitle, video_path, img, thumbnail_path')
-          .eq('status', 'APPROVED')
-          .not('video_path', 'is', null)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (data && data.length > 0 && !error) {
-          setTemplates(data as RealVideoTemplate[]);
-        }
-      } catch (err) {
-        console.error('Error loading real 3 templates:', err);
-      }
-    };
-
-    fetchThreeTemplates();
-  }, []);
-
   return (
     <section className="relative w-full pt-6 pb-6 md:pt-8 md:pb-8 px-4 sm:px-6 bg-black text-white overflow-hidden">
       {/* Background Ambient Mesh Light FX (Blue, Indigo & Subtle Rose Glow) */}
@@ -251,17 +105,29 @@ export default function Hero() {
 
           </div>
 
-          {/* Right Column: 3 Real Marketplace Video Previews */}
+          {/* Right Column: Clean Looping Animation Video Showcase from Cloudflare */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.15, duration: 0.4 }}
             className="lg:col-span-6 relative"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {templates.slice(0, 3).map((tpl, i) => (
-                <PreviewCard key={tpl.slug || i} template={tpl} />
-              ))}
+            <div className="relative rounded-2xl bg-[#04060A]/90 backdrop-blur-2xl border border-zinc-800/90 p-2 sm:p-2.5 shadow-2xl group hover:border-sky-500/40 hover:shadow-sky-500/10 transition-all duration-500">
+              <div className="relative aspect-video sm:aspect-[16/10] w-full rounded-xl overflow-hidden bg-black shadow-inner">
+                <video
+                  src="https://preview.celite.in/previews/hero/ANIMATION.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                >
+                  <source src="https://preview.celite.in/previews/hero/ANIMATION.mp4" type="video/mp4" />
+                  <source src="https://cdn.celite.in/previews/hero/ANIMATION.mp4" type="video/mp4" />
+                  <source src="/previews/ANIMATION.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
           </motion.div>
 

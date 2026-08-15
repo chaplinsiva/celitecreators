@@ -5,8 +5,8 @@ import VideoTemplatesClient from '../video-templates/VideoTemplatesClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'Website Templates — HTML5, CSS3 & JavaScript Web Templates | Celite',
-  description: 'Download responsive website templates built with HTML5, CSS3, Tailwind CSS, and JavaScript. Clean, modern web themes for landing pages, portfolios, and business sites on Celite.',
+  title: 'Responsive Website Templates & Themes | Celite Market',
+  description: 'Download responsive website templates built with HTML5, CSS3, Tailwind CSS, and React on Celite Market with pay-per-product lifetime access.',
   keywords: [
     'website templates',
     'html templates',
@@ -15,18 +15,20 @@ export const metadata: Metadata = {
     'portfolio website template',
     'tailwind css templates',
     'web design templates',
+    'celite market',
   ],
   openGraph: {
-    title: 'Website Templates — HTML, CSS & JS Templates | Celite',
-    description: 'Download responsive website templates and landing page themes for developers and businesses.',
+    title: 'Responsive Website Templates & Themes | Celite Market',
+    description: 'Download responsive website templates and landing page themes for developers and businesses on Celite Market.',
     url: 'https://celitemarket.in/web-templates',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Website Templates - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Website Templates - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Website Templates | Celite',
-    description: 'Download responsive website templates for developers and web designers.',
+    title: 'Website Templates | Celite Market',
+    description: 'Download responsive website templates for developers and web designers on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

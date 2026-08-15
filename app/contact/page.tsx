@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import ContactContent from './ContactContent';
 
 export const metadata: Metadata = {
-  title: "Contact Us | Celite",
-  description: "Contact information for Celite - Professional After Effects Templates. Get in touch with our team.",
+  title: "Contact Us | Celite Market",
+  description: "Get in touch with the Celite Market support team. We're here to assist creators and buyers.",
 };
 
 export default function ContactPage() {

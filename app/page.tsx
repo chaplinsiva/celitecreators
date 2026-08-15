@@ -11,10 +11,13 @@ import FAQAndSubscribe from '../components/FAQAndSubscribe';
 import { getSupabaseServerClient } from '../lib/supabaseServer';
 
 export const metadata: Metadata = {
-  title: 'Celite – Premium After Effects Templates | Wedding, Save the Date & Video Templates',
+  title: "Celite Market – Creative Digital Asset Marketplace",
   description:
-    'Download premium After Effects templates for weddings, save the date videos, cinematic intros, logo reveals, and more. Free & premium AE templates with unlimited downloads. The best wedding video template marketplace.',
+    "Celite Market is India's premier pay-per-product marketplace for digital creators. Buy and download After Effects templates, sound effects, stock music, 3D models & web templates with lifetime access.",
   keywords: [
+    'celite market',
+    'celitemarket',
+    'celitemarket.in',
     'after effects templates',
     'wedding template after effects',
     'save the date template',
@@ -24,23 +27,23 @@ export const metadata: Metadata = {
     'motion graphics templates',
     'after effects wedding',
     'ae templates',
-    'wedding intro after effects',
-    'free after effects templates',
-    'cinematic template',
-    'logo reveal template',
-    'wedding slideshow after effects',
+    'sound effects',
+    'stock music',
+    '3d models',
+    'digital creator marketplace',
   ],
   openGraph: {
-    title: 'Celite – Premium After Effects Templates | Wedding & Save the Date Video Templates',
-    description: 'Download premium After Effects templates for weddings, save the date videos, cinematic intros, and more. Unlimited downloads with subscription.',
+    title: "Celite Market – Creative Digital Asset Marketplace",
+    description: "Download premium After Effects templates, sound effects, stock music, 3D models & web assets with pay-per-product lifetime access.",
     url: 'https://celitemarket.in',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite - Premium After Effects Templates' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite Market - Creative Digital Assets Marketplace' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Celite – Premium After Effects & Wedding Video Templates',
-    description: 'Download premium wedding save the date, cinematic intro & motion graphics templates for After Effects.',
+    title: "Celite Market – Creative Digital Asset Marketplace",
+    description: "Download After Effects templates, sound effects, stock music & 3D models on Celite Market.",
     images: ['/og-image.png'],
   },
   alternates: {

@@ -507,13 +507,7 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
       });
 
       if (res.status === 403) {
-        const errorJson = await res.json();
-        if (errorJson.limitReached) {
-          setFeedback(errorJson.message || 'You have reached your weekly download limit. Your credits will reset next week.');
-        } else {
-        router.push('/pricing');
-        setFeedback('Please subscribe to download this template.');
-        }
+        setFeedback('Please purchase this asset for permanent lifetime download access.');
         setDownloading(false);
         return;
       }
@@ -538,9 +532,8 @@ export default function ProductDetails({ product, related, reviews, monthlyPrice
 
       // Handle errors
       if (json.error) {
-        if (json.error.includes('Access denied') || json.error.includes('subscribe')) {
-          router.push('/pricing');
-          setFeedback('Please subscribe to download this template.');
+        if (json.error.includes('Access denied') || json.error.includes('subscribe') || json.error.includes('purchase')) {
+          setFeedback('Please purchase this template for lifetime download access.');
         } else if (json.error.includes('not found') || json.error.includes('not available')) {
           setFeedback('Source file not available for this template.');
         } else {

@@ -241,7 +241,7 @@ export default function Model3DClient({
       const isSubscribed = !!sub?.is_active && (!validUntil || validUntil > now);
 
       if (!isSubscribed) {
-        router.push('/pricing');
+        router.push(`/product/${slug}`);
         return;
       }
 
@@ -259,8 +259,8 @@ export default function Model3DClient({
 
       // Handle errors
       if (json.error) {
-        if (json.error.includes('Access denied') || json.error.includes('subscription')) {
-          router.push('/pricing');
+        if (json.error.includes('Access denied') || json.error.includes('subscription') || json.error.includes('purchase')) {
+          router.push(`/product/${slug}`);
         } else {
           alert(json.error || 'Download failed');
         }

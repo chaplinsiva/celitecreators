@@ -1,8 +1,8 @@
 import DashboardClient from "./DashboardClient";
 
 export const metadata = {
-  title: "Celite Dashboard • Manage Your Account",
-  description: "Review orders, update payment methods, and manage your Celite subscription.",
+  title: "Dashboard & Purchased Assets | Celite Market",
+  description: "View and re-download your lifetime purchased templates and digital assets on Celite Market.",
 };
 
 export default function DashboardPage() {

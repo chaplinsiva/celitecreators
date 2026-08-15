@@ -5,28 +5,28 @@ import PromptsClient from './PromptsClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-    title: 'AI Prompts — ChatGPT, Midjourney & DALL-E Prompt Templates | Celite',
-    description: 'Download professional AI prompts for ChatGPT, Midjourney, DALL-E, and Stable Diffusion. High-quality prompt engineering templates for image generation and content creation on Celite.',
+    title: 'AI Prompts Library (Midjourney & ChatGPT) | Celite Market',
+    description: 'Download professional AI prompts for ChatGPT, Midjourney, and DALL-E on Celite Market with pay-per-product lifetime access.',
     keywords: [
         'ai prompts',
         'chatgpt prompts',
         'midjourney prompts',
         'dall-e prompts',
         'stable diffusion prompts',
-        'ai prompt templates',
-        'prompt engineering',
+        'celite market',
     ],
     openGraph: {
-        title: 'AI Prompts — ChatGPT, Midjourney & DALL-E Templates | Celite',
-        description: 'Download professional AI prompts for ChatGPT, Midjourney, DALL-E, and Stable Diffusion.',
+        title: 'AI Prompts Library (Midjourney & ChatGPT) | Celite Market',
+        description: 'Download professional AI prompts for ChatGPT, Midjourney, DALL-E, and Stable Diffusion on Celite Market.',
         url: 'https://celitemarket.in/prompts',
+        siteName: 'Celite Market',
         type: 'website',
-        images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AI Prompts - Celite' }],
+        images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AI Prompts - Celite Market' }],
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'AI Prompts | Celite',
-        description: 'Download professional AI prompts for ChatGPT, Midjourney, and DALL-E.',
+        title: 'AI Prompts | Celite Market',
+        description: 'Download professional AI prompts for ChatGPT, Midjourney, and DALL-E on Celite Market.',
         images: ['/og-image.png'],
     },
     alternates: {

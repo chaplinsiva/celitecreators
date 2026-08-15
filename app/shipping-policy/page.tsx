@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Shipping Policy | Celite',
-  description: 'Shipping Policy for Celite - Professional After Effects Templates',
+  title: 'Licensing & Digital Delivery Terms | Celite Market',
+  description: 'Licensing terms and digital asset instant delivery policy for Celite Market.',
 };
 
 export default function ShippingPolicyPage() {

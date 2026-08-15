@@ -5,8 +5,8 @@ import StockMusicsClient from './StockMusicsClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
 export const metadata: Metadata = {
-  title: 'Royalty-Free Stock Music Library — Background Music for Videos | Celite',
-  description: 'Download royalty-free stock music for YouTube videos, films, podcasts, ads, and social media content. High-quality background tracks across all genres on Celite.',
+  title: 'Royalty-Free Stock Music Library | Celite Market',
+  description: 'Download royalty-free stock music tracks for YouTube videos, films, podcasts, and ads on Celite Market with pay-per-product lifetime access.',
   keywords: [
     'royalty free music',
     'stock music',
@@ -14,18 +14,20 @@ export const metadata: Metadata = {
     'youtube background music',
     'cinematic music tracks',
     'royalty free audio',
+    'celite market',
   ],
   openGraph: {
-    title: 'Royalty-Free Stock Music Library | Celite',
-    description: 'Download royalty-free stock music for YouTube, films, podcasts, and advertising videos.',
+    title: 'Royalty-Free Stock Music Library | Celite Market',
+    description: 'Download royalty-free stock music for YouTube, films, podcasts, and advertising videos on Celite Market.',
     url: 'https://celitemarket.in/stock-musics',
+    siteName: 'Celite Market',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Music Library - Celite' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Music Library - Celite Market' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Stock Music Library | Celite',
-    description: 'Download royalty-free stock music for videos and films.',
+    title: 'Stock Music Library | Celite Market',
+    description: 'Download royalty-free stock music for videos and films on Celite Market.',
     images: ['/og-image.png'],
   },
   alternates: {

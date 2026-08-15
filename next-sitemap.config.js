@@ -48,16 +48,17 @@ async function getSupabaseData() {
 const STATIC_PAGES = [
   // Core pages - highest priority
   { loc: '/', changefreq: 'daily', priority: 1.0 },
-  { loc: '/pricing', changefreq: 'weekly', priority: 0.9 },
 
   // Category landing pages - high priority for discoverability
   { loc: '/video-templates', changefreq: 'daily', priority: 0.9 },
+  { loc: '/sound-effects', changefreq: 'daily', priority: 0.9 },
+  { loc: '/stock-musics', changefreq: 'daily', priority: 0.9 },
   { loc: '/3d-models', changefreq: 'daily', priority: 0.9 },
-  { loc: '/stock-photos', changefreq: 'daily', priority: 0.9 },
-  { loc: '/music-sfx', changefreq: 'daily', priority: 0.9 },
-  { loc: '/prompts', changefreq: 'daily', priority: 0.9 },
-  { loc: '/graphics', changefreq: 'daily', priority: 0.9 },
   { loc: '/web-templates', changefreq: 'daily', priority: 0.9 },
+  { loc: '/graphics', changefreq: 'daily', priority: 0.9 },
+  { loc: '/prompts', changefreq: 'daily', priority: 0.9 },
+  { loc: '/stock-photos', changefreq: 'daily', priority: 0.9 },
+  { loc: '/music-sfx', changefreq: 'daily', priority: 0.8 },
   { loc: '/templates', changefreq: 'daily', priority: 0.8 },
 
   // Creator & Business pages
@@ -87,6 +88,7 @@ module.exports = {
     '/signup',
     '/checkout',
     '/checkout/*',
+    '/pricing',
   ],
   additionalPaths: async () => {
     const now = new Date().toISOString();

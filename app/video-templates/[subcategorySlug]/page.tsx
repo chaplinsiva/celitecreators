@@ -125,8 +125,8 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   const subcatName = formatSubcategoryTitle(data.subcategory.name);
 
-  const title = `${subcatName} After Effects Templates | Free & Premium AE Templates — Celite`;
-  const description = `Download professional ${subcatName} templates for Adobe After Effects. High-quality, easy-to-edit AE project files for wedding videos, openers, titles, and motion graphics on Celite.`;
+  const title = `${subcatName} After Effects Templates | Celite Market`;
+  const description = `Download professional ${subcatName} templates for Adobe After Effects. High-quality, easy-to-edit AE project files for wedding videos, openers, titles, and motion graphics on Celite Market.`;
   const canonicalUrl = `https://celitemarket.in/video-templates/${data.subcategory.slug}`;
 
   return {
@@ -140,19 +140,19 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
       `${subcatName.toLowerCase()} after effects`,
       'after effects templates',
       'video templates',
-      'ae templates free',
-      'after effects project files',
+      'celite market',
     ],
     openGraph: {
       title,
       description,
       url: canonicalUrl,
+      siteName: 'Celite Market',
       type: 'website',
-      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${subcatName} After Effects Templates - Celite` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${subcatName} After Effects Templates - Celite Market` }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${subcatName} After Effects Templates | Celite`,
+      title,
       description,
       images: ['/og-image.png'],
     },

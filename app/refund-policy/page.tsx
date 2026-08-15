@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Refund and Returns Policy | Celite',
-  description: 'Refund and Returns Policy for Celite - Professional After Effects Templates',
+  title: 'Refund and Returns Policy | Celite Market',
+  description: 'Refund and Returns Policy for Celite Market - India\'s Creative Digital Asset Marketplace',
 };
 
 export default function RefundPolicyPage() {

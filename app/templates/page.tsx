@@ -4,20 +4,21 @@ import TemplatesClient from './TemplatesClient';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
 
 export const metadata: Metadata = {
-    title: "All Creative Digital Assets & Templates | Celite Marketplace",
-    description: "Explore the complete Celite digital assets marketplace. Download After Effects video templates, wedding save the date videos, cinematic intros, 3D models, stock photos, royalty-free music, sound effects, and AI prompts.",
-    keywords: ['after effects templates', 'wedding templates', 'save the date template', 'video templates', 'creative digital assets', '3d models', 'stock photos', 'royalty free music', 'ai prompts'],
+    title: "All Creative Digital Assets & Templates | Celite Market",
+    description: "Explore Celite Market's digital asset catalog. Download After Effects video templates, wedding save the date videos, 3D models, royalty-free music, and sound effects with lifetime access.",
+    keywords: ['celite market', 'after effects templates', 'wedding templates', 'save the date template', 'video templates', 'creative digital assets', '3d models', 'royalty free music', 'sound effects'],
     openGraph: {
-        title: 'All Creative Digital Assets & Templates | Celite Marketplace',
-        description: 'Explore the complete Celite marketplace. Download After Effects video templates, wedding save the date videos, 3D models, stock photos, royalty-free music, and AI prompts.',
+        title: 'All Creative Digital Assets & Templates | Celite Market',
+        description: 'Explore the complete Celite Market catalog. Download After Effects video templates, wedding save the date videos, 3D models, stock music, and sound effects.',
         url: 'https://celitemarket.in/templates',
+        siteName: 'Celite Market',
         type: 'website',
-        images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite Digital Assets Marketplace' }],
+        images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Celite Market - Digital Assets Marketplace' }],
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'All Creative Digital Assets & Templates | Celite',
-        description: 'Explore After Effects templates, wedding videos, 3D models, photos, music & AI prompts on Celite.',
+        title: 'All Creative Digital Assets & Templates | Celite Market',
+        description: 'Explore After Effects templates, wedding videos, 3D models, music & sound effects on Celite Market.',
         images: ['/og-image.png'],
     },
     alternates: {

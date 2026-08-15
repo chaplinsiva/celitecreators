@@ -45,18 +45,24 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   if (!shop) {
     return {
-      title: "Creator not found | Celite",
+      title: "Creator Not Found | Celite Market",
     };
   }
 
-  const title = `${shop.name} | Celite Creator`;
+  const title = `${shop.name} – Creator Studio | Celite Market`;
   const description =
     shop.description ||
-    "Discover templates and assets from this Celite creator.";
+    `Discover and download exclusive digital assets, video templates & packs from ${shop.name} on Celite Market.`;
 
   return {
     title,
     description,
+    openGraph: {
+      title,
+      description,
+      siteName: 'Celite Market',
+      type: 'profile',
+    },
   };
 }
 

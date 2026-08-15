@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Celite',
-  description: 'Privacy Policy for Celite - Professional After Effects Templates',
+  title: 'Privacy Policy | Celite Market',
+  description: 'Privacy Policy for Celite Market - India\'s Creative Digital Asset Marketplace',
 };
 
 export default function PrivacyPolicyPage() {

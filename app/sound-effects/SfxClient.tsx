@@ -276,7 +276,7 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
       const isSubscribed = !!sub?.is_active && (!validUntil || validUntil > now);
 
       if (!isSubscribed) {
-        router.push('/pricing');
+        router.push(`/product/${slug}`);
         return;
       }
 
@@ -287,14 +287,14 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
       if (!res.ok) {
         try {
           const errorJson = await res.json();
-          if (errorJson.error?.includes('Access denied') || errorJson.error?.includes('subscription')) {
-            router.push('/pricing');
+          if (errorJson.error?.includes('Access denied') || errorJson.error?.includes('subscription') || errorJson.error?.includes('purchase')) {
+            router.push(`/product/${slug}`);
           } else {
             alert(errorJson.error || 'Download failed');
           }
         } catch {
           if (res.status === 403) {
-            router.push('/pricing');
+            router.push(`/product/${slug}`);
           } else if (res.status === 401) {
             openLoginModal();
           } else {
@@ -313,8 +313,8 @@ export default function SfxClient({ initialTemplates }: { initialTemplates: Temp
           return;
         }
         if (json.error) {
-          if (json.error.includes('Access denied') || json.error.includes('subscription')) {
-            router.push('/pricing');
+          if (json.error.includes('Access denied') || json.error.includes('subscription') || json.error.includes('purchase')) {
+            router.push(`/product/${slug}`);
           } else {
             alert(json.error || 'Download failed');
           }
