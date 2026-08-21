@@ -56,7 +56,6 @@ const STATIC_PAGES = [
   { loc: '/3d-models', changefreq: 'daily', priority: 0.9 },
   { loc: '/web-templates', changefreq: 'daily', priority: 0.9 },
   { loc: '/graphics', changefreq: 'daily', priority: 0.9 },
-  { loc: '/prompts', changefreq: 'daily', priority: 0.9 },
   { loc: '/stock-photos', changefreq: 'daily', priority: 0.9 },
   { loc: '/music-sfx', changefreq: 'daily', priority: 0.8 },
   { loc: '/templates', changefreq: 'daily', priority: 0.8 },

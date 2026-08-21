@@ -1,6 +1,6 @@
 "use client";
 
-/* agent-notes: { "last": "antigravity@2026-08-09", "ctx": "Fix unclosed div tag in creator dashboard layout", "deps": ["next/link"], "state": "active" } */
+/* agent-notes: { "last": "sato@2026-08-21", "ctx": "Add missing contact info red action bar, WhatsApp community buttons, and phone/email settings", "deps": ["lib/creatorValidation.ts"], "state": "active" } */
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import { useAppContext } from "../../../context/AppContext";
 import { getSupabaseBrowserClient } from "../../../lib/supabaseClient";
 import { convertR2UrlToCdn } from "../../../lib/utils";
+import {
+  isCreatorContactMissing,
+  CREATOR_COMMUNITY_WHATSAPP_URL,
+} from "../../../lib/creatorValidation";
 
 type CreatorShop = {
   id?: string;
@@ -16,6 +20,9 @@ type CreatorShop = {
   name: string;
   description: string | null;
   bio?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  joined_community?: boolean | null;
   bank_account_name: string | null;
   bank_account_number: string | null;
   bank_ifsc: string | null;
@@ -933,6 +940,8 @@ export default function CreatorDashboardPage() {
     slug: "",
     tagline: "",
     description: "",
+    phone: "",
+    email: "",
     location: "",
     website_url: "",
     instagram_url: "",
@@ -963,6 +972,8 @@ export default function CreatorDashboardPage() {
         slug: shop.slug || "",
         tagline: shop.tagline || "",
         description: shop.description || shop.bio || "",
+        phone: shop.phone || "",
+        email: shop.email || user?.email || "",
         location: shop.location || "",
         website_url: shop.website_url || "",
         instagram_url: shop.instagram_url || "",
@@ -1161,6 +1172,16 @@ export default function CreatorDashboardPage() {
           </Link>
         </div>
         <div className="flex items-center gap-3">
+          <a
+            href={CREATOR_COMMUNITY_WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 rounded-xl bg-emerald-950/70 border border-emerald-800/80 hover:bg-emerald-900/80 text-emerald-400 text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>💬</span>
+            <span className="hidden sm:inline">Join Community</span>
+          </a>
+
           <button
             type="button"
             onClick={() => {
@@ -1253,6 +1274,78 @@ export default function CreatorDashboardPage() {
         {/* Content area */}
         <div className="flex flex-col h-full overflow-hidden">
           <section className="flex-1 p-6 sm:p-8 space-y-6 overflow-y-auto">
+            {/* Action Required Red Bar for Missing Phone / Email */}
+            {isCreatorContactMissing(shop) && (
+              <div className="relative rounded-2xl bg-gradient-to-r from-red-950 via-rose-950/90 to-red-950 border-2 border-red-600/80 p-4 sm:p-5 shadow-2xl shadow-red-950/60 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0 mt-0.5">
+                      <span className="text-xl">⚠️</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-sm sm:text-base font-extrabold text-white tracking-wide">
+                          Action Required: Contact Details Missing
+                        </h3>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-600 text-white animate-pulse">
+                          Action Needed
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-red-200/90 leading-relaxed max-w-3xl">
+                        Please update your <strong>phone number</strong> and <strong>contact email</strong> in your Studio Settings to ensure you receive automated payout confirmations, sales receipts, and critical creator notifications.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 shrink-0 ml-auto sm:ml-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActive("settings");
+                        setTimeout(() => {
+                          const el = document.getElementById("creator-contact-settings-section");
+                          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }, 100);
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-red-950/80 transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>✏️</span>
+                      <span>Update Contact Details</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Creator Community Join Banner */}
+            <div className="rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-emerald-950/60 border border-emerald-800/50 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                  <span className="text-xl">💬</span>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    Join Celite Creator WhatsApp Community
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-950 border border-emerald-800 text-emerald-400">
+                      Official Group
+                    </span>
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    Connect with fellow video editors &amp; 3D artists, get marketplace guidance, and fast payout support.
+                  </p>
+                </div>
+              </div>
+              <a
+                href={CREATOR_COMMUNITY_WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-950/50 shrink-0 cursor-pointer"
+              >
+                <span>📲</span>
+                <span>Join Community</span>
+              </a>
+            </div>
+
             {/* Top Studio Showcase Header Banner & Logo */}
             <section className="relative rounded-3xl border border-slate-800 bg-[#090D16] overflow-hidden shadow-2xl">
               {/* Studio Banner Background */}
@@ -2568,16 +2661,45 @@ export default function CreatorDashboardPage() {
                       Payouts &amp; Earnings Overview
                     </h2>
 
+                    {/* Revenue & Balance Metrics Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 space-y-1">
+                        <p className="text-xs font-semibold text-slate-400">Available Balance</p>
+                        <p className="text-2xl sm:text-3xl font-black text-emerald-400">
+                          ₹{Math.round(revenue).toLocaleString('en-IN')}
+                        </p>
+                        <p className="text-[11px] text-slate-500">Withdrawable now</p>
+                      </div>
+
+                      <div className="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 space-y-1">
+                        <p className="text-xs font-semibold text-slate-400">Total Lifetime Sales (80%)</p>
+                        <p className="text-2xl sm:text-3xl font-black text-white">
+                          ₹{Math.round(totalEarnings).toLocaleString('en-IN')}
+                        </p>
+                        <p className="text-[11px] text-slate-500">{marketplaceSalesCount} orders completed</p>
+                      </div>
+
+                      <div className="bg-[#0F172A] rounded-2xl border border-slate-800 p-4 space-y-1">
+                        <p className="text-xs font-semibold text-slate-400">Paid Out / Withdrawn</p>
+                        <p className="text-2xl sm:text-3xl font-black text-sky-400">
+                          ₹{Math.round(paidOutAmount).toLocaleString('en-IN')}
+                        </p>
+                        <p className="text-[11px] text-slate-500">{pendingPayoutAmount > 0 ? `₹${Math.round(pendingPayoutAmount)} pending` : "No pending payout"}</p>
+                      </div>
+                    </div>
+
                     <div className="bg-[#0F172A] rounded-2xl border border-slate-800 p-5 space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-semibold text-slate-400">Available Revenue Balance</p>
-                          <p className="text-3xl font-black text-emerald-400 mt-1">
-                            ₹{Math.round(revenue).toLocaleString('en-IN')}
+                          <p className="text-xs font-semibold text-slate-400">Payout Status</p>
+                          <p className="text-sm font-bold text-white mt-0.5">
+                            {revenue >= 800
+                              ? "✓ You have met the ₹800 payout threshold!"
+                              : `₹${Math.max(0, 800 - Math.round(revenue)).toLocaleString('en-IN')} more needed to withdraw`}
                           </p>
                         </div>
                         {revenue >= 800 ? (
-                          <span className="px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-bold">
+                          <span className="px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-bold animate-pulse">
                             ✓ Ready for Payout
                           </span>
                         ) : (
@@ -2590,12 +2712,12 @@ export default function CreatorDashboardPage() {
                       <div className="space-y-1.5">
                         <div className="flex justify-between text-xs text-slate-400 font-semibold">
                           <span>Payout Threshold Progress</span>
-                          <span>₹{Math.round(revenue)} / ₹800</span>
+                          <span className="font-mono text-sky-400">₹{Math.round(revenue)} / ₹800 ({Math.min(100, Math.round((revenue / 800) * 100))}%)</span>
                         </div>
-                        <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div className="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-0.5">
                           <div
-                            className="bg-emerald-500 h-full transition-all duration-300 rounded-full"
-                            style={{ width: `${Math.min(100, Math.round((revenue / 800) * 100))}%` }}
+                            className="bg-gradient-to-r from-sky-500 via-emerald-500 to-emerald-400 h-full transition-all duration-500 rounded-full"
+                            style={{ width: `${Math.min(100, Math.max(0, Math.round((revenue / 800) * 100)))}%` }}
                           />
                         </div>
                       </div>
@@ -2605,18 +2727,16 @@ export default function CreatorDashboardPage() {
                           type="button"
                           onClick={handleRequestPayout}
                           disabled={payoutLoading}
-                          className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-lg shadow-emerald-950/40 transition-all cursor-pointer"
+                          className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-lg shadow-emerald-950/40 transition-all cursor-pointer flex items-center justify-center gap-2"
                         >
-                          {payoutLoading ? "Submitting Request..." : `Request Instant Payout (₹${Math.round(revenue)})`}
+                          {payoutLoading ? "Submitting Request..." : `🚀 Request Instant Payout (₹${Math.round(revenue).toLocaleString('en-IN')})`}
                         </button>
                       ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="w-full py-3 rounded-xl bg-slate-900 text-slate-500 text-xs font-bold border border-slate-800 cursor-not-allowed opacity-60"
-                        >
-                          Request Payout (₹{Math.round(revenue)})
-                        </button>
+                        <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                          <p className="text-xs text-slate-400">
+                            Minimum withdrawal threshold is <strong className="text-white">₹800</strong>. Keep creating and publishing assets to reach your payout!
+                          </p>
+                        </div>
                       )}
                     </div>
 
@@ -2822,7 +2942,75 @@ export default function CreatorDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Section 2: Social Links */}
+                    {/* Section 2: Creator Contact Details (Mandatory) */}
+                    <div id="creator-contact-settings-section" className="space-y-4 pt-4 border-t border-slate-800">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                          <span>📞</span> Contact Information (Mandatory for Payouts &amp; Alerts)
+                        </h3>
+                        {(!studioForm.phone || !studioForm.email) ? (
+                          <span className="text-[10px] font-bold text-red-400 bg-red-950/80 border border-red-800/80 px-2 py-0.5 rounded-md">
+                            ⚠️ Incomplete Contact Info
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.5 rounded-md">
+                            ✓ Contact Saved
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        Your phone number and email are used for automated payout confirmations, sales receipts, and critical creator notifications.
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-slate-300">
+                            Contact Phone Number *
+                          </label>
+                          <input
+                            type="tel"
+                            required
+                            value={studioForm.phone}
+                            onChange={(e) => setStudioForm((f) => ({ ...f, phone: e.target.value }))}
+                            placeholder="e.g. +91 98765 43210"
+                            className="w-full px-4 py-2.5 rounded-xl bg-[#0F172A] border border-slate-800 text-white placeholder:text-slate-500 text-xs focus:outline-none focus:border-sky-500 transition-colors font-medium"
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-slate-300">
+                            Contact Email Address *
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            value={studioForm.email}
+                            onChange={(e) => setStudioForm((f) => ({ ...f, email: e.target.value }))}
+                            placeholder="e.g. creator@example.com"
+                            className="w-full px-4 py-2.5 rounded-xl bg-[#0F172A] border border-slate-800 text-white placeholder:text-slate-500 text-xs focus:outline-none focus:border-sky-500 transition-colors font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      {/* WhatsApp Community Quick Join Card inside Settings */}
+                      <div className="bg-[#0F172A]/70 border border-emerald-900/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="space-y-0.5">
+                          <p className="text-xs font-bold text-emerald-400">Celite Creator Community Group</p>
+                          <p className="text-[11px] text-slate-400">Join other creators on WhatsApp for tips, feedback, and sales growth.</p>
+                        </div>
+                        <a
+                          href={CREATOR_COMMUNITY_WHATSAPP_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-950/40 inline-flex items-center justify-center gap-1.5 shrink-0"
+                        >
+                          <span>💬</span>
+                          <span>Join WhatsApp Group</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Section 3: Social Links */}
                     <div className="space-y-4 pt-4 border-t border-slate-800">
                       <h3 className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
                         <span>🌐</span> Social &amp; Portfolio Links

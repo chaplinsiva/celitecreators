@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../lib/downloadStats';
 import VideoTemplatesClient from '../video-templates/VideoTemplatesClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
@@ -40,6 +42,7 @@ export const revalidate = 60;
 
 export default async function WebTemplatesPage() {
   const supabase = getSupabaseServerClient();
+  const admin = getSupabaseAdminClient();
   
   // Fetch only Website Templates
   const websiteTemplatesCategoryId = 'bb7e7b01-19c7-4606-bcec-956eea4b1497';
@@ -54,12 +57,24 @@ export default async function WebTemplatesPage() {
     console.error('Error fetching website templates:', error);
   }
 
+  // Fetch real download counts in batch using bypass-RLS admin client
+  const slugs = (templates || []).map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (e) {
+      console.error('Error fetching batch download counts on web-templates page:', e);
+    }
+  }
+
   // Map templates to match Template type
   const mappedTemplates = (templates || []).map(t => ({
     ...t,
     price: 0,
     is_featured: Boolean((t as any).feature),
     feature: Boolean((t as any).feature),
+    downloadCount: counts[t.slug] || 0,
   }));
 
   return (

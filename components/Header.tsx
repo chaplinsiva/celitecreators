@@ -553,7 +553,6 @@ export default function Header() {
               { name: 'Web', route: '/web-templates', slug: 'website-templates' },
               { name: 'Graphics', route: '/graphics', slug: 'psd-templates' },
               { name: '3D Models', route: '/3d-models', slug: '3d-models' },
-              { name: 'Prompts', route: '/prompts', slug: 'prompts' },
             ].map((navItem) => (
               <Link
                 key={navItem.slug}

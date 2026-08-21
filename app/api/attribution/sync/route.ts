@@ -56,7 +56,8 @@ export async function POST(req: Request) {
         .eq('id', existing.id);
 
       if (updateErr) {
-        return NextResponse.json({ ok: false, error: updateErr.message }, { status: 500 });
+        console.warn('Attribution update warning:', updateErr.message);
+        return NextResponse.json({ ok: false, warning: updateErr.message }, { status: 200 });
       }
     } else {
       // Insert new record
@@ -87,13 +88,14 @@ export async function POST(req: Request) {
         });
 
       if (insertErr) {
-        return NextResponse.json({ ok: false, error: insertErr.message }, { status: 500 });
+        console.warn('Attribution insert warning:', insertErr.message);
+        return NextResponse.json({ ok: false, warning: insertErr.message }, { status: 200 });
       }
     }
 
     return NextResponse.json({ ok: true });
   } catch (e: any) {
-    console.error('Attribution sync error:', e);
-    return NextResponse.json({ ok: false, error: e?.message || 'Server error' }, { status: 500 });
+    console.warn('Attribution sync catch warning:', e);
+    return NextResponse.json({ ok: false, warning: e?.message || 'Warning' }, { status: 200 });
   }
 }

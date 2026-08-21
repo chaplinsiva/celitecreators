@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getSupabaseServerClient } from '../../../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../../../lib/downloadStats';
 import VideoTemplatesClient from '../../VideoTemplatesClient';
 import LoadingSpinnerServer from '../../../../components/ui/loading-spinner-server';
 import Script from 'next/script';
@@ -168,11 +170,24 @@ export default async function SubSubcategoryPage(props: PageProps) {
   const subSubName = subSubcategory.name;
   const subcatName = subcategory.name;
 
+  // Fetch real download counts in batch using bypass-RLS admin client
+  const admin = getSupabaseAdminClient();
+  const slugs = (templates || []).map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (e) {
+      console.error('Error fetching batch download counts on sub-subcategory page:', e);
+    }
+  }
+
   const mappedTemplates = templates.map(t => ({
     ...t,
     price: 0,
     is_featured: Boolean((t as any).feature),
     feature: Boolean((t as any).feature),
+    downloadCount: counts[t.slug] || 0,
   }));
 
   // ItemList structured data

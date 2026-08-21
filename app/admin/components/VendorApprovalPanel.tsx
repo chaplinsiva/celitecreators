@@ -28,15 +28,40 @@ export default function VendorApprovalPanel({
   onReviewed: () => Promise<void> | void;
 }) {
   const [activeTab, setActiveTab] = useState<'marketplace' | 'subscription'>('marketplace');
+  const [marketplaceSubTab, setMarketplaceSubTab] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending');
+  const [searchQuery, setSearchQuery] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const vendorTemplates = (templates || []).filter(
     (t) => t.creator_shop_id || t.vendor_name
   );
 
-  const pendingMarketplace = vendorTemplates.filter(t => t.status === 'pending');
+  const pendingMarketplace = vendorTemplates.filter(t => (t.status || 'pending') === 'pending');
+  const approvedMarketplace = vendorTemplates.filter(t => t.status === 'approved');
+  const rejectedMarketplace = vendorTemplates.filter(t => t.status === 'rejected');
+
   const pendingSubscription = vendorTemplates.filter(t => t.subscription_submission_status === 'PENDING_REVIEW');
   const allSubscriptionPool = (templates || []).filter(t => t.available_on_celite_subscription || t.subscription_submission_status === 'PENDING_REVIEW');
+
+  // Filter marketplace list based on sub-tab and search query
+  const displayedMarketplaceTemplates = vendorTemplates.filter(t => {
+    const currentStatus = (t.status || 'pending').toLowerCase();
+    const matchesStatus =
+      marketplaceSubTab === 'all' ? true : currentStatus === marketplaceSubTab;
+
+    if (!matchesStatus) return false;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        t.name?.toLowerCase().includes(q) ||
+        t.slug?.toLowerCase().includes(q) ||
+        t.vendor_name?.toLowerCase().includes(q)
+      );
+    }
+
+    return true;
+  });
 
   const handleReviewMarketplace = async (
     slug: string,
@@ -104,7 +129,7 @@ export default function VendorApprovalPanel({
         <div>
           <h2 className="text-2xl font-black text-zinc-900 tracking-tight">CELITE MARKET Approval Center</h2>
           <p className="mt-1 text-xs text-zinc-500 font-medium">
-            Manage single product marketplace approvals and Celite.in subscription pool inclusion.
+            Manage marketplace template approvals, inspect approved live assets, and re-reject or restore anytime.
           </p>
         </div>
 
@@ -144,37 +169,126 @@ export default function VendorApprovalPanel({
 
       {/* Tab 1: Marketplace Approvals */}
       {activeTab === 'marketplace' && (
-        <section className="space-y-4">
-          <div className="rounded-xl border border-zinc-200 bg-white p-4 text-xs text-zinc-600 flex items-center justify-between shadow-sm">
-            <div>
-              <strong className="text-zinc-900">Default Policy:</strong> When creators upload templates to Celite Market, they are <strong>NOT</strong> present in the Celite subscription pool by default. They can be sold as pay-per-product once approved.
+        <section className="space-y-5">
+          {/* Sub-Tabs and Search Toolbar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-zinc-50 border border-zinc-200 rounded-2xl">
+            {/* Status Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMarketplaceSubTab('pending')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  marketplaceSubTab === 'pending'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                Pending Review
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                  marketplaceSubTab === 'pending' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800'
+                }`}>
+                  {pendingMarketplace.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMarketplaceSubTab('approved')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  marketplaceSubTab === 'approved'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                ✓ Approved (Live)
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                  marketplaceSubTab === 'approved' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'
+                }`}>
+                  {approvedMarketplace.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMarketplaceSubTab('rejected')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  marketplaceSubTab === 'rejected'
+                    ? 'bg-rose-600 text-white shadow-sm'
+                    : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                ✕ Rejected
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                  marketplaceSubTab === 'rejected' ? 'bg-rose-700 text-white' : 'bg-rose-100 text-rose-800'
+                }`}>
+                  {rejectedMarketplace.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMarketplaceSubTab('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  marketplaceSubTab === 'all'
+                    ? 'bg-zinc-800 text-white shadow-sm'
+                    : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                All Submissions ({vendorTemplates.length})
+              </button>
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-zinc-100 text-zinc-700">
-              {pendingMarketplace.length} Pending Review
-            </span>
+
+            {/* Quick Search Box */}
+            <div className="w-full md:w-72">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search templates or creator..."
+                className="w-full px-3.5 py-1.5 bg-white border border-zinc-200 rounded-xl text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-sky-500 shadow-xs"
+              />
+            </div>
           </div>
 
-          {pendingMarketplace.length === 0 ? (
+          {displayedMarketplaceTemplates.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-zinc-200 bg-white p-8 text-center text-sm text-zinc-500">
-              ✓ All marketplace creator submissions have been reviewed!
+              {searchQuery ? `No templates found matching "${searchQuery}".` : `No templates found in ${marketplaceSubTab} status.`}
             </div>
           ) : (
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {pendingMarketplace.map((t) => {
+              {displayedMarketplaceTemplates.map((t) => {
                 const vendor = t.vendor_name || "Unknown Creator";
                 const price = t.price || 399;
                 const inSubscription = !!t.available_on_celite_subscription;
+                const status = (t.status || 'pending').toLowerCase();
 
                 return (
                   <li
                     key={t.slug}
-                    className="rounded-2xl border border-zinc-200 bg-white p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-4"
+                    className={`rounded-2xl border bg-white p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-4 ${
+                      status === 'approved'
+                        ? 'border-emerald-200'
+                        : status === 'rejected'
+                        ? 'border-rose-200'
+                        : 'border-zinc-200'
+                    }`}
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                          Pending Approval
-                        </span>
+                        {status === 'approved' ? (
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            ✓ Approved & Live
+                          </span>
+                        ) : status === 'rejected' ? (
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+                            ✕ Rejected
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+                            Pending Review
+                          </span>
+                        )}
+
                         <span className="text-xs font-black text-sky-950 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
                           ₹{price}
                         </span>
@@ -202,27 +316,49 @@ export default function VendorApprovalPanel({
                           target="_blank"
                           className="flex-1 text-center py-1.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-xs font-bold text-zinc-700 transition"
                         >
-                          Preview
+                          Preview Asset
                         </Link>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          disabled={actionLoading === t.slug}
-                          onClick={() => handleReviewMarketplace(t.slug, "approved")}
-                          className="w-full py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-1"
-                        >
-                          <Check className="w-3.5 h-3.5" /> Approve
-                        </button>
+
+                      {/* Dynamic Action Buttons Based on Status */}
+                      {status === 'approved' ? (
                         <button
                           type="button"
                           disabled={actionLoading === t.slug}
                           onClick={() => handleReviewMarketplace(t.slug, "rejected")}
-                          className="w-full py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-extrabold transition flex items-center justify-center gap-1"
+                          className="w-full py-2 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-extrabold transition flex items-center justify-center gap-1 shadow-xs cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" /> Reject
+                          <X className="w-3.5 h-3.5" /> Reject Asset (Remove from Store)
                         </button>
-                      </div>
+                      ) : status === 'rejected' ? (
+                        <button
+                          type="button"
+                          disabled={actionLoading === t.slug}
+                          onClick={() => handleReviewMarketplace(t.slug, "approved")}
+                          className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                        >
+                          <Check className="w-3.5 h-3.5" /> Re-Approve Asset (Make Live)
+                        </button>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            disabled={actionLoading === t.slug}
+                            onClick={() => handleReviewMarketplace(t.slug, "approved")}
+                            className="w-full py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-1 cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" /> Approve
+                          </button>
+                          <button
+                            type="button"
+                            disabled={actionLoading === t.slug}
+                            onClick={() => handleReviewMarketplace(t.slug, "rejected")}
+                            className="w-full py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-extrabold transition flex items-center justify-center gap-1 cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" /> Reject
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </li>
                 );

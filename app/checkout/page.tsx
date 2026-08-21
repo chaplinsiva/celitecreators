@@ -108,8 +108,9 @@ function CheckoutContent() {
         const supabase = getSupabaseBrowserClient();
         const { data } = await supabase
           .from('templates')
-          .select('slug, name, price, img')
+          .select('slug, name, price, img, status')
           .eq('slug', productSlug)
+          .eq('status', 'approved')
           .maybeSingle();
         if (data) {
           // Double-check cartItems haven't changed during async operation

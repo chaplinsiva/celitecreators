@@ -25,12 +25,11 @@ const categoryDisplayMap: Record<string, { label: string; route: string }> = {
     'psd-templates': { label: 'Graphics', route: '/graphics' },
     'graphics': { label: 'Graphics', route: '/graphics' },
     '3d-models': { label: '3D', route: '/3d-models' },
-    'prompts': { label: 'Prompts', route: '/prompts' },
 };
 
 // Desired display order
 const displayOrder = [
-    'Video Templates', 'Save Date', 'Photos', 'Music', 'SFX', 'Web', 'Graphics', '3D', 'Prompts'
+    'Video Templates', 'Save Date', 'Photos', 'Music', 'SFX', 'Web', 'Graphics', '3D'
 ];
 
 // Static nav items that aren't top-level categories

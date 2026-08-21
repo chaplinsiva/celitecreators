@@ -20,10 +20,11 @@ export async function POST(req: Request) {
     // Load template details
     const { data: tpl, error: tErr } = await admin
       .from('templates')
-      .select('slug,name,price,img,creator_shop_id')
+      .select('slug,name,price,img,creator_shop_id,status')
       .eq('slug', slug)
+      .eq('status', 'approved')
       .maybeSingle();
-    if (tErr || !tpl) return NextResponse.json({ ok: false, error: 'Template not found' }, { status: 404 });
+    if (tErr || !tpl) return NextResponse.json({ ok: false, error: 'Template not found or not approved' }, { status: 404 });
 
     const price = Number(tpl.price) || 0;
 
