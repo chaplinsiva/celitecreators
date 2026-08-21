@@ -1,5 +1,7 @@
 "use client";
 
+/* agent-notes: { "last": "sato@2026-08-21", "ctx": "Mandatory creator contact phone/email validation and WhatsApp community join onboarding", "deps": ["lib/creatorValidation.ts"], "state": "active" } */
+
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -17,7 +19,15 @@ import {
   Check,
   AlertCircle,
   Lock,
+  Phone,
+  Mail,
+  Users,
+  ExternalLink,
 } from "lucide-react";
+import {
+  validateCreatorContact,
+  CREATOR_COMMUNITY_WHATSAPP_URL,
+} from "../../lib/creatorValidation";
 
 function slugify(value: string): string {
   return value
@@ -42,6 +52,9 @@ export default function StartSellingPage() {
   const [shopName, setShopName] = useState("");
   const [specialty, setSpecialty] = useState("Video Templates & Motion Graphics");
   const [description, setDescription] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [joinedCommunity, setJoinedCommunity] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -127,6 +140,13 @@ export default function StartSellingPage() {
     }
   }, [user, isAuthLoading, router]);
 
+  // Prepopulate email from auth user if available
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user, email]);
+
   // Check if user already has an active creator shop
   useEffect(() => {
     const loadExistingShop = async () => {
@@ -155,6 +175,11 @@ export default function StartSellingPage() {
       setError("Please enter a Shop Name to proceed.");
       return;
     }
+    const contactValidation = validateCreatorContact(phone, email);
+    if (!contactValidation.isValid) {
+      setError(contactValidation.error || "Please enter a valid phone number and email.");
+      return;
+    }
     setCurrentStep(2);
   };
 
@@ -175,6 +200,12 @@ export default function StartSellingPage() {
 
     if (!user) {
       setError("Please log in to start selling.");
+      return;
+    }
+
+    const contactValidation = validateCreatorContact(phone, email);
+    if (!contactValidation.isValid) {
+      setError(contactValidation.error || "Please enter a valid phone number and email.");
       return;
     }
 
@@ -221,6 +252,9 @@ export default function StartSellingPage() {
         slug: finalSlug,
         name: shopName.trim(),
         description: description.trim() || null,
+        phone: phone.trim() || null,
+        email: email.trim() || null,
+        joined_community: joinedCommunity,
         bank_account_name: bankAccountName.trim() || null,
         bank_account_number: bankAccountNumber.trim() || null,
         bank_ifsc: bankIfsc.trim() || null,
@@ -407,6 +441,54 @@ export default function StartSellingPage() {
                     rows={3}
                     className="w-full px-4 py-3.5 rounded-xl bg-[#0F172A] border border-slate-800 text-sm text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all resize-none font-medium"
                   />
+                </div>
+
+                {/* Mandatory Contact Details */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#0F172A]/90 border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5" />
+                      Creator Contact Information (Mandatory)
+                    </p>
+                    <span className="text-[10px] font-bold text-sky-400 bg-sky-950/80 border border-sky-800/80 px-2 py-0.5 rounded-md">
+                      Required
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Required for direct payout notifications, instant security verification, and creator updates.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-200 mb-2 flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        Phone Number <span className="text-sky-400">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="e.g. +91 98765 43210"
+                        className="w-full px-4 py-3 rounded-xl bg-[#0B0F17] border border-slate-800 text-sm text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all font-medium"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-200 mb-2 flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-slate-400" />
+                        Email Address <span className="text-sky-400">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="e.g. creator@example.com"
+                        className="w-full px-4 py-3 rounded-xl bg-[#0B0F17] border border-slate-800 text-sm text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/50 outline-none transition-all font-medium"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Optional Branding Setup */}
@@ -602,6 +684,50 @@ export default function StartSellingPage() {
                     <li>Pay-per-product access grants perpetual lifetime download rights to valid purchasers.</li>
                     <li>Automated bank transfers execute upon reaching the payout threshold.</li>
                   </ul>
+
+                  {/* Creator Community Join Card & Checkbox */}
+                  <div className="bg-gradient-to-br from-[#090D16] to-emerald-950/30 border border-emerald-800/40 rounded-2xl p-4 sm:p-5 space-y-3.5 mt-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                          <Users className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                            Join Celite Creator Community
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-950 border border-emerald-800 text-emerald-400">
+                              WhatsApp
+                            </span>
+                          </h4>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            Connect with fellow editors &amp; artists, get platform guidance, and rapid support.
+                          </p>
+                        </div>
+                      </div>
+                      <a
+                        href={CREATOR_COMMUNITY_WHATSAPP_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setJoinedCommunity(true)}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-950/50 shrink-0 cursor-pointer"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Join Community
+                      </a>
+                    </div>
+
+                    <label className="flex items-start gap-2.5 pt-2 border-t border-emerald-900/40 cursor-pointer text-xs text-slate-300 font-medium select-none">
+                      <input
+                        type="checkbox"
+                        checked={joinedCommunity}
+                        onChange={(e) => setJoinedCommunity(e.target.checked)}
+                        className="mt-0.5 w-4 h-4 rounded border-slate-700 bg-[#090D16] text-emerald-500 focus:ring-emerald-500 shrink-0"
+                      />
+                      <span>
+                        I have joined (or wish to participate in) the Celite Creator Community for guidance and updates.
+                      </span>
+                    </label>
+                  </div>
 
                   <label className="flex items-start gap-3 pt-3 border-t border-slate-800/80 cursor-pointer text-xs sm:text-sm text-slate-200 font-semibold select-none">
                     <input

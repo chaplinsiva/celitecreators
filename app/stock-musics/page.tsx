@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../lib/downloadStats';
 import StockMusicsClient from './StockMusicsClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
@@ -18,9 +20,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Royalty-Free Stock Music Library | Celite Market',
-    description: 'Download royalty-free stock music for YouTube, films, podcasts, and advertising videos on Celite Market.',
-    url: 'https://celitemarket.in/stock-musics',
-    siteName: 'Celite Market',
+    description: 'Explore royalty-free stock music tracks on Celite Market.',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Stock Music Library - Celite Market' }],
   },
@@ -39,6 +39,7 @@ export const revalidate = 60;
 
 export default async function StockMusicsPage() {
   const supabase = getSupabaseServerClient();
+  const admin = getSupabaseAdminClient();
 
   // First get the category ID for 'stock-musics'
   const { data: category } = await supabase
@@ -68,12 +69,24 @@ export default async function StockMusicsPage() {
     console.error('Error fetching stock music templates:', error);
   }
 
+  // Fetch real download counts in batch using bypass-RLS admin client
+  const slugs = (templates || []).map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (e) {
+      console.error('Error fetching batch download counts on stock-musics page:', e);
+    }
+  }
+
   // Map templates to match Template type
   const mappedTemplates = (templates || []).map(t => ({
     ...t,
     price: 0,
     is_featured: Boolean((t as any).feature),
     feature: Boolean((t as any).feature),
+    downloadCount: counts[t.slug] || 0,
   }));
 
   return (

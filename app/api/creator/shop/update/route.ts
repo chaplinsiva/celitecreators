@@ -1,4 +1,4 @@
-// agent-notes: { ctx: "API route for updating creator studio profile, branding, and bank/payout details seamlessly", deps: ["lib/supabaseAdmin.ts"], state: active, last: "sato@2026-08-14" }
+// agent-notes: { ctx: "API route for updating creator studio profile, branding, contact info, and payout details", deps: ["lib/supabaseAdmin.ts"], state: active, last: "sato@2026-08-21" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 
@@ -98,6 +98,11 @@ export async function POST(req: Request) {
     if (typeof body.bank_account_number === 'string') updatePayload.bank_account_number = body.bank_account_number.trim();
     if (typeof body.bank_ifsc === 'string') updatePayload.bank_ifsc = body.bank_ifsc.trim().toUpperCase();
     if (typeof body.bank_upi_id === 'string') updatePayload.bank_upi_id = body.bank_upi_id.trim();
+
+    // Contact & Community Details
+    if (typeof body.phone === 'string') updatePayload.phone = body.phone.trim();
+    if (typeof body.email === 'string') updatePayload.email = body.email.trim();
+    if (typeof body.joined_community === 'boolean') updatePayload.joined_community = body.joined_community;
 
     if (Object.keys(updatePayload).length === 0) {
       return NextResponse.json({ ok: false, error: 'No fields provided for update' }, { status: 400 });

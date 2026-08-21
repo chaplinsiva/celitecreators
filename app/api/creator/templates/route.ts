@@ -1,4 +1,4 @@
-// agent-notes: { ctx: "API route for creators to manage templates and view sales stats", deps: ["lib/supabaseAdmin.ts"], state: active, last: "antigravity@2026-08-13" }
+// agent-notes: { ctx: "API route for creators to manage templates, stats, and fetch shop profile with contact info", deps: ["lib/supabaseAdmin.ts"], state: active, last: "sato@2026-08-21" }
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '../../../../lib/supabaseAdmin';
 
@@ -20,7 +20,7 @@ async function getCreatorContext(req: Request) {
 
   const { data: shop, error: shopErr } = await admin
     .from('creator_shops')
-    .select('id, user_id, slug, name, description, bio, tagline, location, website_url, instagram_url, youtube_url, twitter_url, logo_url, profile_image_url, banner_url, bank_account_name, bank_account_number, bank_ifsc, bank_upi_id, direct_upload_enabled, total_sales_count')
+    .select('id, user_id, slug, name, description, bio, tagline, location, website_url, instagram_url, youtube_url, twitter_url, logo_url, profile_image_url, banner_url, bank_account_name, bank_account_number, bank_ifsc, bank_upi_id, phone, email, joined_community, direct_upload_enabled, total_sales_count')
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -185,7 +185,7 @@ export async function GET(req: Request) {
     const payoutRequests = payoutsResult.data || [];
     const downloadLogs = (downloadLogsResult as any)?.data || [];
 
-    // Filter for paid orders when calculating revenue
+    // Calculate creator sales and balance with robust 80% revenue share logic
     const paidOrderItems = orderItems.filter((item: any) => {
       const order = Array.isArray(item.orders) ? item.orders[0] : item.orders;
       return !order || order.status === 'paid' || order.status === 'completed';
@@ -193,7 +193,10 @@ export async function GET(req: Request) {
 
     const marketplaceSalesCount = paidOrderItems.length;
     const marketplaceSalesRevenue = paidOrderItems.reduce((sum: number, item: any) => {
-      const earnings = Number(item.creator_earnings) || (Number(item.price || 0) * 0.8);
+      const price = Number(item.price || 0);
+      const earnings = (item.creator_earnings !== null && item.creator_earnings !== undefined && Number(item.creator_earnings) > 0)
+        ? Number(item.creator_earnings)
+        : (price * 0.8);
       return sum + earnings;
     }, 0);
 
@@ -214,7 +217,9 @@ export async function GET(req: Request) {
     const transactions = orderItems.map((item: any) => {
       const order = Array.isArray(item.orders) ? item.orders[0] : item.orders;
       const grossPrice = Number(item.price || 0);
-      const netEarnings = Number(item.creator_earnings) || (grossPrice * 0.8);
+      const netEarnings = (item.creator_earnings !== null && item.creator_earnings !== undefined && Number(item.creator_earnings) > 0)
+        ? Number(item.creator_earnings)
+        : (grossPrice * 0.8);
       const fee = Number(item.platform_fee) || (grossPrice * 0.2);
 
       return {

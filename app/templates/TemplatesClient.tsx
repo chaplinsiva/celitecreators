@@ -8,7 +8,7 @@ import { convertR2UrlToCdn } from '../../lib/utils';
 import VideoThumbnailPlayer from '../../components/VideoThumbnailPlayer';
 import MusicSfxPlayer from '../../components/MusicSfxPlayer';
 import StockPhotoViewer from '../../components/StockPhotoViewer';
-import { ChevronRight, PlayCircle, Music2, Image, Video, Box, Sparkles, Search } from 'lucide-react';
+import { ChevronRight, PlayCircle, Music2, Image, Video, Box, Sparkles, Search, Download } from 'lucide-react';
 
 type Template = {
     slug: string;
@@ -20,6 +20,7 @@ type Template = {
     audio_preview_path?: string | null;
     model_3d_path?: string | null;
     category_id?: string | null;
+    downloadCount?: number;
 };
 
 type Category = {
@@ -396,6 +397,11 @@ export default function TemplatesClient({ initialCategoryGroups }: { initialCate
                                         {/* Template Thumbnail/Video */}
                                         <div className="relative aspect-video overflow-hidden bg-zinc-100">
                                             {renderTemplatePreview(template)}
+                                            {/* Downloads Badge */}
+                                            <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-extrabold text-sky-400 border border-sky-500/30 flex items-center gap-1 z-20">
+                                                <Download className="w-3 h-3 text-sky-400" />
+                                                <span>{template.downloadCount || 0} Downloads</span>
+                                            </div>
                                         </div>
 
                                         {/* Template Info */}

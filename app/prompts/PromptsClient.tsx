@@ -35,10 +35,14 @@ type Template = {
 
 interface PromptsClientProps {
     initialTemplates: Template[];
-    subcategories: Subcategory[];
+    subcategories?: Subcategory[];
+    pageTitle?: string;
+    pageSubtitle?: string;
+    breadcrumbLabel?: string;
+    basePath?: string;
 }
 
-export default function PromptsClient({ initialTemplates, subcategories }: PromptsClientProps) {
+export default function PromptsClient({ initialTemplates = [], subcategories = [] }: PromptsClientProps) {
     const { user } = useAppContext();
     const { openLoginModal } = useLoginModal();
     const searchParams = useSearchParams();
@@ -67,7 +71,7 @@ export default function PromptsClient({ initialTemplates, subcategories }: Promp
     const filteredTemplates = useMemo(() => {
         if (!selectedSubcategory) return initialTemplates;
 
-        const subcategory = subcategories.find(s => s.slug === selectedSubcategory);
+        const subcategory = (subcategories || []).find(s => s.slug === selectedSubcategory);
         if (!subcategory) return initialTemplates;
 
         return initialTemplates.filter(t => t.subcategory_id === subcategory.id);
@@ -77,13 +81,13 @@ export default function PromptsClient({ initialTemplates, subcategories }: Promp
     const templatesBySubcategory = useMemo(() => {
         const grouped: Record<string, Template[]> = {};
 
-        subcategories.forEach(sub => {
+        (subcategories || []).forEach(sub => {
             grouped[sub.id] = initialTemplates.filter(t => t.subcategory_id === sub.id);
         });
 
         // Add uncategorized templates
         grouped['uncategorized'] = initialTemplates.filter(
-            t => !t.subcategory_id || !subcategories.find(s => s.id === t.subcategory_id)
+            t => !t.subcategory_id || !(subcategories || []).find(s => s.id === t.subcategory_id)
         );
 
         return grouped;

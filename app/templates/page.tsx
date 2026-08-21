@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import TemplatesClient from './TemplatesClient';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../lib/downloadStats';
 
 export const metadata: Metadata = {
     title: "All Creative Digital Assets & Templates | Celite Market",
@@ -31,15 +33,16 @@ export const revalidate = 60;
 
 export default async function TemplatesPage() {
     const supabase = getSupabaseServerClient();
+    const admin = getSupabaseAdminClient();
 
-    // Fetch all categories from the database
-    const { data: dbCategories, error: categoryError } = await supabase
+    // Fetch active categories
+    const { data: dbCategories, error: categoriesError } = await supabase
         .from('categories')
         .select('id, name, slug')
         .order('name');
 
-    if (categoryError || !dbCategories) {
-        console.error('Error loading categories on server:', categoryError);
+    if (categoriesError || !dbCategories) {
+        console.error('Error loading categories:', categoriesError);
         return (
             <Suspense fallback={
                 <main className="bg-background min-h-screen pt-20 pb-20">
@@ -95,6 +98,24 @@ export default async function TemplatesPage() {
 
     // Filter out categories with no templates
     const filteredGroups = groups.filter(group => group.templates.length > 0);
+
+    // Collect all template slugs to fetch download stats in batch
+    const allSlugs = filteredGroups.flatMap(g => g.templates.map(t => t.slug));
+    let counts: Record<string, number> = {};
+    if (allSlugs.length > 0) {
+        try {
+            counts = await getBatchTemplateDownloads(admin, allSlugs);
+        } catch (e) {
+            console.error('Error fetching batch downloads on templates page:', e);
+        }
+    }
+
+    // Attach real download counts
+    filteredGroups.forEach(g => {
+        g.templates.forEach((t: any) => {
+            t.downloadCount = counts[t.slug] || 0;
+        });
+    });
 
     // Sort by count (descending), then by name
     filteredGroups.sort((a, b) => {

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getSupabaseServerClient } from '../../lib/supabaseServer';
+import { getSupabaseAdminClient } from '../../lib/supabaseAdmin';
+import { getBatchTemplateDownloads } from '../../lib/downloadStats';
 import Model3DClient from './Model3DClient';
 import LoadingSpinnerServer from '../../components/ui/loading-spinner-server';
 
@@ -19,27 +21,17 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: '3D Models & Game Assets (GLB, GLTF, OBJ) | Celite Market',
-    description: 'Download high-quality 3D models for games, animation, and CGI on Celite Market.',
-    url: 'https://celitemarket.in/3d-models',
-    siteName: 'Celite Market',
+    description: 'Explore 3D models and digital assets on Celite Market.',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: '3D Models - Celite Market' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '3D Models | Celite Market',
-    description: 'Download high-quality 3D models for games, animation, and CGI on Celite Market.',
-    images: ['/og-image.png'],
-  },
-  alternates: {
-    canonical: 'https://celitemarket.in/3d-models',
   },
 };
 
+// Revalidate every 60 seconds (ISR)
 export const revalidate = 60;
 
 export default async function Model3DPage() {
   const supabase = getSupabaseServerClient();
+  const admin = getSupabaseAdminClient();
   
   // Fetch 3D Models category - try to find by slug first
   const { data: category } = await supabase
@@ -65,12 +57,24 @@ export default async function Model3DPage() {
     }
   }
 
+  // Fetch real download counts in batch using bypass-RLS admin client
+  const slugs = templates.map(t => t.slug);
+  let counts: Record<string, number> = {};
+  if (slugs.length > 0) {
+    try {
+      counts = await getBatchTemplateDownloads(admin, slugs);
+    } catch (e) {
+      console.error('Error fetching batch download counts on 3d-models page:', e);
+    }
+  }
+
   // Map templates to match Template type
   const mappedTemplates = templates.map(t => ({
     ...t,
     price: 0,
     is_featured: Boolean((t as any).feature),
     feature: Boolean((t as any).feature),
+    downloadCount: counts[t.slug] || 0,
   }));
 
   return (

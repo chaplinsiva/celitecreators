@@ -9,6 +9,7 @@ import { getTemplateDownloadCount } from '../../../lib/downloadStats';
 import { convertR2UrlToCdn } from '../../../lib/utils';
 
 import { paiseToINR } from '../../../lib/priceUtils';
+import { isTemplateApproved } from '../../../lib/templateGuard';
 
 const reviews = [
   {
@@ -35,10 +36,19 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const supabase = getSupabaseServerClient();
   const { data: row } = await supabase
     .from('templates')
-    .select('slug,name,subtitle,description,img,thumbnail_path,video_path,features,software,plugins,tags,meta_title,meta_description,vendor_name,category_id,is_free,categories(id,slug,name)')
+    .select('slug,name,subtitle,description,img,thumbnail_path,video_path,features,software,plugins,tags,meta_title,meta_description,vendor_name,category_id,is_free,status,categories(id,slug,name)')
     .eq('slug', params.slug)
+    .eq('status', 'approved')
     .maybeSingle();
-  const prod = row ? ({
+
+  if (!row || !isTemplateApproved(row)) {
+    return {
+      title: 'Template Not Found | Celite Market',
+      description: 'This template does not exist, was removed, or is not approved.',
+    };
+  }
+
+  const prod = {
     slug: row.slug,
     name: row.name,
     subtitle: row.subtitle,
@@ -51,13 +61,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     tags: row.tags ?? [],
     isFeatured: false,
     is_free: !!row.is_free,
-  } as Template) : null;
-  if (!prod) {
-    return {
-      title: 'Template Not Found | Celite Market',
-      description: 'This template does not exist or was removed.',
-    };
-  }
+  } as Template;
 
   // Use thumbnail_path for better preview (actual template preview), fallback to img
   const metaImage = row?.thumbnail_path
@@ -149,8 +153,9 @@ export default async function ProductPage(props: PageProps) {
   const [{ data: row }, { data: settingsData }, statsResult] = await Promise.all([
     supabase
       .from('templates')
-      .select('slug,name,subtitle,description,img,video_path,thumbnail_path,audio_preview_path,model_3d_path,features,software,plugins,tags,source_path,meta_title,meta_description,vendor_name,category_id,subcategory_id,is_free,price,ownership_type,categories(id,slug,name)')
+      .select('slug,name,subtitle,description,img,video_path,thumbnail_path,audio_preview_path,model_3d_path,features,software,plugins,tags,source_path,meta_title,meta_description,vendor_name,category_id,subcategory_id,is_free,price,ownership_type,status,categories(id,slug,name)')
       .eq('slug', params.slug)
+      .eq('status', 'approved')
       .maybeSingle(),
     supabase
       .from('settings')
@@ -161,7 +166,7 @@ export default async function ProductPage(props: PageProps) {
       return { total: 0 };
     })
   ]);
-  if (!row) return notFound();
+  if (!row || !isTemplateApproved(row)) return notFound();
 
   const serverDownloadCount = statsResult?.total || 0;
 
